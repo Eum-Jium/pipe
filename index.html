@@ -241,6 +241,11 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>20</i><b>10%를 전 관종에 준용</b></li>
           <li><i>21</i><b>103%는 겹침이 아니었다</b></li>
           <li><i>22</i><b>곡면 보정 — 판정이 뒤집힌다</b></li>
+          <li><i>23</i><b>누수의 대가는 41%p였다</b></li>
+          <li><i>24</i><b>잡음 바닥선 1.8%p</b></li>
+          <li><i>25</i><b>mAP 와 면적비가 반대를 가리켰다</b></li>
+          <li><i>26</i><b>외우지도 옮기지도 못한다</b></li>
+          <li><i>27</i><b>소실점을 8.9%밖에 못 찾는다</b></li>
         </ol>
       </div>
     </div>
@@ -517,7 +522,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 </section>
 
 <section class="slide tight" data-title="판정 화면"
- data-notes="마지막으로 사람 편차를 실제로 재는 화면입니다. 지금 보시는 것이 두 과장님이 각자 쓰게 될 도구고, 이 자리에서 직접 눌러 보실 수 있습니다. 화면에는 원본 프레임만 뜹니다. 라벨은 일부러 넣지 않았습니다. 라벨을 겹쳐 보여주면 그걸 보고 판단하게 되니까 사람 판단을 재는 게 아니라 라벨에 동의하는지를 재게 됩니다. 키보드 1이 10% 이하, 2가 초과, 0이 애매입니다. 애매를 따로 둔 이유는, 억지로 둘 중 하나를 고르게 하면 그 잡음이 일치율에 섞이기 때문입니다. 애매하다고 찍힌 자리는 그 자체가 사람도 갈리는 자리라는 정보입니다. 문항은 검증용 732장에서 관종 비율 그대로 150장을 무작위로 뽑았습니다. 여기에 20장을 몰래 한 번 더 끼워 넣어 총 170문항입니다. 같은 프레임인지 모르고 다시 답하게 되는데, 본인이 같은 답을 하는지를 봅니다. 짝끼리는 최소 25문항 떨어뜨려서 방금 본 걸 기억해 맞히지 못하게 했습니다. 이게 본인 일관성이고, 두 사람 일치율의 바닥값이기도 합니다. 본인끼리도 안 맞는데 남과 맞을 수는 없으니까요. 두 분의 문항은 같지만 순서는 다르게 섞었습니다. 순서가 같으면 심한 프레임이 몰린 구간이 두 분에게 똑같이 작용해서 일치율이 실제보다 높게 나옵니다. 한 사람당 스무 분쯤 걸립니다. 결과는 각자 파일로 받고, 두 판정이 일치한 프레임은 확실한 정답으로 쓰고 갈린 프레임은 따로 봅니다. 그리고 이 일치율이 세션 1에서 문제로 잡았던 판독자 편차를 처음으로 숫자로 만든 값이고, 동시에 AI에게 기대할 수 있는 성능의 상한이 됩니다. 사람끼리 80%밖에 안 맞는 일을 AI가 95% 맞힌다고 하면 그건 채점이 잘못된 겁니다.">
+ data-notes="마지막으로 사람 편차를 실제로 재는 화면입니다. 지금 보시는 것이 두 과장님이 각자 쓰게 될 도구고, 이 자리에서 직접 눌러 보실 수 있습니다. 화면에는 원본 프레임만 뜹니다. 라벨은 일부러 넣지 않았습니다. 라벨을 겹쳐 보여주면 그걸 보고 판단하게 되니까 사람 판단을 재는 게 아니라 라벨에 동의하는지를 재게 됩니다. 키보드 1이 10% 이하, 2가 초과, 0이 애매입니다. 애매를 따로 둔 이유는, 억지로 둘 중 하나를 고르게 하면 그 잡음이 일치율에 섞이기 때문입니다. 애매하다고 찍힌 자리는 그 자체가 사람도 갈리는 자리라는 정보입니다. 문항은 검증용 732장에서 관종별로 50장씩 균등하게, 관종 안에서는 무작위로 뽑아 150장입니다. 비율대로 뽑으면 강관이 29장밖에 안 돼서 관종별 일치율의 신뢰구간이 플러스마이너스 14.6퍼센트포인트까지 벌어집니다. 균등하게 50장씩이면 11.1입니다. 대신 보고할 때는 실제 관종 비율로 가중평균해서 냅니다. 여기에 관종당 7장씩 21장을 몰래 한 번 더 끼워 넣어 총 171문항입니다. 같은 프레임인지 모르고 다시 답하게 되는데, 본인이 같은 답을 하는지를 봅니다. 짝끼리는 최소 25문항 떨어뜨려서 방금 본 걸 기억해 맞히지 못하게 했습니다. 이게 본인 일관성이고, 두 사람 일치율의 바닥값이기도 합니다. 본인끼리도 안 맞는데 남과 맞을 수는 없으니까요. 두 분의 문항은 같지만 순서는 다르게 섞었습니다. 순서가 같으면 심한 프레임이 몰린 구간이 두 분에게 똑같이 작용해서 일치율이 실제보다 높게 나옵니다. 한 사람당 스무 분쯤 걸립니다. 결과는 각자 파일로 받고, 두 판정이 일치한 프레임은 확실한 정답으로 쓰고 갈린 프레임은 따로 봅니다. 그리고 이 일치율이 세션 1에서 문제로 잡았던 판독자 편차를 처음으로 숫자로 만든 값이고, 동시에 AI에게 기대할 수 있는 성능의 상한이 됩니다. 사람끼리 80%밖에 안 맞는 일을 AI가 95% 맞힌다고 하면 그건 채점이 잘못된 겁니다.">
   <div class="eyebrow">DESIGN 08 · 사람 편차를 재는 도구</div>
   <h2>같은 프레임을 두 사람이 따로 찍는다</h2>
   <hr class="rule">
@@ -631,7 +636,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <h2>이번에 확인한 것</h2>
   <hr>
   <p class="lead">실제로 만들어 보면서 드러난 것들. 앞의 주장을 뒷받침하는 숫자와, 바로잡은 것이 여기 있다.</p>
-  <div class="items"><div><b>16~20</b>분할 · 매뉴얼 10%</div><div><b>21~22</b>면적 계산 모듈</div></div>
+  <div class="items"><div><b>16~20</b>분할 · 매뉴얼 10%</div><div><b>21~22</b>면적 계산 모듈</div><div><b>23</b>트랙 B 첫 결과</div></div>
 </section>
 
 <section class="slide tight" data-title="분할을 다시 잘랐다"
@@ -884,6 +889,194 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   </div>
   <div class="foot">보정하지 않으면 프레임 일곱 장에 한 장꼴로 등급이 틀린다</div>
 </section>
+
+<section class="slide tight" data-title="누수의 대가"
+ data-notes="이건 이번에 나온 것 중 가장 큰 숫자입니다. 앞에서 분할을 지점 단위로 다시 잘랐다고 말씀드렸는데, 그게 실제로 얼마짜리였는지를 재봤습니다. 방법은 이렇습니다. 기존 스타터 학습과 조건을 완전히 똑같이 맞췄습니다. 같은 모델, 같은 343장, 같은 2클래스, 같은 960픽셀, 같은 50에폭, 같은 배치. 딱 하나만 바꿨습니다. 데이터를 자르는 방식만 영상 단위에서 지점 단위로 바꿨습니다. 결과가 44.6퍼센트에서 3.6퍼센트로 떨어졌습니다. 41퍼센트포인트입니다. 조건이 하나만 다르니까 이 차이를 다른 요인으로 돌릴 수 없습니다. 이게 옛 분할이 부풀리고 있던 양입니다. 왜 이렇게 컸느냐. 같은 지점을 순방향 역방향 전진 후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어가 있었기 때문입니다. 시험지에 나온 관로를 이미 다른 각도에서 외운 상태였던 겁니다. 지점 기준으로 다시 세어보니 134개 지점 중 84개가 여러 분할에 걸쳐 있었고 프레임의 75.9퍼센트가 거기 속했습니다. 그래서 두 가지를 말씀드립니다. 첫째, 기존에 보고된 44.6퍼센트는 이제 쓸 수 없습니다. 그건 이미 본 관로를 채점한 값입니다. 둘째, 3.6퍼센트가 낮아 보이지만 이게 진짜 출발선입니다. 낮은 데서 시작해야 올린 만큼이 진짜입니다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수가 없습니다.">
+  <div class="eyebrow">APPENDIX 08 · 2026-09-05 · 트랙 B</div>
+  <h2>누수의 대가는 <b style="color:var(--warn)">41%p</b>였다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">조건을 완전히 맞추고 <b style="color:var(--ink)">분할만</b> 바꿨다</div>
+        <table class="dense">
+          <tr><th></th><th>스타터 실측</th><th>e0r</th></tr>
+          <tr><td class="k">모델</td><td>YOLO11n-seg</td><td>같음</td></tr>
+          <tr><td class="k">학습</td><td>343장 · 2클래스</td><td>같음</td></tr>
+          <tr><td class="k">조건</td><td>960px · 50ep · batch 4</td><td>같음</td></tr>
+          <tr class="sum"><td class="k">분할</td><td style="color:var(--warn)"><b>영상 단위</b></td><td style="color:var(--accent)"><b>지점 단위</b></td></tr>
+        </table>
+        <div class="grid g2" style="gap:1.4em;margin-top:.3em">
+          <div class="stat"><div class="n">44.6%</div><div class="c">스타터 OOS Box mAP50<br>(test 48장)</div></div>
+          <div class="stat warn"><div class="n">3.6%</div><div class="c">e0r OOS Box mAP50<br>(OOS 732장)</div></div>
+        </div>
+        <div class="src">조건이 하나만 다르므로 이 차이를 다른 요인으로 돌릴 수 없다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">왜 이렇게 컸나</div>
+        <div class="item warn"><div class="t">시험지에 나온 관로를 이미 외우고 있었다</div><div class="d">같은 지점을 순/역 × 전진/후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어갔다.<br><b style="color:var(--ink)">134개 지점 중 84개가 걸쳐 있었고 프레임의 75.9%가 거기 속했다</b></div></div>
+        <hr class="rule">
+        <div class="item warn"><div class="t">기존 44.6%는 쓸 수 없다</div><div class="d">이미 본 관로를 채점한 값이다. 보고·비교의 기준선에서 내린다</div></div>
+        <div class="item acc"><div class="t">3.6%가 진짜 출발선이다</div><div class="d">낮은 데서 시작해야 <b>올린 만큼이 진짜</b>다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수 없다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">숫자를 낮추는 작업이었지만, 이제부터의 개선은 전부 실제 개선이다</div>
+</section>
+
+<section class="slide tight" data-title="잡음 바닥선"
+ data-notes="앞 장에서 41퍼센트포인트라는 큰 숫자를 보셨는데, 그런 큰 숫자만 있는 게 아닙니다. 작은 차이들이 훨씬 많고, 그걸 어떻게 다룰지를 먼저 정해야 했습니다. 사정은 이렇습니다. 실험을 하나 돌리면 값이 하나 나옵니다. 조건을 바꿔서 또 돌리면 다른 값이 나옵니다. 그 차이가 조건 때문인지, 아니면 그냥 다시 돌리면 달라지는 폭인지를 모르면 아무 이야기나 만들 수 있습니다. 그래서 차이를 읽기 전에 잡음부터 쟀습니다. 방법은 이렇습니다. 처음에 배치 크기를 자동으로 잡게 뒀는데, 그게 실험마다 11, 9, 11로 다르게 잡혔습니다. 한 번에 하나만 바꾼다는 원칙이 깨진 거라 배치를 8로 고정하고 사다리를 통째로 다시 돌렸습니다. 그런데 이게 뜻밖의 선물이 됐습니다. 데이터도 같고 시드도 같고 배치만 다른 두 벌이 생긴 겁니다. 그 차이가 곧 통제 못 한 변수 하나가 흔드는 폭입니다. 평균 1.2, 최대 1.8퍼센트포인트였습니다. 이 자를 대고 보면 이렇게 갈립니다. 누수 41퍼센트포인트는 잡음의 23배니까 확실합니다. 데이터를 열 배 늘린 효과 6.2퍼센트포인트는 3배니까 확실합니다. 그런데 라벨 품질 QA는, 24.8퍼센트를 지우든 1.1퍼센트를 지우든, 최대 최소 차이가 1.7퍼센트포인트로 잡음보다 작습니다. 판정 불가입니다. 그리고 여기가 중요한데, 이 실험은 결론이 두 번 뒤집혔습니다. 자동 배치 판에서는 QA가 해롭다고 나왔고, 배치 고정 판에서는 이롭다고 나왔습니다. 잡음에 대보니 둘 다 못 읽는 값이었습니다. 통제 안 된 변수 하나로 결론의 부호가 바뀐 겁니다. 잡음을 먼저 재지 않고 델타를 읽으면 아무 이야기나 만들 수 있다는 걸 저희가 직접 겪었습니다.">
+  <div class="eyebrow">APPENDIX 09 · 2026-09-05 · 트랙 B</div>
+  <h2>차이를 읽기 전에 <b style="color:var(--accent)">잡음부터 쟀다</b> — 바닥선 1.8%p</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1.05fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">어떻게 쟀나 — 데이터·seed 같고 <b style="color:var(--ink)">배치만</b> 다른 두 벌</div>
+        <table class="dense">
+          <tr><th></th><th class="num">AutoBatch</th><th class="num">batch=8</th><th class="num">차이</th></tr>
+          <tr><td class="k">e0</td><td class="num">7.0%</td><td class="num">6.4%</td><td class="num">−0.6%p</td></tr>
+          <tr><td class="k">e1</td><td class="num">13.8%</td><td class="num">12.6%</td><td class="num">−1.2%p</td></tr>
+          <tr class="sum"><td class="k">e2</td><td class="num">9.9%</td><td class="num">8.1%</td><td class="num">−1.8%p</td></tr>
+        </table>
+        <div class="src">AutoBatch 가 실험마다 11 · 9 · 11 을 골랐다 — "한 번에 하나만" 이 깨진 자리</div>
+        <div class="item acc"><div class="t">사고가 자가 돼 주었다</div><div class="d">배치를 8로 고정하고 다시 돌리는 김에, <b style="color:var(--ink)">통제 못 한 변수 하나가 흔드는 폭</b>이 그대로 측정됐다</div></div>
+        <div class="big" style="color:var(--warn);font-size:1.3em;margin-top:.1em">1.8%p 아래는 단일 실행으로 해석하지 않는다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">이 자를 대면 이렇게 갈린다</div>
+        <table class="dense">
+          <tr><th></th><th class="num">델타</th><th class="num">잡음 대비</th><th>판정</th></tr>
+          <tr><td class="k">누수 (스타터 → e0r)</td><td class="num"><b>41%p</b></td><td class="num">23배</td><td style="color:var(--accent)">확실</td></tr>
+          <tr><td class="k">데이터량 (e0 → e1)</td><td class="num"><b>+6.2%p</b></td><td class="num">3배</td><td style="color:var(--accent)">확실</td></tr>
+          <tr class="sum"><td class="k">라벨 QA (e2·e3·e3b)</td><td class="num"><b>1.7%p</b></td><td class="num">0.9배</td><td style="color:var(--warn)">판정 불가</td></tr>
+        </table>
+        <hr class="rule">
+        <div class="item warn"><div class="t">E3 결론이 두 번 뒤집혔다</div><div class="d">AutoBatch 판 <b style="color:var(--ink)">−1.5%p</b>("QA 가 해롭다") → 배치 고정 판 <b style="color:var(--ink)">+1.5%p</b>("이롭다") → 잡음에 대니 <b style="color:var(--ink)">둘 다 못 읽는 값</b></div></div>
+        <div class="item acc"><div class="t">그래도 남는 진단</div><div class="d">"QA 규칙이 과했다" 는 mAP 와 무관하게 선다 — <b style="color:var(--ink)">slime 어노테이션의 39.2%를 지웠다</b>는 건 세어 본 사실이다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">통제 안 된 변수 하나로 결론의 부호가 바뀌었다 — 잡음을 먼저 재지 않으면 아무 이야기나 만들 수 있다</div>
+</section>
+
+<section class="slide tight" data-title="두 지표가 갈렸다"
+ data-notes="다음은 오늘 새로 나온 것입니다. 지표를 두 층으로 두기로 했다고 앞에서 말씀드렸는데, 그 두 층이 실제로 반대 방향을 가리켰습니다. 먼저 왜 두 층이냐. mAP는 탐지 성능 지표입니다. 클래스 수가 다르면 분모가 달라져서 2클래스 실험과 10클래스 실험을 직접 비교할 수 없습니다. 그리고 더 중요한 건, mAP가 올라도 등급 판정에는 쓸모가 없을 수 있다는 겁니다. 우리 업무는 결함을 몇 개 찾았느냐가 아니라 면적이 10퍼센트를 넘느냐입니다. 그래서 두 번째 층으로 면적비 지표를 만들었습니다. 모델이 칠한 마스크와 라벨 폴리곤을 같은 면적 계산기에 넣고, 10퍼센트 경계에서 초과냐 이하냐가 같은지를 봅니다. 클래스가 몇 개든 상관없이 결함 합집합의 면적만 보니까 같은 자입니다. 오늘 검증 732장 전체에 대해 돌렸습니다. 결과가 이렇습니다. mAP로는 클래스 체계를 2종에서 10종으로 늘렸을 때 12.6에서 8.1로 떨어졌습니다. 그런데 면적비 일치율은 55.3에서 64.9로 올랐습니다. 방향이 정반대입니다. 왜 그러냐면, 10종으로 나누면 클래스마다 표본이 쪼개져서 클래스별 평균인 mAP는 떨어집니다. 하지만 결함이 어디 있는지는 더 정확히 칠하게 됩니다. 면적비는 그걸 봅니다. 그리고 하나 더. mAP로는 판정 불가였던 라벨 QA가 여기서는 갈립니다. 넓은 기준으로 24.8퍼센트를 지운 e3가 일치율 54.8로 e2보다 10퍼센트포인트 낮습니다. 기전도 보입니다. 초과라고 예측한 프레임이 254장에서 78장으로 줄었습니다. QA가 큰 슬라임을 지워버리니까 모델이 큰 면적을 예측하지 못하게 된 겁니다. 정직하게 덧붙이면, 이 지표의 잡음 바닥선은 아직 안 쟀습니다. 다만 라벨이 1.1퍼센트만 다른 e2와 e3b가 2.2퍼센트포인트 안에 있으니, 10퍼센트포인트는 그것보다 훨씬 큽니다. 마지막으로 바닥값을 봐주십시오. 아무 생각 없이 전부 이하로 찍으면 50.7퍼센트가 나옵니다. e0, e0r, e1은 거기 붙어 있습니다. 즉 2클래스 모델은 판정에 쓸 수 없습니다.">
+  <div class="eyebrow">APPENDIX 10 · 2026-09-05 · 트랙 B · 신규</div>
+  <h2>mAP 와 면적비가 <b style="color:var(--warn)">반대</b>를 가리켰다 — 업무 지표는 면적비다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.15fr auto .95fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">OOS 732장 · <b style="color:var(--ink)">10% 경계 판정이 라벨과 같은 비율</b></div>
+        <table class="dense">
+          <tr><th></th><th class="num">Box mAP50</th><th class="num">면적비 일치율</th><th class="num">"초과" 예측</th></tr>
+          <tr><td class="k">e0 <span style="color:var(--mute)">2종 · 기준선</span></td><td class="num">6.4%</td><td class="num">53.0%</td><td class="num">129</td></tr>
+          <tr><td class="k">e0r <span style="color:var(--mute)">2종 · 스타터 재현</span></td><td class="num">3.6%</td><td class="num">49.5%</td><td class="num">193</td></tr>
+          <tr><td class="k">e1 <span style="color:var(--mute)">2종 · +데이터량</span></td><td class="num"><b style="color:var(--accent)">12.6%</b></td><td class="num">55.3%</td><td class="num">120</td></tr>
+          <tr class="sum"><td class="k">e2 <span style="color:var(--mute)">10종 · +클래스 체계</span></td><td class="num" style="color:var(--warn)">8.1%</td><td class="num"><b style="color:var(--accent)">64.9%</b></td><td class="num">254</td></tr>
+          <tr><td class="k">e3 <span style="color:var(--mute)">10종 · +QA 넓은 기준</span></td><td class="num">9.6%</td><td class="num" style="color:var(--warn)"><b>54.8%</b></td><td class="num" style="color:var(--warn)">78</td></tr>
+          <tr><td class="k">e3b <span style="color:var(--mute)">10종 · +QA 좁힌 기준</span></td><td class="num">7.9%</td><td class="num">62.7%</td><td class="num">266</td></tr>
+        </table>
+        <div class="src">라벨은 초과 361 / 732장 — <b style="color:var(--ink)">전부 "이하" 로 찍으면 50.7%</b>. e0 · e0r · e1 은 거기 붙어 있다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">두 지표가 <b style="color:var(--ink)">갈리는 자리</b></div>
+        <div class="item acc"><div class="t">e1 → e2 — 두 지표의 <b>부호가 갈린다</b></div><div class="d">mAP <b style="color:var(--ink)">12.6 → 8.1</b>(내려감) · 면적비 <b style="color:var(--ink)">55.3 → 64.9</b>(올라감).<br>10종으로 쪼개면 클래스별 평균인 mAP 는 떨어지지만 <b style="color:var(--ink)">결함을 칠하는 자리는 정확해진다</b></div></div>
+        <div class="lbl">mAP 로 못 갈랐던 QA 가 여기서 갈린다</div>
+        <div class="item warn"><div class="t">e3 (넓은 기준) 은 확실히 나쁘다</div><div class="d">e2 대비 <b style="color:var(--ink)">−10.1%p</b>. 기전까지 보인다 — "초과" 예측이 <b style="color:var(--ink)">254 → 78장</b>, 편향 −6.0 → −14.9%.<br><b style="color:var(--ink)">큰 슬라임을 지웠으니 큰 면적을 못 그린다</b></div></div>
+        <div class="item acc"><div class="t">정직하게 — 이 지표의 잡음은 아직 안 쟀다</div><div class="d">라벨이 <b style="color:var(--ink)">1.1%만</b> 다른 e2·e3b 가 2.2%p 안에 있다 — 10.1%p 는 그 <b style="color:var(--ink)">다섯 배</b>다. seed 3회는 남은 일감</div></div>
+        <div class="item acc"><div class="t">그래서 mAP 는 스크리닝용으로만 쓴다</div><div class="d">클래스 수가 다르면 분모가 달라진다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">"몇 개 찾았나" 가 아니라 "10%를 넘나" 가 업무 질문이다 — 자를 업무에 맞춰야 답이 보인다</div>
+</section>
+
+<section class="slide tight" data-title="외우지도 옮기지도 못한다"
+ data-notes="다음은 지금 모델이 어디서 막혀 있는지입니다. 보통 성능이 안 나오면 과적합이냐 아니냐를 먼저 묻습니다. 그런데 그걸 재려면 학습 데이터에서의 성능과 처음 보는 데이터에서의 성능을 둘 다 알아야 합니다. 여기서 한 번 틀렸던 게 있습니다. 처음에 점검용 데이터에서 잰 값이 검증셋과 비슷하게 나오길래 과적합이 아니라고 읽었습니다. 그런데 점검용도 지점 단위로 분리해 둔 거라 사실상 처음 보는 데이터였습니다. 진짜 학습 성능은 학습에 쓴 데이터에서 다시 재야 합니다. 다시 재봤더니 이렇습니다. 학습 데이터에서 29에서 35퍼센트, 처음 보는 관로에서 6에서 13퍼센트. 격차가 21에서 27퍼센트포인트입니다. 두 가지가 동시에 보입니다. 첫째, 학습 데이터조차 못 맞춥니다. 외운 것도 30퍼센트대입니다. 둘째, 그나마 외운 것도 새 관로로 안 옮겨갑니다. 여기서 한 줄 딱지를 붙이고 싶은 유혹이 있습니다. 과적합이다, 혹은 용량 부족이다. 안 붙이기로 했습니다. 25퍼센트 같은 경계는 자의적이고, 그 선을 오가는 값에 번갈아 딱지를 붙이면 없는 차이를 있는 것처럼 읽게 됩니다. 대신 이걸 가르는 실험을 지금 돌리고 있습니다. 학습량을 30에폭에서 수렴까지 늘리고 모델을 한 단계 키웠을 때, 학습 데이터에서의 성능이 크게 오르면 학습량이 부족했던 겁니다. 안 오르면 라벨이 일관되지 않아서 외울 대상 자체가 흐릿하다는 뜻입니다. 후자가 나오면 트랙 A의 전제와 곧장 연결됩니다. 어느 쪽이 나와도 다음에 어디에 투자할지를 가리킵니다.">
+  <div class="eyebrow">APPENDIX 11 · 2026-09-05 · 트랙 B</div>
+  <h2>학습 데이터도 <b style="color:var(--warn)">못 외우고</b>, 외운 것도 <b style="color:var(--warn)">안 옮겨간다</b></h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">Box mAP50 — 학습셋에서 다시 쟀다</div>
+        <table class="dense">
+          <tr><th></th><th class="num">IS (학습셋)</th><th class="num">OOS (검증)</th><th class="num">격차</th></tr>
+          <tr><td class="k">e0</td><td class="num">29.9%</td><td class="num">6.4%</td><td class="num">+23.5%p</td></tr>
+          <tr><td class="k">e1</td><td class="num">33.8%</td><td class="num">12.6%</td><td class="num">+21.2%p</td></tr>
+          <tr><td class="k">e2</td><td class="num">34.7%</td><td class="num">8.1%</td><td class="num">+26.6%p</td></tr>
+          <tr class="sum"><td class="k">e3</td><td class="num">31.6%</td><td class="num">9.6%</td><td class="num">+21.9%p</td></tr>
+        </table>
+        <div class="grid g2" style="gap:1.4em;margin-top:.2em">
+          <div class="stat warn"><div class="n">30~35%</div><div class="c">IS — 학습 데이터조차<br>못 맞춘다</div></div>
+          <div class="stat warn"><div class="n">21~27%p</div><div class="c">격차 — 맞춘 것도<br>새 관로로 안 옮겨간다</div></div>
+        </div>
+        <div class="src">과적합과 용량부족이 <b style="color:var(--ink)">겹쳐 있고</b> 어느 한쪽으로 갈리지 않는다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">먼저 틀렸던 것</div>
+        <div class="item warn"><div class="t">점검셋(val)으로는 이 격차를 못 잰다</div><div class="d">val 도 지점 단위로 분리돼 <b style="color:var(--ink)">사실상 OOS</b> 다. val≈OOS 를 보고 "과적합 아님" 으로 읽었다가 학습셋에서 다시 재고 뒤집었다</div></div>
+        <div class="lbl">딱지를 붙이지 않는 이유</div>
+        <div class="item acc"><div class="t">25% 같은 경계는 자의적이다</div><div class="d">그 선을 오가는 값에 "과적합"/"부족" 을 번갈아 붙이면 <b style="color:var(--ink)">없는 차이를 있는 것처럼 읽게 된다</b></div></div>
+        <div class="lbl" style="margin-top:.2em">대신 <b style="color:var(--accent)">가르는 실험을 돌린다</b> — E4 · E5 에서 IS 가</div>
+        <table class="dense">
+          <tr><td class="k">오른다</td><td><b>학습량·용량 부족</b> — 더 태우면 된다</td></tr>
+          <tr class="sum"><td class="k">안 오른다</td><td><b style="color:var(--warn)">외울 대상이 흐릿하다</b> — 라벨이 일관되지 않다<br><span style="color:var(--mute)">→ 트랙 A 의 전제와 곧장 연결된다</span></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="foot">답을 미리 정하지 않고, 답이 갈리는 실험을 설계해서 돌린다</div>
+</section>
+
+<section class="slide tight" data-title="소실점을 못 찾는다"
+ data-notes="마지막으로 이번에 나온 부정적인 결과 하나를 정직하게 말씀드립니다. 앞에서 곡면 보정이 필수라고 말씀드렸습니다. 매뉴얼의 분모가 관 내면 실면적이고, 화면 기준으로 재면 프레임 일곱 장에 한 장꼴로 등급이 틀린다고 했습니다. 그 보정을 하려면 소실점이 필요합니다. 소실점에서 화면 반경을 재서 세제곱으로 가중치를 주니까, 소실점을 모르면 계산 자체가 시작이 안 됩니다. 지금은 사람이 찍은 소실점 라벨을 쓰고 있는데, 그게 4,916장 중 285장, 5.8퍼센트에만 있습니다. 나머지는 중앙값 원으로 대입하고 있습니다. 진짜 해법은 AI가 소실점을 직접 찾는 것이고, 그래서 소실점을 학습 클래스에 넣어뒀습니다. 오늘 그게 되는지 재봤습니다. 안 됩니다. 검증셋에 소실점 라벨이 있는 45장 중에 모델이 찾아낸 건 4장, 8.9퍼센트입니다. 라벨을 정리한 e3b 모델은 2장, 4.4퍼센트로 더 떨어졌습니다. 원인은 짐작이 갑니다. 학습셋에 소실점 어노테이션이 213건뿐입니다. 박리가 2,703건인 것과 비교하면 십분의 일도 안 됩니다. 이게 무슨 뜻이냐. 지금 곡면 보정 지표는 사람 라벨에 기대고 있어서 자동으로 돌아가지 않습니다. 표에 곡면 기준 일치율도 같이 적어놨는데 40에서 44퍼센트입니다. 표본이 45장뿐이고, 모델이 사실상 전부 이하로 찍은 것과 구분이 안 됩니다. 이 수치는 아직 읽으면 안 됩니다. 그래서 다음 할 일이 셋입니다. 첫째, 소실점은 결함이 아니라 기하 구조니까 학습으로 풀 게 아니라 원 검출로 직접 푸는 게 맞을 수 있습니다. 둘째, 소실점 라벨을 더 채우는 건 결함 라벨보다 훨씬 싸고 판단이 안 들어갑니다. 셋째, 카메라 제원을 받으면 렌즈 왜곡을 보정해서 원 피팅 자체가 정확해집니다. 이건 다음 주 받을 자료에 들어 있습니다.">
+  <div class="eyebrow">APPENDIX 12 · 2026-09-05 · 트랙 B · 신규</div>
+  <h2>소실점을 <b style="color:var(--warn)">8.9%</b>밖에 못 찾는다 — 곡면 보정의 병목</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1.05fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">왜 소실점이 필요한가</div>
+        <div class="card" style="padding:.9em 1.3em">
+          <div class="d" style="font-size:1.25em;line-height:1.6;color:var(--ink2)">
+            가중치 <span class="mono">w(ρ) = (ρ<sub>vp</sub>/ρ)³</span> — <b style="color:var(--ink)">소실점에서 잰 화면 반경</b>이 없으면
+            곡면 보정 계산이 시작되지 않는다
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:.2em">OOS 45장(소실점 라벨 있는 프레임)에서 검출률</div>
+        <table class="dense">
+          <tr><th></th><th class="num">찾은 프레임</th><th class="num">검출률</th></tr>
+          <tr><td class="k">e2</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)"><b>8.9%</b></td></tr>
+          <tr><td class="k">e3</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)">8.9%</td></tr>
+          <tr class="sum"><td class="k">e3b</td><td class="num">2 / 45</td><td class="num" style="color:var(--warn)">4.4%</td></tr>
+        </table>
+        <div class="item warn"><div class="t">짐작되는 원인 — 표본이 없다</div><div class="d">학습셋 소실점 어노테이션 <b style="color:var(--ink)">213건</b>. 박리 2,703건의 <b style="color:var(--ink)">1/13</b> 이다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">그래서 지금 무엇이 성립하지 않나</div>
+        <div class="item warn"><div class="t">곡면 보정 지표는 아직 자동으로 안 돈다</div><div class="d">사람이 찍은 소실점 원을 빌려 쓰고 있다. 그 라벨은 <b style="color:var(--ink)">4,916장 중 285장(5.8%)</b> 에만 있다</div></div>
+        <div class="item warn"><div class="t">곡면 기준 일치율 40~44%는 아직 읽지 않는다</div><div class="d">표본이 <b style="color:var(--ink)">45장</b>뿐이고, 전부 "이하" 로 찍은 것과 구분이 안 된다 (예측 "초과" 0~7 / 라벨 27)</div></div>
+        <hr class="rule">
+        <div class="lbl">다음 할 일 — 셋 다 <b style="color:var(--accent)">라벨보다 싸다</b></div>
+        <table class="dense">
+          <tr><td class="k">원 검출</td><td>결함이 아니라 <b>기하 구조</b>다</td></tr>
+          <tr><td class="k">라벨 보충</td><td>결함 라벨과 달리 <b>판단이 안 들어간다</b></td></tr>
+          <tr class="sum"><td class="k">카메라 제원</td><td>렌즈 왜곡 보정 → <b>원 피팅이 정확</b>해진다</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="foot">안 되는 것을 안 된다고 먼저 적어야, 다음에 무엇을 살지가 정해진다</div>
+</section>
+
 
 
 </div>
