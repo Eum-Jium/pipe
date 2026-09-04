@@ -243,10 +243,11 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>22</i><b>곡면 보정 — 판정이 뒤집힌다</b></li>
           <li><i>23</i><b>누수의 대가는 41%p였다</b></li>
           <li><i>24</i><b>잡음 바닥선 1.8%p</b></li>
-          <li><i>25</i><b>mAP 와 면적비가 반대를 가리켰다</b></li>
+          <li><i>25</i><b>mAP 와 면적비가 반대다</b></li>
           <li><i>26</i><b>외우지도 옮기지도 못한다</b></li>
           <li><i>27</i><b>소실점을 8.9%밖에 못 찾는다</b></li>
-          <li><i>28</i><b>문지방을 의심했다 — 결론은 남고 크기는 줄었다</b></li>
+          <li><i>28</i><b>문지방을 의심했다</b></li>
+          <li><i>29</i><b>프레임을 짝지어 맞댔다</b></li>
         </ol>
       </div>
     </div>
@@ -1115,6 +1116,40 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">기본값을 의심하지 않으면, 기본값이 만든 차이를 내가 발견한 차이로 읽는다</div>
+</section>
+
+<section class="slide tight" data-title="프레임을 짝지어 맞댔다"
+ data-notes="마지막 장입니다. 지금까지 델타를 볼 때마다 잡음 바닥선 1.8퍼센트포인트의 몇 배냐로 읽었습니다. 그런데 그 바닥선은 mAP에서 배치 하나를 바꿔서 잰 값입니다. 면적비 일치율에 그 자를 갖다 댈 근거가 없습니다. 그래서 제대로 된 검정을 붙였습니다. 핵심은 두 모델이 같은 732장을 푼다는 겁니다. 그러면 두 비율을 따로 구해서 빼는 것보다 훨씬 센 방법이 있습니다. 프레임마다 누가 맞았는지를 세는 겁니다. 둘 다 맞은 프레임과 둘 다 틀린 프레임은 정보가 없습니다. 어려운 프레임은 양쪽에 똑같이 작용하니까 그 몫이 상쇄됩니다. 남는 건 한쪽만 맞은 프레임이고, 차이가 없다면 그게 반반으로 갈려야 합니다. 이게 맥니마 검정입니다. 추가 추론도 필요 없었습니다. 프레임별 판정이 이미 저장돼 있었으니까요. 결과를 보시면 셋은 표본 탓으로 보기 어렵고 둘은 표본 탓일 수 있습니다. 클래스 체계 효과 플러스 9.6, QA 넓은 기준의 손해 마이너스 10.1, 기준을 좁혔을 때의 회복 플러스 7.9. 이 셋은 p값이 0.0001보다 작습니다. 반면 QA 좁힌 기준과 안 지운 것의 차이 마이너스 2.2는 p가 0.24로 구분이 안 됩니다. 앞 장에서 문지방을 보정하면 0.3퍼센트포인트로 붙는다고 말씀드린 것과 같은 이야기입니다. 그런데 하나가 새로 나왔습니다. 데이터량입니다. mAP로 보면 343장에서 3,440장으로 열 배 늘렸을 때 6.2퍼센트포인트 올라서 잡음의 세 배, 확실하다고 읽었습니다. 그런데 면적비 일치율로 보면 2.3퍼센트포인트에 p값 0.18입니다. 확인이 안 됩니다. 이게 무슨 뜻이냐. 데이터를 열 배 넣으면 결함을 더 잘 찾긴 합니다. 그런데 10퍼센트를 넘느냐 마느냐를 더 잘 맞히지는 못합니다. 업무 질문에는 아직 답을 못 하는 겁니다. 두 지표를 다 보지 않았으면 데이터만 더 넣으면 된다고 잘못 읽었을 자리입니다. 마지막으로 이 검정이 답하지 않는 걸 분명히 하겠습니다. 이건 이 가중치 두 개의 차이가 시험지 표본 때문일 수 있느냐에만 답합니다. 시드를 바꿔서 다시 학습하면 뒤집힐까에는 답하지 않습니다. 학습 잡음은 여기 안 들어 있습니다. 그건 여전히 시드 세 번으로 재야 하고, 그게 남은 일감입니다.">
+  <div class="eyebrow">APPENDIX 14 · 2026-09-05 · 트랙 B · 신규</div>
+  <h2>델타를 믿어도 되나 — 프레임을 <b style="color:var(--accent)">짝지어</b> 맞댔다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.15fr auto .9fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">McNemar · OOS 732장 · 10% 경계 · conf 0.25 고정</div>
+        <table class="dense">
+          <tr><th></th><th class="num">뒤−앞</th><th class="num">95% CI</th><th class="num">p</th></tr>
+          <tr><td class="k">e0→e1 <span style="color:var(--mute)">데이터량</span></td><td class="num" style="color:var(--warn)">+2.3%p</td><td class="num">−0.9~+5.5</td><td class="num">0.18</td></tr>
+          <tr class="sum"><td class="k">e1→e2 <span style="color:var(--mute)">클래스 체계</span></td><td class="num" style="color:var(--accent)"><b>+9.6%p</b></td><td class="num">+5.8~+13.3</td><td class="num"><b>&lt;.0001</b></td></tr>
+          <tr><td class="k">e2→e3 <span style="color:var(--mute)">QA 넓은</span></td><td class="num" style="color:var(--accent)"><b>−10.1%p</b></td><td class="num">−14.0~−6.2</td><td class="num"><b>&lt;.0001</b></td></tr>
+          <tr><td class="k">e2→e3b <span style="color:var(--mute)">QA 좁힌</span></td><td class="num" style="color:var(--warn)">−2.2%p</td><td class="num">−5.6~+1.2</td><td class="num">0.24</td></tr>
+          <tr><td class="k">e3→e3b <span style="color:var(--mute)">기준 좁힘</span></td><td class="num" style="color:var(--accent)"><b>+7.9%p</b></td><td class="num">+3.9~+11.9</td><td class="num"><b>.0001</b></td></tr>
+        </table>
+        <div class="src"><b style="color:var(--accent)">파랑</b> = 표본 탓으로 보기 어렵다 · <b style="color:var(--warn)">주황</b> = 표본 탓일 수 있다</div>
+        <div class="item acc"><div class="t">왜 짝지어야 센가</div><div class="d">두 모델이 <b style="color:var(--ink)">같은 732장</b>을 푼다. 둘 다 맞거나 둘 다 틀린 프레임은 <b style="color:var(--ink)">정보가 없다</b> — 어려운 프레임이 양쪽에 똑같이 작용하는 몫이 상쇄된다. 남는 건 한쪽만 맞은 프레임이고, 차이가 없다면 반반으로 갈려야 한다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">새로 나온 것</div>
+        <div class="item warn"><div class="t">데이터량 효과가 업무 지표에서는 <b>확인이 안 된다</b></div><div class="d">mAP <b style="color:var(--ink)">+6.2%p</b>(잡음의 3배, "확실") ↔ 면적비 <b style="color:var(--ink)">+2.3%p · p 0.18</b><br>열 배를 넣으면 <b style="color:var(--ink)">결함은 더 찾는데 10%를 넘느냐는 더 못 맞힌다</b></div></div>
+        <div class="item acc"><div class="t">두 지표를 다 안 봤으면</div><div class="d">"데이터만 더 넣으면 된다" 로 잘못 읽었을 자리다</div></div>
+        <hr class="rule">
+        <div class="lbl">이 검정이 <b style="color:var(--warn)">답하지 않는 것</b></div>
+        <div class="item warn"><div class="t">seed 를 바꾸면 뒤집힐까</div><div class="d">이건 <b style="color:var(--ink)">이 가중치 두 개</b>의 차이가 시험지 표본 탓일 수 있나에만 답한다. <b style="color:var(--ink)">학습 잡음은 여기 안 들어 있다</b> — seed 3회로 따로 재야 한다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">같은 시험지를 풀렸으면 총점을 빼지 말고 문항별로 맞대야 한다 — 훨씬 적은 표본으로 답이 나온다</div>
 </section>
 
 
