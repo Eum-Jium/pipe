@@ -244,7 +244,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>23</i><b>누수의 대가는 41%p였다</b></li>
           <li><i>24</i><b>잡음 바닥선 1.8%p</b></li>
           <li><i>25</i><b>mAP 와 면적비가 반대다</b></li>
-          <li><i>26</i><b>외우지도 옮기지도 못한다</b></li>
+          <li><i>26</i><b>더 태웠더니 외우기만 했다</b></li>
           <li><i>27</i><b>소실점을 8.9%밖에 못 찾는다</b></li>
           <li><i>28</i><b>문지방을 의심했다</b></li>
           <li><i>29</i><b>프레임을 짝지어 맞댔다</b></li>
@@ -998,43 +998,41 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">"몇 개 찾았나" 가 아니라 "10%를 넘나" 가 업무 질문이다 — 자를 업무에 맞춰야 답이 보인다</div>
 </section>
 
-<section class="slide tight" data-title="외우지도 옮기지도 못한다"
- data-notes="다음은 지금 모델이 어디서 막혀 있는지입니다. 보통 성능이 안 나오면 과적합이냐 아니냐를 먼저 묻습니다. 그런데 그걸 재려면 학습 데이터에서의 성능과 처음 보는 데이터에서의 성능을 둘 다 알아야 합니다. 여기서 한 번 틀렸던 게 있습니다. 처음에 점검용 데이터에서 잰 값이 검증셋과 비슷하게 나오길래 과적합이 아니라고 읽었습니다. 그런데 점검용도 지점 단위로 분리해 둔 거라 사실상 처음 보는 데이터였습니다. 진짜 학습 성능은 학습에 쓴 데이터에서 다시 재야 합니다. 다시 재봤더니 이렇습니다. 학습 데이터에서 29에서 35퍼센트, 처음 보는 관로에서 6에서 13퍼센트. 격차가 21에서 27퍼센트포인트입니다. 두 가지가 동시에 보입니다. 첫째, 학습 데이터조차 못 맞춥니다. 외운 것도 30퍼센트대입니다. 둘째, 그나마 외운 것도 새 관로로 안 옮겨갑니다. 여기서 한 줄 딱지를 붙이고 싶은 유혹이 있습니다. 과적합이다, 혹은 용량 부족이다. 안 붙이기로 했습니다. 25퍼센트 같은 경계는 자의적이고, 그 선을 오가는 값에 번갈아 딱지를 붙이면 없는 차이를 있는 것처럼 읽게 됩니다. 대신 이걸 가르는 실험을 지금 돌리고 있습니다. 학습량을 30에폭에서 수렴까지 늘리고 모델을 한 단계 키웠을 때, 학습 데이터에서의 성능이 크게 오르면 학습량이 부족했던 겁니다. 안 오르면 라벨이 일관되지 않아서 외울 대상 자체가 흐릿하다는 뜻입니다. 후자가 나오면 트랙 A의 전제와 곧장 연결됩니다. 어느 쪽이 나와도 다음에 어디에 투자할지를 가리킵니다.">
-  <div class="eyebrow">APPENDIX 11 · 2026-09-05 · 트랙 B</div>
-  <h2>학습 데이터도 <b style="color:var(--warn)">못 외우고</b>, 외운 것도 <b style="color:var(--warn)">안 옮겨간다</b></h2>
+<section class="slide tight" data-title="더 태웠더니 외우기만 했다"
+ data-notes="지금 모델이 어디서 막혀 있는지입니다. 보통 성능이 안 나오면 과적합이냐 아니냐를 먼저 묻는데, 그걸 재려면 학습 데이터에서의 성능과 처음 보는 데이터에서의 성능을 둘 다 알아야 합니다. 여기서 한 번 틀렸던 게 있습니다. 처음에 점검용 데이터에서 잰 값이 검증셋과 비슷하길래 과적합이 아니라고 읽었습니다. 그런데 점검용도 지점 단위로 분리해둔 거라 사실상 처음 보는 데이터였습니다. 진짜 학습 성능은 학습에 쓴 데이터에서 재야 합니다. 다시 재보니 학습 데이터에서 30에서 37퍼센트, 처음 보는 관로에서 8에서 13퍼센트였습니다. 격차가 크지만 학습 데이터조차 못 맞추는 것도 사실이라, 과적합이다 용량 부족이다 한 줄로 딱지를 붙이지 않았습니다. 25퍼센트 같은 경계는 자의적이고, 그 선을 오가는 값에 번갈아 딱지를 붙이면 없는 차이를 있는 것처럼 읽게 됩니다. 대신 답이 갈리는 실험을 설계해서 돌렸습니다. 그게 E4입니다. 오늘 결과가 나왔습니다. 데이터도 모델도 해상도도 배치도 다 같게 두고 학습량만 30에폭에서 84에폭으로, 2.8배 늘렸습니다. 참고로 120에폭을 걸었는데 84에서 조기종료됐습니다. patience가 30이니까 54에폭쯤에 이미 최고점을 찍고 그 뒤 30에폭이 헛돌았다는 뜻입니다. 수렴은 확실히 했습니다. 결과가 이렇습니다. 학습 데이터에서는 36.6에서 42.2로 5.6퍼센트포인트 올랐습니다. 그런데 처음 보는 관로에서는 7.9에서 7.5로, 안 움직였습니다. 업무 지표인 면적비 일치율도 62.7에서 61.1로 안 움직였고, 짝지어 검정하니 p값이 0.37입니다. 구분이 안 됩니다. 격차만 28.7에서 34.7퍼센트포인트로 벌어졌습니다. 늘린 학습량이 전부 외우는 데 들어간 겁니다. 여기서 정직하게 말씀드릴 게 있습니다. 저희가 미리 적어둔 갈림길은 IS가 크게 오르면 학습량 부족이고 안 오르면 라벨이 흐릿하다는 것이었습니다. IS가 올랐으니 형식상으로는 첫 번째입니다. 그런데 실제 함의는 정반대입니다. 더 태우는 건 답이 아닙니다. 둘로 갈리는 질문이 아니었던 겁니다. 미리 적어뒀기 때문에 안 맞았다는 걸 알 수 있었지, 안 적어뒀으면 나온 숫자에 맞춰서 아무 이야기나 만들었을 겁니다. 그리고 두 번째 가설도 안 죽었습니다. 84에폭을 태워서 수렴시킨 모델이 자기가 본 학습 데이터조차 42퍼센트밖에 못 맞춥니다. 라벨이 깨끗하고 일관되면 이 정도 태운 뒤에는 학습셋에서 훨씬 높이 올라가야 합니다. 42퍼센트에 멈춘다는 건 여전히 외울 대상 자체가 흐릿하다는 쪽을 가리킵니다. 그러면 다음 투자처가 정해집니다. 에폭도 아니고 데이터량도 아닙니다. 앞에서 데이터를 열 배 넣어도 업무 지표는 안 올랐다고 말씀드렸죠. 남은 건 라벨입니다. 그게 트랙 A가 하려는 일이고, 두 트랙으로 나눈 이유입니다.">
+  <div class="eyebrow">APPENDIX 11 · 2026-09-05 · 트랙 B · E4 갱신</div>
+  <h2>더 태웠더니 <b style="color:var(--warn)">외우기만</b> 했다</h2>
   <hr class="rule">
   <div class="body">
-    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
-      <div class="stack" style="gap:.75em">
-        <div class="lbl">Box mAP50 — 학습셋에서 다시 쟀다</div>
+    <div class="split" style="grid-template-columns:1fr auto 1.05fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">Box mAP50 — <b style="color:var(--ink)">학습셋에서 다시 쟀다</b></div>
         <table class="dense">
           <tr><th></th><th class="num">IS (학습셋)</th><th class="num">OOS (검증)</th><th class="num">격차</th></tr>
-          <tr><td class="k">e0</td><td class="num">29.9%</td><td class="num">6.4%</td><td class="num">+23.5%p</td></tr>
-          <tr><td class="k">e1</td><td class="num">33.8%</td><td class="num">12.6%</td><td class="num">+21.2%p</td></tr>
           <tr><td class="k">e2</td><td class="num">34.7%</td><td class="num">8.1%</td><td class="num">+26.6%p</td></tr>
-          <tr class="sum"><td class="k">e3</td><td class="num">31.6%</td><td class="num">9.6%</td><td class="num">+21.9%p</td></tr>
+          <tr><td class="k">e3</td><td class="num">31.6%</td><td class="num">9.6%</td><td class="num">+21.9%p</td></tr>
+          <tr><td class="k">e3b <span style="color:var(--mute)">30ep</span></td><td class="num">36.6%</td><td class="num">7.9%</td><td class="num">+28.7%p</td></tr>
+          <tr class="sum"><td class="k">e4 <span style="color:var(--mute)">84ep</span></td><td class="num" style="color:var(--warn)"><b>42.2%</b></td><td class="num">7.5%</td><td class="num" style="color:var(--warn)"><b>+34.7%p</b></td></tr>
         </table>
-        <div class="grid g2" style="gap:1.4em;margin-top:.2em">
-          <div class="stat warn"><div class="n">30~35%</div><div class="c">IS — 학습 데이터조차<br>못 맞춘다</div></div>
-          <div class="stat warn"><div class="n">21~27%p</div><div class="c">격차 — 맞춘 것도<br>새 관로로 안 옮겨간다</div></div>
-        </div>
-        <div class="src">과적합과 용량부족이 <b style="color:var(--ink)">겹쳐 있고</b> 어느 한쪽으로 갈리지 않는다</div>
+        <div class="src">10클래스만 실었다 — 2클래스(e0 29.9/6.4 · e1 33.8/12.6)는 분모가 다르다. <b style="color:var(--ink)">e3b → e4 는 학습량만</b> 2.8배</div>
+        <div class="item warn"><div class="t">늘린 학습량이 전부 외우는 데 들어갔다</div><div class="d">IS <b style="color:var(--ink)">+5.6%p</b> · OOS <b style="color:var(--ink)">−0.4%p</b> · 면적비 −1.6%p(<span class="mono">p 0.37</span>) · 격차 <b style="color:var(--ink)">28.7 → 34.7%p</b><br>120에폭 중 <b style="color:var(--ink)">84에폭에서 조기종료</b> — 54에폭쯤 최고점을 찍고 30에폭이 헛돌았다</div></div>
       </div>
       <div class="vr"></div>
-      <div class="stack" style="gap:.75em">
-        <div class="lbl">먼저 틀렸던 것</div>
-        <div class="item warn"><div class="t">점검셋(val)으로는 이 격차를 못 잰다</div><div class="d">val 도 지점 단위로 분리돼 <b style="color:var(--ink)">사실상 OOS</b> 다. val≈OOS 를 보고 "과적합 아님" 으로 읽었다가 학습셋에서 다시 재고 뒤집었다</div></div>
-        <div class="lbl">딱지를 붙이지 않는 이유</div>
-        <div class="item acc"><div class="t">25% 같은 경계는 자의적이다</div><div class="d">그 선을 오가는 값에 "과적합"/"부족" 을 번갈아 붙이면 <b style="color:var(--ink)">없는 차이를 있는 것처럼 읽게 된다</b></div></div>
-        <div class="lbl" style="margin-top:.2em">대신 <b style="color:var(--accent)">가르는 실험을 돌린다</b> — E4 · E5 에서 IS 가</div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">미리 적어 둔 갈림길이 <b style="color:var(--warn)">그대로 안 맞았다</b></div>
         <table class="dense">
-          <tr><td class="k">오른다</td><td><b>학습량·용량 부족</b> — 더 태우면 된다</td></tr>
-          <tr class="sum"><td class="k">안 오른다</td><td><b style="color:var(--warn)">외울 대상이 흐릿하다</b> — 라벨이 일관되지 않다<br><span style="color:var(--mute)">→ 트랙 A 의 전제와 곧장 연결된다</span></td></tr>
+          <tr><th>적어 둔 것</th><th>실제</th></tr>
+          <tr><td class="k">IS 오르면 <b>학습량 부족</b></td><td>IS 는 <b>올랐다</b> (+5.6%p)</td></tr>
+          <tr class="sum"><td class="k">IS 안 오르면 <b>라벨이 흐릿</b></td><td style="color:var(--warn)">그런데 <b>OOS 는 안 움직였다</b></td></tr>
         </table>
+        <div class="item acc"><div class="t">둘로 갈리는 질문이 아니었다</div><div class="d">형식상 첫째지만 함의는 정반대다 — <b style="color:var(--ink)">더 태우는 건 답이 아니다.</b> 미리 적어 뒀기에 <b style="color:var(--ink)">안 맞았다는 걸 알 수 있었다</b></div></div>
+        <div class="item warn"><div class="t">둘째 가설은 살아 있다</div><div class="d">수렴시킨 모델이 <b style="color:var(--ink)">자기가 본 데이터조차 42%</b> 다. 라벨이 일관되면 이만큼 태운 뒤엔 훨씬 높이 올라가야 한다</div></div>
+        <hr class="rule">
+        <div class="item acc"><div class="t">그래서 다음 투자처는 <b>에폭도 데이터량도 아니다</b></div><div class="d">데이터 열 배도 업무 지표를 못 올렸다(29장). 남은 건 <b style="color:var(--ink)">라벨</b> — 트랙 A 가 하려는 일이고, 두 갈래로 나눈 이유다</div></div>
       </div>
     </div>
   </div>
-  <div class="foot">답을 미리 정하지 않고, 답이 갈리는 실험을 설계해서 돌린다</div>
+  <div class="foot">답을 미리 정하지 않고 답이 갈리는 실험을 돌렸더니, 갈림길 자체가 틀렸다는 게 나왔다</div>
 </section>
 
 <section class="slide tight" data-title="소실점을 못 찾는다"
