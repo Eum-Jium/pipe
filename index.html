@@ -246,6 +246,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>25</i><b>mAP 와 면적비가 반대를 가리켰다</b></li>
           <li><i>26</i><b>외우지도 옮기지도 못한다</b></li>
           <li><i>27</i><b>소실점을 8.9%밖에 못 찾는다</b></li>
+          <li><i>28</i><b>문지방을 의심했다 — 결론은 남고 크기는 줄었다</b></li>
         </ol>
       </div>
     </div>
@@ -980,7 +981,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <tr><td class="k">e3 <span style="color:var(--mute)">10종 · +QA 넓은 기준</span></td><td class="num">9.6%</td><td class="num" style="color:var(--warn)"><b>54.8%</b></td><td class="num" style="color:var(--warn)">78</td></tr>
           <tr><td class="k">e3b <span style="color:var(--mute)">10종 · +QA 좁힌 기준</span></td><td class="num">7.9%</td><td class="num">62.7%</td><td class="num">266</td></tr>
         </table>
-        <div class="src">라벨은 초과 361 / 732장 — <b style="color:var(--ink)">전부 "이하" 로 찍으면 50.7%</b>. e0 · e0r · e1 은 거기 붙어 있다</div>
+        <div class="src">라벨은 초과 361 / 732장 — <b style="color:var(--ink)">전부 "이하" 로 찍으면 50.7%</b>. e0 · e0r 은 거기 붙어 있고 e1 도 +4.6%p 뿐이다</div>
       </div>
       <div class="vr"></div>
       <div class="stack" style="gap:.7em">
@@ -988,7 +989,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
         <div class="item acc"><div class="t">e1 → e2 — 두 지표의 <b>부호가 갈린다</b></div><div class="d">mAP <b style="color:var(--ink)">12.6 → 8.1</b>(내려감) · 면적비 <b style="color:var(--ink)">55.3 → 64.9</b>(올라감).<br>10종으로 쪼개면 클래스별 평균인 mAP 는 떨어지지만 <b style="color:var(--ink)">결함을 칠하는 자리는 정확해진다</b></div></div>
         <div class="lbl">mAP 로 못 갈랐던 QA 가 여기서 갈린다</div>
         <div class="item warn"><div class="t">e3 (넓은 기준) 은 확실히 나쁘다</div><div class="d">e2 대비 <b style="color:var(--ink)">−10.1%p</b>. 기전까지 보인다 — "초과" 예측이 <b style="color:var(--ink)">254 → 78장</b>, 편향 −6.0 → −14.9%.<br><b style="color:var(--ink)">큰 슬라임을 지웠으니 큰 면적을 못 그린다</b></div></div>
-        <div class="item acc"><div class="t">정직하게 — 이 지표의 잡음은 아직 안 쟀다</div><div class="d">라벨이 <b style="color:var(--ink)">1.1%만</b> 다른 e2·e3b 가 2.2%p 안에 있다 — 10.1%p 는 그 <b style="color:var(--ink)">다섯 배</b>다. seed 3회는 남은 일감</div></div>
+        <div class="item acc"><div class="t">문지방을 의심해 다시 쟀다 → <b>28장</b></div><div class="d">conf 0.25 는 근거 없는 기본값이다. val 에서 골라 다시 재니 e3 의 열세는 <b style="color:var(--ink)">−10.1 → −6.8%p</b> 로 줄었지만 <b style="color:var(--ink)">남았다</b></div></div>
         <div class="item acc"><div class="t">그래서 mAP 는 스크리닝용으로만 쓴다</div><div class="d">클래스 수가 다르면 분모가 달라진다</div></div>
       </div>
     </div>
@@ -1075,6 +1076,45 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">안 되는 것을 안 된다고 먼저 적어야, 다음에 무엇을 살지가 정해진다</div>
+</section>
+
+<section class="slide tight" data-title="문지방을 의심했다"
+ data-notes="앞 장에서 e3가 나쁘다고 말씀드렸는데, 그걸 그대로 두면 안 되는 이유가 있었습니다. 채점할 때 모델이 확신하는 정도, 신뢰도 문지방을 0.25로 잡고 있었는데 그건 라이브러리 기본값이지 저희가 정한 값이 아닙니다. 그리고 채점 결과를 보면 모든 모델이 면적을 낮게 부르고 있었습니다. 편향이 마이너스 6에서 마이너스 15퍼센트입니다. 낮게 부르면 10퍼센트 초과를 놓치니까 일치율이 떨어집니다. 그럼 e3가 나쁜 게 아니라 e3한테 문지방이 안 맞았던 것일 수도 있습니다. 이걸 확인 안 하고 넘어가면 지난번에 QA 결론이 두 번 뒤집힌 것과 똑같은 일이 됩니다. 그래서 다시 쟀습니다. 규율을 하나 지켰습니다. 문지방은 점검셋에서 고르고 검증셋으로는 딱 한 번만 잽니다. 검증셋에서 제일 좋은 값을 고르면 시험지를 보고 답을 맞추는 겁니다. 그리고 문지방 여덟 개를 재려고 여덟 번 돌리지 않았습니다. 가장 낮은 값으로 한 번 예측해두고 그걸 걸러서 썼습니다. 결과가 셋입니다. 첫째, 문지방으로 메울 수 있는 게 아닙니다. 0.1에서 0.25 사이에서 일치율이 거의 평평합니다. 제일 많이 오른 게 e3의 3.7퍼센트포인트입니다. 업무 지표를 올리는 건 문지방이 아니라 모델이라는 뜻이고, 이건 못 올린 게 아니라 올릴 여지가 거기 없다는 걸 확인한 겁니다. 둘째, 편향은 문지방이 만든 것이었습니다. e3b는 마이너스 5.8에서 마이너스 0.2로 사라집니다. 그러니까 모델이 체계적으로 낮게 부른다는 진단은 틀렸습니다. 기본 문지방이 낮게 부르게 만든 겁니다. 셋째, 이게 핵심인데, e3의 열세는 살아남았습니다. 다만 10.1퍼센트포인트에서 6.8로 줄었습니다. 그리고 근거가 하나 더 생겼습니다. e3만 곡선이 계속 내려갑니다. 제일 낮은 문지방인 0.05에서 최고점을 찍습니다. 마스크를 최대한 붙여도 면적이 모자란다는 뜻입니다. 큰 슬라임을 지웠으니 물리적으로 그릴 게 없는 겁니다. 이건 집계된 숫자가 아니라 곡선 모양에서 직접 보이는 거라 더 단단한 근거입니다. 그리고 제가 앞 장에서 e2와 e3b가 2.2퍼센트포인트 차이라고 했던 게 있는데, 보정하니까 0.3퍼센트포인트로 붙습니다. 그 2.2는 라벨 차이가 아니라 문지방 차이였습니다. 제 근거 하나가 틀렸던 거고, 고치니까 e3 결론은 오히려 더 단단해졌습니다.">
+  <div class="eyebrow">APPENDIX 13 · 2026-09-05 · 트랙 B · 신규</div>
+  <h2>문지방을 의심했다 — 결론은 <b style="color:var(--accent)">남고</b>, 크기는 <b style="color:var(--warn)">줄었다</b></h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.05fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">OOS 일치율 — 신뢰도 문지방을 바꿔 가며 (<span class="mono">◆</span> = val 이 고른 값)</div>
+        <table class="dense">
+          <tr><th class="num">conf</th><th class="num">e1</th><th class="num">e2</th><th class="num">e3</th><th class="num">e3b</th></tr>
+          <tr><td class="k">0.05</td><td class="num">55.2</td><td class="num">63.4</td><td class="num" style="color:var(--warn)"><b>58.5 ◆</b></td><td class="num">61.1</td></tr>
+          <tr><td class="k">0.10</td><td class="num"><b>57.8 ◆</b></td><td class="num">65.8</td><td class="num">57.0</td><td class="num">62.8</td></tr>
+          <tr><td class="k">0.15</td><td class="num">56.0</td><td class="num">65.6</td><td class="num">55.1</td><td class="num"><b>65.0 ◆</b></td></tr>
+          <tr><td class="k">0.20</td><td class="num">57.0</td><td class="num"><b>65.3 ◆</b></td><td class="num">56.0</td><td class="num">64.1</td></tr>
+          <tr class="sum"><td class="k">0.25 <span style="color:var(--mute)">기본값</span></td><td class="num">55.3</td><td class="num">64.9</td><td class="num">54.8</td><td class="num">62.7</td></tr>
+          <tr><td class="k">0.50</td><td class="num">51.0</td><td class="num">55.5</td><td class="num">50.7</td><td class="num">56.3</td></tr>
+        </table>
+        <div class="src"><b style="color:var(--ink)">e3 만 곡선이 계속 내려간다</b> — 마스크를 최대한 붙여도 면적이 모자란다</div>
+        <div class="item acc"><div class="t">규율 — val 에서 고르고 OOS 로 <b>한 번만</b></div><div class="d">문지방 선택은 모델 선택이다 — OOS 에서 고르면 시험지를 보고 답을 맞추는 것이 된다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">나온 것 셋</div>
+        <div class="item warn"><div class="t">① 문지방으로 메울 게 아니다</div><div class="d">conf 0.10~0.25 에서 거의 평평하다. 제일 많이 오른 e3 가 <b style="color:var(--ink)">+3.7%p</b>.<br><b style="color:var(--ink)">업무 지표를 올리는 건 문지방이 아니라 모델이다</b></div></div>
+        <div class="item acc"><div class="t">② 편향은 문지방이 만든 것이었다</div><div class="d">e3b 편향 <b style="color:var(--ink)">−5.8% → −0.2%</b>. "모델이 체계적으로 낮게 부른다" 는 진단은 <b style="color:var(--ink)">틀렸다</b> — 기본값이 그렇게 만든 것이다</div></div>
+        <div class="lbl" style="margin-top:.2em">③ e3 의 열세는 <b style="color:var(--accent)">살아남았다</b></div>
+        <table class="dense">
+          <tr><th></th><th class="num">고정 0.25</th><th class="num">val 보정</th></tr>
+          <tr><td class="k">e2 − e3</td><td class="num">−10.1%p</td><td class="num"><b>−6.8%p</b></td></tr>
+          <tr class="sum"><td class="k">e2 − e3b</td><td class="num">2.2%p</td><td class="num"><b style="color:var(--warn)">0.3%p</b></td></tr>
+        </table>
+        <div class="src">앞 장에서 잡음 대용치로 쓴 2.2%p 는 라벨이 아니라 <b style="color:var(--ink)">문지방 차이</b>였다 — 근거 하나가 틀렸고, 고치니 결론은 더 단단해졌다</div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">기본값을 의심하지 않으면, 기본값이 만든 차이를 내가 발견한 차이로 읽는다</div>
 </section>
 
 
