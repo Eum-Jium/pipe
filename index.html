@@ -272,12 +272,12 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     <div class="split" style="flex:none">
       <div class="stack" style="gap:.7em">
         <div class="lbl" style="margin:0">정답은 갈리는 곳부터</div>
-        <div class="item acc"><div class="t">AI가 사람이 볼 곳을 골라준다</div><div class="d">학습셋에서 AI 결과와 기존 라벨이 <b style="color:var(--ink)">크게 어긋난 프레임부터</b> 전문가가 확인하고, 확정된 정답은 다시 학습에 넣는다. 성능 측정용으로는 무작위 표본을 따로 둔다</div></div>
+        <div class="item acc"><div class="t">AI가 사람이 볼 곳을 골라준다</div><div class="d">학습셋에서 AI 결과와 기존 라벨이 <b style="color:var(--ink)">크게 어긋난 것부터</b> 확인한다. 확정된 정답은 다시 학습에 넣고, 채점용은 무작위 표본을 따로 둔다</div></div>
       </div>
       <div class="vr"></div>
       <div class="stack" style="gap:.7em">
         <div class="lbl" style="margin:0">비교가 성립하려면</div>
-        <div class="item acc"><div class="t">두 트랙의 학습 조건을 같게 둔다</div><div class="d">모델도 학습량도 동일하게 맞춰 수렴시킨다. 그래야 결과 차이가 라벨 출처에서만 왔다고 말할 수 있다</div></div>
+        <div class="item acc"><div class="t">두 트랙의 학습 조건을 같게 둔다</div><div class="d">모델도 학습량도 같게 맞춘다. 그래야 차이가 라벨 출처에서만 왔다고 말할 수 있다</div></div>
       </div>
     </div>
   </div>
