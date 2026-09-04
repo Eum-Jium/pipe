@@ -472,6 +472,195 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">두 사람의 1차 일치율이 곧 판독자 편차의 크기이자, AI에게 기대할 수 있는 성능의 상한이다</div>
 </section>
 
+<section class="slide tight" data-title="분할을 다시 잘랐다"
+ data-notes="여기부터는 이번에 새로 확인한 것들입니다. 먼저 데이터를 자르는 방식을 다시 잡았습니다. 앞에서 지점 단위로 자른다고 말씀드렸는데, 실제 코드는 영상 단위로 잘려 있었습니다. 말과 실제가 어긋나 있었던 겁니다. 파일명을 보면 같은 지점을 순방향 역방향 전진 후진 네 방향으로 찍었고, 강관 프로젝트는 같은 영상이 avi와 mp4 두 벌로 들어와 있었습니다. 영상 단위로 자르면 이것들이 학습과 검증으로 흩어집니다. 얼마나 샜는지 재봤더니, 지점 134개 중 84개가 여러 분할에 걸쳐 있었고 거기 속한 프레임이 3,731장, 전체의 75.9%였습니다. 검증용이라고 떼어둔 773장의 상당수가 사실은 학습에서 본 관로를 다른 방향에서 찍은 것이었다는 뜻입니다. 그대로 채점했으면 성능이 부풀려집니다. 다시 자른 결과 새 검증셋 732장 중에 옛 검증셋과 겹치는 건 56장뿐입니다. 분할이 사실상 새로 짜였으니 이전 분할 위에서 잰 수치는 전부 무효로 봐야 합니다. 한 가지 판단이 필요했던 게, 날짜와 시각만 있고 지점 정보가 없는 파일이 152개 있었습니다. 같은 지점인지 가릴 근거가 없어서 프로젝트와 날짜 단위로 묶었습니다. 잘못 묶으면 그룹이 굵어질 뿐이지만 잘못 나누면 성능이 부풀려지니까요. 되돌리려면 플래그 하나만 바꾸면 됩니다.">
+  <div class="eyebrow">APPENDIX 01 · 2026-09-04 확인</div>
+  <h2>분할을 지점 단위로 다시 잘랐다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">영상 단위로 자르면 무슨 일이 생기나</div>
+        <div class="item warn"><div class="t">같은 지점을 네 방향으로 찍었다</div><div class="d"><span class="mono">…1지점 순방향 전진.avi</span> · 순/역 × 전진/후진</div></div>
+        <div class="item warn"><div class="t">강관은 같은 영상이 두 벌</div><div class="d"><span class="mono">.avi</span> 와 <span class="mono">.mp4</span> 로 각각 들어와 있었다</div></div>
+        <hr class="rule">
+        <div class="grid g2" style="gap:1.4em">
+          <div class="stat warn"><div class="n">84 / 134</div><div class="c">여러 분할에 걸친 지점</div></div>
+          <div class="stat warn"><div class="n">75.9%</div><div class="c">거기 속한 프레임 3,731장</div></div>
+        </div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">다시 자른 결과</div>
+        <table class="dense">
+          <tr><th></th><th class="num">지점</th><th class="num">영상</th><th class="num">이미지</th></tr>
+          <tr><td class="k">학습</td><td class="num">67</td><td class="num">322</td><td class="num">3,440</td></tr>
+          <tr><td class="k">점검</td><td class="num">34</td><td class="num">116</td><td class="num">744</td></tr>
+          <tr class="sum"><td class="k">검증 <span class="pill oos">OOS</span></td><td class="num">33</td><td class="num">110</td><td class="num">732</td></tr>
+        </table>
+        <div class="src">지점 · 원본영상 · 영상ID 세 층위 모두 중복 0건</div>
+        <div class="item warn"><div class="t">옛 수치는 전부 무효다</div><div class="d">새 검증 732장 중 옛 검증과 겹치는 것은 <b style="color:var(--ink)">56장</b>뿐. 옛 검증의 649장이 학습으로 갔다</div></div>
+        <div class="item acc"><div class="t">판단한 것 — 날짜·시각만 있는 파일 152개</div><div class="d"><b style="color:var(--ink)">잘못 묶으면 그룹이 굵어질 뿐이지만, 잘못 나누면 성능이 부풀려진다</b></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">검증셋은 계약이다 — 목록을 파일로 고정하고, seed 로 다시 만들지 않는다</div>
+</section>
+
+<section class="slide tight" data-title="10%의 정체 — 분모"
+ data-notes="다음은 매뉴얼 원문을 확보해서 확인한 것입니다. 그동안 10%라는 숫자는 알고 있었지만 그게 무엇에 대한 10%인지는 확인이 안 된 상태였습니다. 환경부 상수도 관망진단 매뉴얼 2021년 4월판과 상수관로 정밀조사 매뉴얼 2020년 6월판을 받아서 원문을 봤습니다. 결론부터 말씀드리면 분모는 관 한 본, 6미터의 실제 표면적입니다. 화면 픽셀이 아닙니다. 원문에 관 1본 6미터를 기준으로 내면 도장재가 손상된 면적을 박리비율 퍼센트로 표현한다, 조사구간 전체에 대해서는 평균값을 적용한다고 되어 있습니다. 그리고 결정적인 게 산정 방법입니다. 조사구간에 대해 일정 격자망을 구성하여 격자별 부식면적을 계산하라고 되어 있는데, 격자망은 관 내면이라는 실제 곡면 위에 놓는 것이지 카메라 화면 위에 놓는 게 아닙니다. 그래서 곡면 보정이 필수입니다. 화면 픽셀 기준값은 참고값으로만 냅니다. 다만 한 가지 정직하게 말씀드릴 게 있습니다. 매뉴얼은 6미터 단위이고 우리는 프레임 한 장 단위입니다. 그래서 우리가 프레임마다 내는 10% 판정은 매뉴얼의 등급 판정 그 자체가 아니라 우리가 만든 대용값입니다. 관로 등급으로 가려면 프레임 면적비를 6미터 단위로 집계해야 하고, 그건 등간격 표본이 확보된 다음 일입니다. 이걸 흐리면 나중에 반드시 지적받습니다.">
+  <div class="eyebrow">APPENDIX 02 · 2026-09-04 확인 · 매뉴얼 원문</div>
+  <h2>10%의 분모는 관 내면의 실제 면적이다 — 화면 픽셀이 아니다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:.82fr auto 1.18fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">원문 — 상수관로 정밀조사 매뉴얼 2.7.7</div>
+        <div class="card" style="padding:1.05em 1.4em">
+          <div class="d" style="font-size:1.3em;line-height:1.65;color:var(--ink2)">
+            "관 <b style="color:var(--ink)">1본(6m)을 기준으로</b> 내면 도장재가 손상된 면적을 박리비율 %로 표현한다.
+            <b style="color:var(--ink)">조사구간 전체에 대해서는 평균 값을 적용</b>한다."
+          </div>
+        </div>
+        <div class="card" style="padding:1.05em 1.4em">
+          <div class="d" style="font-size:1.3em;line-height:1.65;color:var(--ink2)">
+            "부식면적을 산정할 때 조사구간에 대해 <b style="color:var(--ink)">일정 격자망을 구성하여</b>
+            격자별 부식면적이나 둘레를 계산하면 더욱 용이하다."
+          </div>
+        </div>
+        <div class="big" style="color:var(--accent);font-size:1.42em">격자망은 관 내면이라는 실제 곡면 위에 놓는 것이다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">그래서 무엇이 정해졌나</div>
+        <div class="item acc"><div class="t">곡면 보정값이 주값</div><div class="d">화면 안쪽 픽셀이 가장자리보다 넓은 면적을 덮는다. 원 피팅으로 가중치를 계산한다. 화면 픽셀값은 참고값</div></div>
+        <div class="lbl" style="margin-top:.3em">정직하게 적어 둘 것</div>
+        <table class="dense">
+          <tr><th></th><th>매뉴얼</th><th>우리</th></tr>
+          <tr><td class="k">단위</td><td>관 1본 <b>6m</b> → 1km 평균</td><td><b>프레임 한 장</b></td></tr>
+          <tr><td class="k">기준면</td><td>관 내면 <b>곡면</b></td><td>곡면 보정 <b>일치</b></td></tr>
+        </table>
+        <div class="item warn"><div class="t">프레임 단위 10%는 대용값이다</div><div class="d">매뉴얼의 등급 판정 자체가 아니다. 관로 등급은 6m 단위로 집계해야 나오고, 그건 등간격 표본이 확보된 뒤다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">잴 수 있는 것은 재고, 부르는 이름은 정확히 붙인다</div>
+</section>
+
+<section class="slide tight" data-title="관종마다 등급이 다르다"
+ data-notes="원문을 보다가 예상 못 한 게 나왔습니다. 10퍼센트가 생각보다 좁게 쓰이고 있었습니다. 매뉴얼 3장에 관종별 직접평가 등급표가 네 개 있습니다. 강관 표 3-24를 보면 박리비율 10퍼센트가 2등급과 3등급을 가릅니다. 10퍼센트 이하면 세척, 이상이면 갱생입니다. 여기까지는 우리가 알던 대로입니다. 그런데 시멘트모르타르 라이닝 덕타일주철관, 우리 데이터의 절반 이상을 차지하는 DCIP는 박리비율 10퍼센트 기준이 아예 없습니다. CML 중성화도 100퍼센트가 갈림길입니다. 그리고 그 표 비고란에 부단수 내시경 조사시 CML 중성화는 판단이 불가하다고 매뉴얼이 직접 적어놨습니다. 중성화도는 영상으로 볼 수 없다는 겁니다. 무라이닝 주철관은 1등급 2등급 자체가 해당사항 없음이고, PE 같은 비금속관은 면적비율 항목이 아예 없습니다. 슬라임과 수질, 안전계수만 봅니다. 그러니까 10퍼센트가 매뉴얼 등급과 직결되는 건 강관뿐인데, 강관이 우리 데이터에서 가장 작은 19퍼센트입니다. 이걸 모르고 관종 구분 없이 10퍼센트를 물었으면 근거가 없는 질문을 한 셈이 됩니다.">
+  <div class="eyebrow">APPENDIX 03 · 2026-09-04 확인 · 표 3-24 ~ 3-27</div>
+  <h2>10%가 매뉴얼 등급과 직결되는 것은 강관뿐이다</h2>
+  <hr class="rule">
+  <div class="body">
+    <table class="dense" style="flex:none">
+      <tr>
+        <th style="width:15em">관종</th><th class="num" style="width:9em">우리 프레임</th>
+        <th>등급을 가르는 것</th><th style="width:26em">내시경으로 볼 수 있나</th>
+      </tr>
+      <tr>
+        <td class="k">강관 SP <span class="pill">표 3-24</span></td><td class="num">956 · 19%</td>
+        <td><b style="color:var(--warn)">도장재 박리비율 10%</b> — 이하면 세척(II), 이상이면 갱생(III)</td>
+        <td><b style="color:var(--accent)">I·II 판별 가능</b> — 비고에 "부단수 내시경 조사로 판별"</td>
+      </tr>
+      <tr>
+        <td class="k">DCIP <span class="pill">표 3-25</span><br><span class="src" style="margin:0">시멘트모르타르 라이닝</span></td><td class="num">2,864 · 58%</td>
+        <td>CML <b>중성화도 100%</b><br><span class="src" style="margin:0">박리비율 10% 기준 없음</span></td>
+        <td><b style="color:var(--warn)">중성화는 판단 불가</b> — 비고에 그렇게 적혀 있다</td>
+      </tr>
+      <tr>
+        <td class="k">CIP / DIP <span class="pill">표 3-26</span><br><span class="src" style="margin:0">무라이닝 주철관</span></td><td class="num">—</td>
+        <td>안전계수 · 부식깊이비율</td>
+        <td>I·II 자체가 <b>"해당사항 없음"</b> — 관종 특성상 모두 개량대상</td>
+      </tr>
+      <tr>
+        <td class="k">PE · PVC <span class="pill">표 3-27</span></td><td class="num">1,087 · 22%</td>
+        <td>슬라임 + 수질영향 · 안전계수 SF ≤ 1.5<br><span class="src" style="margin:0">면적비율 항목 없음</span></td>
+        <td>슬라임·수질만. III·IV는 <b>"해당사항 없음"</b></td>
+      </tr>
+    </table>
+    <hr class="rule" style="margin:1.2em 0 1em">
+    <div class="grid g2" style="gap:2.2em">
+      <div class="item warn"><div class="t">10%가 직결되는 강관이 가장 작다</div><div class="d">956장, 전체의 19%. 관종 구분 없이 10%를 물으면 나머지 81%는 근거가 없는 질문이 된다</div></div>
+      <div class="item warn"><div class="t">가장 큰 DCIP는 매뉴얼이 못을 박아 놨다</div><div class="d">"부단수 내시경 조사시 CML중성화는 판단이 불가" — 중성화도는 영상으로 볼 수 없다</div></div>
+    </div>
+  </div>
+  <div class="foot">숫자 하나를 확인하러 갔다가, 관종마다 다른 문제를 풀고 있었다는 것을 알았다</div>
+</section>
+
+<section class="slide tight" data-title="AI가 설 자리"
+ data-notes="그런데 이게 우리한테 나쁜 소식이 아닙니다. 오히려 우리 과업의 자리를 매뉴얼이 정확히 짚어준 겁니다. 강관 등급표의 비고란을 다시 보시면, 1등급과 2등급에는 부단수 내시경 조사로 판별이라고 적혀 있고 3등급부터 5등급에는 그런 말이 없습니다. 3등급부터는 관체분석입니다. 관을 잘라내거나 천공해서 시편을 뜨고, 인장강도를 재고, 초음파로 두께를 재서 안전계수를 계산해야 합니다. 그게 앞에서 말씀드린 21일 걸리는 절차입니다. 그러니까 영상으로 갈 수 있는 데까지가 1등급과 2등급이고, 그 경계가 정확히 박리비율 10퍼센트입니다. 우리가 겨냥해야 할 자리가 여기입니다. 이 경계를 AI가 정확히 판정하면 무슨 일이 생기냐면, 세척으로 끝낼 관로와 갱생 검토로 넘겨야 할 관로가 영상만으로 갈립니다. 갱생 검토로 넘어간 것만 관체분석을 하면 되니까 21일짜리 절차를 타는 관로 수가 줄어듭니다. 반대로 3등급 위로는 영상으로 애초에 갈 수 없습니다. 안전계수는 인장강도가 있어야 나오고 인장강도는 영상으로 알 수 없습니다. 이걸 분명히 해두는 게 중요합니다. AI가 등급을 다 매긴다고 말하면 안 됩니다. 못 하는 걸 하겠다고 하면 실증에서 무너집니다.">
+  <div class="eyebrow">APPENDIX 04 · 2026-09-04 확인</div>
+  <h2>AI가 설 자리를 매뉴얼이 적어 놓았다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 30em;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.9em">
+        <div class="lbl">강관 표 3-24 의 비고란</div>
+        <table class="dense">
+          <tr><th style="width:5em">등급</th><th>개량방안</th><th style="width:20em">비고</th></tr>
+          <tr><td class="k">I</td><td>필요없음</td><td style="color:var(--accent)"><b>부단수 내시경 조사로 판별</b></td></tr>
+          <tr><td class="k">II</td><td>세척</td><td style="color:var(--accent)"><b>부단수 내시경 조사로 판별</b></td></tr>
+          <tr><td class="k">III</td><td>갱생 / 전기방식</td><td style="color:var(--mute2)">관체분석</td></tr>
+          <tr><td class="k">IV</td><td>갱생 / 교체</td><td style="color:var(--mute2)">관체분석</td></tr>
+          <tr><td class="k">V</td><td>교체</td><td style="color:var(--mute2)">관체분석</td></tr>
+        </table>
+        <div class="card" style="padding:1.2em 1.5em;background:#f3e2d8">
+          <div class="d" style="font-size:1.35em;line-height:1.6;color:var(--warn)">
+            <b>I · II 의 경계가 곧 박리비율 10% 다.</b><br>
+            영상으로 갈 수 있는 끝이 여기고, 그 위는 관체분석 영역이다.
+          </div>
+        </div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:1em">
+        <div class="lbl">그래서 무엇을 얻나</div>
+        <div class="item acc"><div class="t">21일 절차를 타는 관로가 줄어든다</div><div class="d">세척으로 끝낼 관로와 갱생 검토로 넘길 관로가 <b>영상만으로</b> 갈린다. 넘어간 것만 관체분석하면 된다</div></div>
+        <div class="item warn"><div class="t">III 위로는 영상으로 못 간다</div><div class="d">안전계수는 인장강도가 있어야 나오고, 인장강도는 영상으로 알 수 없다. 단수·절단·외주가공 최대 25일</div></div>
+        <hr class="rule">
+        <div class="item warn"><div class="t">못 하는 것을 하겠다고 하지 않는다</div><div class="d">"AI가 등급을 다 매긴다"고 말하면 실증에서 무너진다. <b>10% 경계 판정</b>이 우리가 약속할 수 있는 자리다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">겨냥할 자리는 하나다 — 세척이냐 갱생이냐를 가르는 박리비율 10%</div>
+</section>
+
+<section class="slide tight" data-title="10%를 전 관종에 준용"
+ data-notes="그러면 강관 말고 나머지는 어떻게 하느냐. 빼는 게 아니라 준용합니다. 근거가 있습니다. 등급표만 보면 10퍼센트가 강관 전용으로 보이는데, 조사항목 표는 다릅니다. 표 3-20 관내시경 조사시 단계별 조사항목을 보면 관종을 나누지 않습니다. 내부 침전물 상태를 유형과 분포면적으로, 내부 도장재 상태를 박리와 손상으로, 내부 부식 상태를 면적과 비율로, 결절 분포를 면적으로 재라고 되어 있습니다. 즉 면적과 비율을 재라는 요구는 전 관종에 걸려 있고, 관종에 따라 갈리는 건 그 값을 어느 등급 분기에 쓰느냐뿐입니다. 그래서 문지방은 10퍼센트로 통일하고 무엇의 면적인지만 관종별로 바꿉니다. 강관은 도장재 박리, 주철관은 라이닝 박리와 결절, PE는 슬라임과 침전물 분포입니다. PE는 비금속관이라 도장재가 아예 없어서 박리라는 말이 성립하지 않습니다. 대신 침전물 분포면적에 준용합니다. 특히 주철관에서 이 준용이 의미가 있는데, 매뉴얼이 중성화는 내시경으로 못 본다고 못박아둔 자리를 박리비율이라는 볼 수 있는 값으로 메우는 겁니다. 중성화가 진행되면 라이닝이 박리되고 내부결절이 성장한다고 매뉴얼 3등급 상태조건에 적혀 있으니까, 박리비율 10퍼센트를 그 진행을 영상으로 잡는 조기 신호로 놓는 겁니다. 이건 매뉴얼에 없는 우리 가설이고, 그렇다고 정직하게 적어야 합니다. 강관만 직결이고 나머지는 준용이라고요.">
+  <div class="eyebrow">APPENDIX 05 · 2026-09-04 확인 · 표 3-20</div>
+  <h2>측정은 전 관종 공통이다 — 그래서 10%를 준용한다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:34em auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.9em">
+        <div class="lbl">표 3-20 관내시경 조사항목 — 관종을 나누지 않는다</div>
+        <div class="card" style="padding:1.3em 1.5em">
+          <div class="d" style="font-size:1.3em;line-height:1.75;color:var(--ink2)">
+            ○ 내부 침전물 상태 (유형, <b style="color:var(--ink)">분포면적</b> 등)<br>
+            ○ 내부도장재 상태 (<b style="color:var(--ink)">박리</b>, 손상 등)<br>
+            ○ 내부부식 상태 (<b style="color:var(--ink)">면적, 비율</b> 등)<br>
+            &nbsp;&nbsp;− <b style="color:var(--ink)">결절분포(면적)</b> 등
+          </div>
+        </div>
+        <div class="item acc"><div class="t">재라고 되어 있는 값을 재는 것이다</div><div class="d">측정 자체는 매뉴얼 안에 있다. 관종에 따라 갈리는 건 그 값을 <b>어느 등급 분기에 쓰느냐</b>뿐이다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.9em">
+        <div class="lbl">문지방은 10%로 통일, 대상만 관종별로</div>
+        <table class="dense">
+          <tr><th style="width:7em">관종</th><th>무엇의 면적비인가</th><th style="width:14em">매뉴얼 연결</th></tr>
+          <tr><td class="k">SP</td><td>내면 <b>도장재 박리</b></td><td style="color:var(--accent)"><b>표 3-24 직결</b></td></tr>
+          <tr><td class="k">DCIP</td><td>라이닝 <b>박리 + 결절</b></td><td>표 3-25 준용</td></tr>
+          <tr><td class="k">PE</td><td><b>슬라임 · 침전물</b> 분포</td><td>표 3-27 준용</td></tr>
+        </table>
+        <div class="item acc"><div class="t">주철관에서는 중성화의 영상 대용지표가 된다</div><div class="d">매뉴얼이 "내시경으로 판단 불가"라 못박은 자리를 <b>볼 수 있는 값</b>으로 메운다. 중성화가 진행되면 라이닝이 박리되고 결절이 성장한다(표 3-25 III 상태조건)</div></div>
+        <div class="item warn"><div class="t">준용이라고 적는다</div><div class="d">강관만 매뉴얼 직결이다. 주철관·PE는 <b>우리가 준용한 것</b>이라고 명시하고, 일치율도 관종별로 따로 낸다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">빼지 않는다 — 전 관종을 같은 문지방으로 재되, 무엇을 쟀는지는 관종별로 밝힌다</div>
+</section>
+
 </div>
 
 <div class="notes" id="notes"><b>발표 노트</b><span id="notetext"></span></div>
