@@ -166,45 +166,9 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">절차가 틀린 것이 아니라, 절차를 사람이 눈으로 채우고 있다</div>
 </section>
 
-<section class="slide" data-title="접근 방식"
- data-notes="우리 접근은 사람이 눈으로 하던 자리를 AI로 바꾸는 것입니다. 첫째 결함이 있는 자리를 픽셀 단위로 따냅니다. 그 픽셀 수가 넓이입니다. 둘째 따낸 영역이 어느 클래스인지 분류합니다. 부식과 녹 침착물은 등급 지표가 다르기 때문에 이 구분이 중요합니다. 셋째 넓이를 전체 면적으로 나눠 10% 기준으로 등급 후보를 냅니다. 한 가지 짚을 것은 분모입니다. 이건 AI가 만드는 게 아닙니다. 관 단면은 원으로 찍히니까, 그 원을 피팅하면 중심과 크기가 함께 나옵니다. 다만 그게 실제로 몇 밀리미터인지는 영상이 모릅니다. 그래서 GIS 관경이 필요합니다.">
-  <div class="eyebrow">DESIGN 02 · 접근 방식</div>
-  <h2>네 단계 중 셋을 AI가 맡는다</h2>
-  <hr class="rule">
-  <div class="body">
-    <p class="lead" style="margin:0 0 1.1em">사람이 눈으로 하던 자리를 AI로 바꾸고, 판정 근거는 숫자로 남긴다</p>
-    <div class="split" style="flex:none">
-      <div class="card">
-        <div class="flow f3">
-          <div class="step"><span class="n">01</span><div class="t">AI 넓이 산정</div><div class="d">결함이 있는 자리를 픽셀 단위로 따낸다. 그 픽셀 수가 곧 넓이다</div></div>
-          <div class="arw">→</div>
-          <div class="step"><span class="n">02</span><div class="t">AI 종류 판별</div><div class="d">따낸 영역이 어느 클래스인지 분류한다. 부식과 녹 침착물은 등급 지표가 서로 다르다</div></div>
-          <div class="arw">→</div>
-          <div class="step"><span class="n">03</span><div class="t">최종 판정</div><div class="d">넓이를 관 전체 면적으로 나눠 면적비를 내고, 10% 기준으로 등급 후보를 제시한다</div></div>
-        </div>
-      </div>
-      <div class="vr"></div>
-      <div class="stack" style="max-width:22em">
-        <div class="lbl" style="margin:0">03의 분모는 AI가 아니다</div>
-        <div class="item"><div class="t" style="font-size:1.77em">원에 관경을 댄다</div></div>
-        <div class="item"><div class="d">관 단면은 원으로 찍힌다. 피팅하면 중심과 크기가 함께 나온다.</div></div>
-        <div class="item"><div class="d">실제 치수는 영상이 모른다. GIS 관경이 있어야 한다.</div></div>
-      </div>
-    </div>
-    <hr class="rule" style="margin:1.6em 0 1.1em">
-    <div class="lbl">이렇게 하면 무엇이 달라지는가</div>
-    <div class="grid g3">
-      <div class="item acc"><div class="t">같은 영상 → 같은 답</div><div class="d">반복 수행해도 동일한 면적비가 나온다. 판독자에 따른 편차가 사라진다</div></div>
-      <div class="item acc"><div class="t">근거가 남는다</div><div class="d">어느 픽셀을 결함으로 봤는지 마스크로 남아 전문가가 판정 근거를 되짚을 수 있다</div></div>
-      <div class="item acc"><div class="t">전 구간으로 확장</div><div class="d">표본이 아니라 촬영된 구간 전체를 같은 기준으로 훑을 수 있다</div></div>
-    </div>
-  </div>
-  <div class="foot">사람을 대체하는 것이 아니라, 사람이 눈으로 채우던 자리를 숫자로 바꾸는 것이다</div>
-</section>
-
 <section class="slide" data-title="실제 데이터 상황"
  data-notes="이제 데이터입니다. 인튜웍스 학술용역으로 라벨링된 관로 촬영 프레임 4,916장이고, 그 안에 표시된 결함이 11,437건입니다. 결함 하나를 폴리곤으로 둘러싼 것이 한 건이라, 한 장에 평균 두세 개씩 들어 있습니다. 관종이 셋인데 성격이 다릅니다. PE 비금속관은 슬라임이 대부분입니다. 통수 중이라 물때가 주로 잡힙니다. SP 강관은 결절이 많고, DCIP 주철관은 가장 많은데 박리가 3,500건 넘습니다. 라이닝이 벗겨진 것입니다. 중요한 것은 이 라벨을 우리가 만들지 않았다는 점입니다. 업체가 자체 도구로 작성한 것이고, 자동 라벨링은 아직 과제의 개발 예정 항목입니다. 논의필요라고 판단을 미룬 표시도 64건 남아 있습니다. 받아서 열어보니 한계도 보였습니다. 영상 원본이 일부 보존되지 않아 127프레임은 애초에 빠져 있었고, 네 클래스가 전체의 85%를 차지할 만큼 불균형했고, 라벨 체계가 작업 도중에 바뀌어 있었습니다. 그래서 19종으로 흩어진 것을 매뉴얼 조사항목에 맞춰 10종으로 정리했습니다.">
-  <div class="eyebrow">DESIGN 03 · 데이터</div>
+  <div class="eyebrow">DESIGN 02 · 데이터</div>
   <h2>실제 데이터는 이렇다</h2>
   <hr class="rule">
   <div class="body">
@@ -237,7 +201,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 
 <section class="slide" data-title="데이터를 어떻게 쓰는가"
  data-notes="그럼 이 데이터로 무엇을 하느냐. 한 장을 열어 보겠습니다. 왼쪽이 촬영된 프레임이고 오른쪽이 업체가 라벨링한 결과입니다. 초록이 슬라임, 주황이 침전물, 파란 원이 관 안쪽 끝입니다. 이 한 장에서 AI에게 시킬 일이 셋입니다. 첫째 관 축을 잡습니다. 안쪽 원을 피팅하면 중심과 크기가 함께 나옵니다. 둘째 결함을 픽셀 단위로 따냅니다. 그 픽셀 수가 곧 넓이입니다. 셋째 그게 슬라임인지 침전물인지 부식인지 종류를 가릅니다. 이 세 가지가 되면 면적비가 나오고 10% 판정으로 넘어갑니다. 그리고 4,916장 전체는 이렇게 나눠 씁니다. 영상 단위로 잘라서 학습에 3,420장, 중간 점검에 723장, 최종 검증용으로 773장입니다. 인접 프레임은 사실상 같은 장면이라 장면 단위로 자르지 않으면 학습에서 본 걸 검증에서 또 보게 됩니다. 세 묶음 사이에 겹치는 영상은 0건이고, 검증용 773장은 학습에 한 번도 쓰지 않습니다.">
-  <div class="eyebrow">DESIGN 04 · 데이터 활용</div>
+  <div class="eyebrow">DESIGN 03 · 데이터 활용</div>
   <h2>한 장에서 무엇을 뽑는가</h2>
   <hr class="rule">
   <div class="body">
@@ -278,11 +242,10 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 
 <section class="slide" data-title="결론"
  data-notes="마지막으로 결론입니다. 전체 흐름을 보면 영상과 AI 판독까지가 AI 구간이고, 전문가 검토와 등급 확정은 사람 구간입니다. 두 가지를 지키려 합니다. 첫째 수정하기 쉬운 화면을 만듭니다. AI가 따낸 마스크를 원본 영상 위에 겹쳐 보여주고 전문가가 그 자리에서 지우거나 덧그릴 수 있게 합니다. 수정한 내용은 다시 학습 데이터로 돌아갑니다. 쓸수록 정확해집니다. 둘째 판정은 사람이 내립니다. AI는 등급을 확정하지 않고 면적비와 근거만 제시합니다. 신뢰도가 낮은 검출은 자동으로 전문가 검토 대상으로 넘깁니다. 등급 판정은 개량 예산을 움직이는 일입니다. 책임 소재가 사람에게 남아야 현장에서 실제로 쓸 수 있습니다. 이상입니다.">
-  <div class="eyebrow">DESIGN 05 · 결론</div>
+  <div class="eyebrow">DESIGN 04 · 결론</div>
   <h2>AI가 판독하고 사람이 결정한다</h2>
   <hr class="rule">
   <div class="body">
-    <p class="lead" style="margin:0 0 1.2em">등급 판정은 개량 예산을 움직인다. 그래서 마지막 결정은 사람에게 남긴다.</p>
     <div class="flow">
       <div class="step"><span class="n">01</span><div class="t">관 영상</div><div class="d">촬영된 구간 전체</div></div>
       <div class="arw">→</div>
@@ -296,15 +259,47 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
       <div><hr style="height:2px;background:var(--accent);border:0"><div class="mono" style="font-size:1.25em;color:var(--accent);margin-top:.4em">AI 구간</div></div>
       <div><hr style="height:2px;background:var(--warn);border:0"><div class="mono" style="font-size:1.25em;color:var(--warn);margin-top:.4em">사람 구간</div></div>
     </div>
-    <hr class="rule" style="margin:1.5em 0 1.1em">
-    <div class="grid g2">
-      <div class="card">
-        <div style="font-size:1.77em;font-weight:700;margin-bottom:.5em">수정하기 쉬운 화면을 만든다</div>
-        <div style="font-size:1.35em;color:var(--ink2);line-height:1.75">AI가 따낸 마스크를 원본 영상 위에 겹쳐 보여주고, 전문가가 그 자리에서 지우거나 덧그릴 수 있게 한다. 수정한 내용은 다시 학습 데이터로 돌아간다. 쓸수록 정확해지는 구조다.</div>
+    <hr class="rule" style="margin:1.1em 0 .9em">
+    <div class="split" style="flex:none;grid-template-columns:33em auto 1fr">
+      <div>
+        <div class="lbl" style="margin-bottom:.5em">전문가가 보게 될 화면</div>
+        <svg viewBox="0 0 560 260" style="width:100%;height:auto;display:block" role="img"
+             aria-label="검토 화면 구상도. 왼쪽에 관 내부 영상과 AI가 표시한 결함 영역, 오른쪽에 클래스별 면적비 목록과 등급 후보, 아래에 지우기·덧그리기·확정 버튼이 있다">
+          <rect x="1" y="1" width="558" height="258" rx="9" fill="#ffffff" stroke="#ccd2d6"/>
+          <path d="M1 10a9 9 0 0 1 9-9h540a9 9 0 0 1 9 9v20H1z" fill="#e7eef3"/>
+          <text x="16" y="21" font-size="11" fill="#434f57" font-family="Malgun Gothic, sans-serif">관상태 판독 검토</text>
+          <text x="544" y="21" font-size="10" fill="#707c85" text-anchor="end" font-family="Courier New, monospace">f002494</text>
+
+          <rect x="14" y="42" width="326" height="168" rx="5" fill="#3f454b"/>
+          <ellipse cx="177" cy="126" rx="96" ry="72" fill="none" stroke="#6e767e" stroke-width="2"/>
+          <ellipse cx="177" cy="126" rx="52" ry="39" fill="#23272b"/>
+          <ellipse cx="186" cy="140" rx="15" ry="12" fill="none" stroke="#0095c7" stroke-width="2.5"/>
+          <path d="M112 82c26-12 62-14 88-4 10 4 8 14-4 16-30 5-58 4-82-2-8-2-8-8-2-10z" fill="#1d9e75" fill-opacity=".5" stroke="#1d9e75" stroke-width="2"/>
+          <path d="M232 104c16 6 22 24 16 40-4 12-16 10-18-2-3-16-6-24-10-30-4-6 4-12 12-8z" fill="#1d9e75" fill-opacity=".5" stroke="#1d9e75" stroke-width="2"/>
+          <path d="M138 176c20 6 44 6 62 0 8-2 10 6 2 9-22 8-50 8-70 1-7-3-3-12 6-10z" fill="#8d703e" fill-opacity=".5" stroke="#8d703e" stroke-width="2"/>
+
+          <rect x="352" y="42" width="194" height="168" rx="5" fill="#f6f9fb" stroke="#e0e6ea"/>
+          <text x="366" y="60" font-size="10" fill="#707c85" font-family="Courier New, monospace">AI 검출 결과</text>
+          <circle cx="370" cy="80" r="4" fill="#1d9e75"/><text x="382" y="84" font-size="11" fill="#161b20" font-family="Malgun Gothic, sans-serif">슬라임</text><text x="532" y="84" font-size="11" fill="#161b20" text-anchor="end" font-family="Malgun Gothic, sans-serif">12.4%</text>
+          <circle cx="370" cy="103" r="4" fill="#8d703e"/><text x="382" y="107" font-size="11" fill="#161b20" font-family="Malgun Gothic, sans-serif">침전물</text><text x="532" y="107" font-size="11" fill="#161b20" text-anchor="end" font-family="Malgun Gothic, sans-serif">3.1%</text>
+          <circle cx="370" cy="126" r="4" fill="#d85a30"/><text x="382" y="130" font-size="11" fill="#161b20" font-family="Malgun Gothic, sans-serif">부식</text><text x="532" y="130" font-size="11" fill="#161b20" text-anchor="end" font-family="Malgun Gothic, sans-serif">0.8%</text>
+          <line x1="366" y1="146" x2="532" y2="146" stroke="#e0e6ea"/>
+          <text x="366" y="166" font-size="11" fill="#5f6b74" font-family="Malgun Gothic, sans-serif">면적비 합계</text><text x="532" y="166" font-size="12" fill="#161b20" text-anchor="end" font-weight="700" font-family="Malgun Gothic, sans-serif">16.3%</text>
+          <rect x="366" y="178" width="166" height="24" rx="4" fill="#e7eef3"/>
+          <text x="376" y="194" font-size="11" fill="#005f86" font-family="Malgun Gothic, sans-serif">등급 후보</text><text x="522" y="194" font-size="12" fill="#005f86" text-anchor="end" font-weight="700" font-family="Malgun Gothic, sans-serif">Ⅱ</text>
+
+          <rect x="14" y="222" width="62" height="24" rx="4" fill="#ffffff" stroke="#ccd2d6"/><text x="45" y="238" font-size="10" fill="#434f57" text-anchor="middle" font-family="Malgun Gothic, sans-serif">지우기</text>
+          <rect x="84" y="222" width="70" height="24" rx="4" fill="#ffffff" stroke="#ccd2d6"/><text x="119" y="238" font-size="10" fill="#434f57" text-anchor="middle" font-family="Malgun Gothic, sans-serif">덧그리기</text>
+          <rect x="162" y="222" width="76" height="24" rx="4" fill="#ffffff" stroke="#ccd2d6"/><text x="200" y="238" font-size="10" fill="#434f57" text-anchor="middle" font-family="Malgun Gothic, sans-serif">전체 보기</text>
+          <rect x="446" y="222" width="100" height="24" rx="4" fill="#8d3700"/><text x="496" y="238" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="700" font-family="Malgun Gothic, sans-serif">등급 확정</text>
+        </svg>
+        <div class="cap">① 관 축 · ② 면적 · ③ 종류가 화면에서 이렇게 보인다</div>
       </div>
-      <div class="card">
-        <div style="font-size:1.77em;font-weight:700;margin-bottom:.5em">판정은 사람이 내린다</div>
-        <div style="font-size:1.35em;color:var(--ink2);line-height:1.75">AI는 등급을 확정하지 않는다. 면적비와 근거를 제시할 뿐이다. 신뢰도가 낮은 검출과 판독 불가 구간은 자동으로 전문가 검토 대상으로 분류한다. 책임 소재가 사람에게 남아야 현장에서 쓸 수 있다.</div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:1.1em">
+        <div class="item acc"><div class="t">수정한 것이 되돌아온다</div><div class="d">전문가가 고친 내용은 다시 학습 데이터가 된다</div></div>
+        <div class="item acc"><div class="t">AI는 등급을 확정하지 않는다</div><div class="d">면적비와 근거만 제시하고, 신뢰도 낮은 검출은 검토 대상으로 넘긴다</div></div>
+        <div class="item warn"><div class="t">책임은 사람에게 남는다</div><div class="d">등급 판정은 개량 예산을 움직인다. 그래야 현장에서 쓸 수 있다</div></div>
       </div>
     </div>
   </div>
