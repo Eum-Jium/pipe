@@ -234,20 +234,10 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
       <div class="col acc">
         <div class="ph">PART 4 · 부록</div><div class="pn">이번에<br>확인한 것</div>
         <ol>
-          <li><i>16</i><b>분할을 지점 단위로 다시 잘랐다</b></li>
-          <li><i>17</i><b>10%의 분모는 실면적이다</b></li>
-          <li><i>18</i><b>관종마다 등급이 다르다</b></li>
-          <li><i>19</i><b>AI가 설 자리</b></li>
-          <li><i>20</i><b>10%를 전 관종에 준용</b></li>
-          <li><i>21</i><b>103%는 겹침이 아니었다</b></li>
-          <li><i>22</i><b>곡면 보정 — 판정이 뒤집힌다</b></li>
-          <li><i>23</i><b>누수의 대가는 41%p였다</b></li>
-          <li><i>24</i><b>잡음 바닥선 1.8%p</b></li>
-          <li><i>25</i><b>mAP 와 면적비가 반대다</b></li>
-          <li><i>26</i><b>더 태웠더니 외우기만 했다</b></li>
-          <li><i>27</i><b>소실점을 8.9%밖에 못 찾는다</b></li>
-          <li><i>28</i><b>문지방을 의심했다</b></li>
-          <li><i>29</i><b>프레임을 짝지어 맞댔다</b></li>
+          <li><i>16</i><b>분할을 바로잡았다</b> <span style="color:var(--faint)">2장</span></li>
+          <li><i>19</i><b>매뉴얼이 말하는 10%</b> <span style="color:var(--faint)">4장</span></li>
+          <li><i>24</i><b>면적을 어떻게 세나</b> <span style="color:var(--faint)">3장</span></li>
+          <li><i>28</i><b>이 숫자를 믿어도 되나</b> <span style="color:var(--faint)">5장</span></li>
         </ol>
       </div>
     </div>
@@ -633,12 +623,20 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">AI가 사람을 대신하는 것이 아니라, 사람이 더 정확하게 판단하도록 근거를 만들어 준다</div>
 </section>
 
-<section class="slide divider" data-title="이번에 확인한 것" data-notes="4부는 부록입니다. 이번에 실제로 만들어 보면서 확인한 것들이고, 앞의 주장을 뒷받침하는 숫자가 여기 있습니다. 시간이 부족하면 건너뛰셔도 됩니다.">
+<section class="slide divider" data-title="이번에 확인한 것" data-notes="여기부터 4부입니다. 실제로 만들어 보면서 확인한 것들이고, 네 묶음으로 나뉩니다. 첫째는 데이터를 자르는 방식을 바로잡은 것, 둘째는 매뉴얼 원문에서 10퍼센트의 정체를 확인한 것, 셋째는 면적을 실제로 계산하는 모듈, 넷째는 그 숫자들을 어디까지 믿을 수 있느냐입니다. 넷째 묶음에서 앞의 결론 몇 개가 무너집니다. 시간이 부족하면 넷째만 보셔도 됩니다.">
   <div class="pt">PART 4 · 부록</div>
   <h2>이번에 확인한 것</h2>
   <hr>
   <p class="lead">실제로 만들어 보면서 드러난 것들. 앞의 주장을 뒷받침하는 숫자와, 바로잡은 것이 여기 있다.</p>
-  <div class="items"><div><b>16~20</b>분할 · 매뉴얼 10%</div><div><b>21~22</b>면적 계산 모듈</div><div><b>23</b>트랙 B 첫 결과</div></div>
+  <div class="items"><div><b>4-1</b>분할을 바로잡았다</div><div><b>4-2</b>매뉴얼이 말하는 10%</div><div><b>4-3</b>면적을 어떻게 세나</div><div><b>4-4</b>이 숫자를 믿어도 되나</div></div>
+</section>
+
+<section class="slide divider" data-title="분할을 바로잡았다" data-notes="4부 첫째 묶음입니다. 데이터를 자르는 방식을 바로잡은 이야기입니다.">
+  <div class="pt">4-1</div>
+  <h2>분할을 바로잡았다</h2>
+  <hr>
+  <p class="lead">검증셋이 검증셋이 아니었다. 조건을 완전히 맞추고 분할만 바꿔 그 대가를 쟀다.</p>
+  <div class="items"><div><b>17</b>분할을 다시 잘랐다</div><div><b>18</b>누수의 대가 41%p</div></div>
 </section>
 
 <section class="slide tight" data-title="분할을 다시 잘랐다"
@@ -674,6 +672,49 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">검증셋은 계약이다 — 목록을 파일로 고정하고, seed 로 다시 만들지 않는다</div>
+</section>
+
+<section class="slide tight" data-title="누수의 대가"
+ data-notes="이건 이번에 나온 것 중 가장 큰 숫자입니다. 앞에서 분할을 지점 단위로 다시 잘랐다고 말씀드렸는데, 그게 실제로 얼마짜리였는지를 재봤습니다. 방법은 이렇습니다. 기존 스타터 학습과 조건을 완전히 똑같이 맞췄습니다. 같은 모델, 같은 343장, 같은 2클래스, 같은 960픽셀, 같은 50에폭, 같은 배치. 딱 하나만 바꿨습니다. 데이터를 자르는 방식만 영상 단위에서 지점 단위로 바꿨습니다. 결과가 44.6퍼센트에서 3.6퍼센트로 떨어졌습니다. 41퍼센트포인트입니다. 조건이 하나만 다르니까 이 차이를 다른 요인으로 돌릴 수 없습니다. 이게 옛 분할이 부풀리고 있던 양입니다. 왜 이렇게 컸느냐. 같은 지점을 순방향 역방향 전진 후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어가 있었기 때문입니다. 시험지에 나온 관로를 이미 다른 각도에서 외운 상태였던 겁니다. 지점 기준으로 다시 세어보니 134개 지점 중 84개가 여러 분할에 걸쳐 있었고 프레임의 75.9퍼센트가 거기 속했습니다. 그래서 두 가지를 말씀드립니다. 첫째, 기존에 보고된 44.6퍼센트는 이제 쓸 수 없습니다. 그건 이미 본 관로를 채점한 값입니다. 둘째, 3.6퍼센트가 낮아 보이지만 이게 진짜 출발선입니다. 낮은 데서 시작해야 올린 만큼이 진짜입니다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수가 없습니다.">
+  <div class="eyebrow">APPENDIX 08 · 2026-09-05 · 트랙 B</div>
+  <h2>누수의 대가는 <b style="color:var(--warn)">41%p</b>였다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">조건을 완전히 맞추고 <b style="color:var(--ink)">분할만</b> 바꿨다</div>
+        <table class="dense">
+          <tr><th></th><th>스타터 실측</th><th>e0r</th></tr>
+          <tr><td class="k">모델</td><td>YOLO11n-seg</td><td>같음</td></tr>
+          <tr><td class="k">학습</td><td>343장 · 2클래스</td><td>같음</td></tr>
+          <tr><td class="k">조건</td><td>960px · 50ep · batch 4</td><td>같음</td></tr>
+          <tr class="sum"><td class="k">분할</td><td style="color:var(--warn)"><b>영상 단위</b></td><td style="color:var(--accent)"><b>지점 단위</b></td></tr>
+        </table>
+        <div class="grid g2" style="gap:1.4em;margin-top:.3em">
+          <div class="stat"><div class="n">44.6%</div><div class="c">스타터 OOS Box mAP50<br>(test 48장)</div></div>
+          <div class="stat warn"><div class="n">3.6%</div><div class="c">e0r OOS Box mAP50<br>(OOS 732장)</div></div>
+        </div>
+        <div class="src">조건이 하나만 다르므로 이 차이를 다른 요인으로 돌릴 수 없다</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">왜 이렇게 컸나</div>
+        <div class="item warn"><div class="t">시험지에 나온 관로를 이미 외우고 있었다</div><div class="d">같은 지점을 순/역 × 전진/후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어갔다.<br><b style="color:var(--ink)">134개 지점 중 84개가 걸쳐 있었고 프레임의 75.9%가 거기 속했다</b></div></div>
+        <hr class="rule">
+        <div class="item warn"><div class="t">기존 44.6%는 쓸 수 없다</div><div class="d">이미 본 관로를 채점한 값이다. 보고·비교의 기준선에서 내린다</div></div>
+        <div class="item acc"><div class="t">3.6%가 진짜 출발선이다</div><div class="d">낮은 데서 시작해야 <b>올린 만큼이 진짜</b>다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수 없다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">숫자를 낮추는 작업이었지만, 이제부터의 개선은 전부 실제 개선이다</div>
+</section>
+
+<section class="slide divider" data-title="매뉴얼이 말하는 10%" data-notes="둘째 묶음입니다. 환경부 매뉴얼 원문을 확보해서 10퍼센트의 정체를 확인한 내용입니다.">
+  <div class="pt">4-2</div>
+  <h2>매뉴얼이 말하는 10%</h2>
+  <hr>
+  <p class="lead">원문을 확보해 확인했다. 분모가 무엇이고, 관종마다 어디서 갈리고, AI가 설 자리는 어디인가.</p>
+  <div class="items"><div><b>20</b>분모는 실면적</div><div><b>21~22</b>관종별 등급 · AI의 자리</div><div><b>23</b>전 관종 준용</div></div>
 </section>
 
 <section class="slide tight" data-title="10%의 정체 — 분모"
@@ -830,6 +871,14 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">빼지 않는다 — 전 관종을 같은 문지방으로 재되, 무엇을 쟀는지는 관종별로 밝힌다</div>
 </section>
 
+<section class="slide divider" data-title="면적을 어떻게 세나" data-notes="셋째 묶음입니다. 면적비를 실제로 계산하는 모듈과, 아직 풀리지 않은 소실점 문제입니다.">
+  <div class="pt">4-3</div>
+  <h2>면적을 어떻게 세나</h2>
+  <hr>
+  <p class="lead">겹친 곳을 한 번만 세고, 곡면을 펴서 잰다. 그런데 그 전제가 아직 안 선다.</p>
+  <div class="items"><div><b>25</b>폴리곤 합집합</div><div><b>26</b>곡면 보정</div><div><b>27</b>소실점 — 미해결</div></div>
+</section>
+
 <section class="slide tight" data-title="면적을 세는 법"
  data-notes="면적 계산 모듈을 만들면서 나온 것입니다. 먼저 정정할 게 하나 있습니다. 그동안 기존 라벨에 겹침이 있어서 한 프레임 결함 합이 103퍼센트까지 나온다고 말씀드렸는데, 직접 계산해 보니 원인이 겹침이 아니었습니다. 두 가지 문제가 섞여 있었습니다. 첫째는 자기교차 폴리곤입니다. 폴리곤이 자기 자신과 교차해서 이중으로 감기면, 코코 포맷의 면적 필드가 그 자리를 두 번 셉니다. 103.7퍼센트가 나온 그 프레임은 슬라임 폴리곤 하나짜리인데, 면적 필드로는 103.7퍼센트지만 실제로 칠해진 픽셀은 94.4퍼센트였습니다. 겹친 것도 아니고 화면 밖으로 나간 것도 아니고, 자기교차였습니다. 이런 게 만천사백여 건 중 서른다섯 건 있고 최악은 실제의 3.18배였습니다. 이건 우리가 직접 래스터로 칠해서 세면 저절로 사라집니다. 칠해진 픽셀은 한 번만 세니까요. 그래서 면적 필드를 쓰지 않기로 했습니다. 둘째가 진짜 겹침입니다. 서로 다른 폴리곤이 같은 자리를 덮는 건데, 4916장 중 657장, 13.4퍼센트에서 나타납니다. 부풀리는 양은 중앙값 0.1퍼센트로 대부분 작지만 최대 15.9퍼센트포인트까지 갑니다. 오른쪽 그림이 가장 심한 프레임인데 빨간 부분이 두 겹 이상 덮인 자리입니다. 단순합 96.2퍼센트가 합집합으로는 80.4퍼센트가 됩니다. 이건 합집합으로 풉니다. 왜 벡터가 아니라 픽셀로 푸느냐 하면, 다음 단계인 곡면 보정이 픽셀마다 다른 무게를 주는 일이라 마스크에 가중치 배열을 곱하면 그대로 끝나기 때문입니다. 그리고 자기교차 같은 폴리곤 이상에 걸리지 않습니다.">
   <div class="eyebrow">APPENDIX 06 · 2026-09-04 · 면적 계산 1단계</div>
@@ -892,39 +941,54 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">보정하지 않으면 프레임 일곱 장에 한 장꼴로 등급이 틀린다</div>
 </section>
 
-<section class="slide tight" data-title="누수의 대가"
- data-notes="이건 이번에 나온 것 중 가장 큰 숫자입니다. 앞에서 분할을 지점 단위로 다시 잘랐다고 말씀드렸는데, 그게 실제로 얼마짜리였는지를 재봤습니다. 방법은 이렇습니다. 기존 스타터 학습과 조건을 완전히 똑같이 맞췄습니다. 같은 모델, 같은 343장, 같은 2클래스, 같은 960픽셀, 같은 50에폭, 같은 배치. 딱 하나만 바꿨습니다. 데이터를 자르는 방식만 영상 단위에서 지점 단위로 바꿨습니다. 결과가 44.6퍼센트에서 3.6퍼센트로 떨어졌습니다. 41퍼센트포인트입니다. 조건이 하나만 다르니까 이 차이를 다른 요인으로 돌릴 수 없습니다. 이게 옛 분할이 부풀리고 있던 양입니다. 왜 이렇게 컸느냐. 같은 지점을 순방향 역방향 전진 후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어가 있었기 때문입니다. 시험지에 나온 관로를 이미 다른 각도에서 외운 상태였던 겁니다. 지점 기준으로 다시 세어보니 134개 지점 중 84개가 여러 분할에 걸쳐 있었고 프레임의 75.9퍼센트가 거기 속했습니다. 그래서 두 가지를 말씀드립니다. 첫째, 기존에 보고된 44.6퍼센트는 이제 쓸 수 없습니다. 그건 이미 본 관로를 채점한 값입니다. 둘째, 3.6퍼센트가 낮아 보이지만 이게 진짜 출발선입니다. 낮은 데서 시작해야 올린 만큼이 진짜입니다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수가 없습니다.">
-  <div class="eyebrow">APPENDIX 08 · 2026-09-05 · 트랙 B</div>
-  <h2>누수의 대가는 <b style="color:var(--warn)">41%p</b>였다</h2>
+<section class="slide tight" data-title="소실점을 못 찾는다"
+ data-notes="마지막으로 이번에 나온 부정적인 결과 하나를 정직하게 말씀드립니다. 앞에서 곡면 보정이 필수라고 말씀드렸습니다. 매뉴얼의 분모가 관 내면 실면적이고, 화면 기준으로 재면 프레임 일곱 장에 한 장꼴로 등급이 틀린다고 했습니다. 그 보정을 하려면 소실점이 필요합니다. 소실점에서 화면 반경을 재서 세제곱으로 가중치를 주니까, 소실점을 모르면 계산 자체가 시작이 안 됩니다. 지금은 사람이 찍은 소실점 라벨을 쓰고 있는데, 그게 4,916장 중 285장, 5.8퍼센트에만 있습니다. 나머지는 중앙값 원으로 대입하고 있습니다. 진짜 해법은 AI가 소실점을 직접 찾는 것이고, 그래서 소실점을 학습 클래스에 넣어뒀습니다. 오늘 그게 되는지 재봤습니다. 안 됩니다. 검증셋에 소실점 라벨이 있는 45장 중에 모델이 찾아낸 건 4장, 8.9퍼센트입니다. 라벨을 정리한 e3b 모델은 2장, 4.4퍼센트로 더 떨어졌습니다. 원인은 짐작이 갑니다. 학습셋에 소실점 어노테이션이 213건뿐입니다. 박리가 2,703건인 것과 비교하면 십분의 일도 안 됩니다. 이게 무슨 뜻이냐. 지금 곡면 보정 지표는 사람 라벨에 기대고 있어서 자동으로 돌아가지 않습니다. 표에 곡면 기준 일치율도 같이 적어놨는데 40에서 44퍼센트입니다. 표본이 45장뿐이고, 모델이 사실상 전부 이하로 찍은 것과 구분이 안 됩니다. 이 수치는 아직 읽으면 안 됩니다. 그래서 다음 할 일이 셋입니다. 첫째, 소실점은 결함이 아니라 기하 구조니까 학습으로 풀 게 아니라 원 검출로 직접 푸는 게 맞을 수 있습니다. 둘째, 소실점 라벨을 더 채우는 건 결함 라벨보다 훨씬 싸고 판단이 안 들어갑니다. 셋째, 카메라 제원을 받으면 렌즈 왜곡을 보정해서 원 피팅 자체가 정확해집니다. 이건 다음 주 받을 자료에 들어 있습니다.">
+  <div class="eyebrow">APPENDIX 12 · 2026-09-05 · 트랙 B · 신규</div>
+  <h2>소실점을 <b style="color:var(--warn)">8.9%</b>밖에 못 찾는다 — 곡면 보정의 병목</h2>
   <hr class="rule">
   <div class="body">
-    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
-      <div class="stack" style="gap:.8em">
-        <div class="lbl">조건을 완전히 맞추고 <b style="color:var(--ink)">분할만</b> 바꿨다</div>
-        <table class="dense">
-          <tr><th></th><th>스타터 실측</th><th>e0r</th></tr>
-          <tr><td class="k">모델</td><td>YOLO11n-seg</td><td>같음</td></tr>
-          <tr><td class="k">학습</td><td>343장 · 2클래스</td><td>같음</td></tr>
-          <tr><td class="k">조건</td><td>960px · 50ep · batch 4</td><td>같음</td></tr>
-          <tr class="sum"><td class="k">분할</td><td style="color:var(--warn)"><b>영상 단위</b></td><td style="color:var(--accent)"><b>지점 단위</b></td></tr>
-        </table>
-        <div class="grid g2" style="gap:1.4em;margin-top:.3em">
-          <div class="stat"><div class="n">44.6%</div><div class="c">스타터 OOS Box mAP50<br>(test 48장)</div></div>
-          <div class="stat warn"><div class="n">3.6%</div><div class="c">e0r OOS Box mAP50<br>(OOS 732장)</div></div>
+    <div class="split" style="grid-template-columns:1fr auto 1.05fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">왜 소실점이 필요한가</div>
+        <div class="card" style="padding:.9em 1.3em">
+          <div class="d" style="font-size:1.25em;line-height:1.6;color:var(--ink2)">
+            가중치 <span class="mono">w(ρ) = (ρ<sub>vp</sub>/ρ)³</span> — <b style="color:var(--ink)">소실점에서 잰 화면 반경</b>이 없으면
+            곡면 보정 계산이 시작되지 않는다
+          </div>
         </div>
-        <div class="src">조건이 하나만 다르므로 이 차이를 다른 요인으로 돌릴 수 없다</div>
+        <div class="lbl" style="margin-top:.2em">OOS 45장(소실점 라벨 있는 프레임)에서 검출률</div>
+        <table class="dense">
+          <tr><th></th><th class="num">찾은 프레임</th><th class="num">검출률</th></tr>
+          <tr><td class="k">e2</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)"><b>8.9%</b></td></tr>
+          <tr><td class="k">e3</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)">8.9%</td></tr>
+          <tr class="sum"><td class="k">e3b</td><td class="num">2 / 45</td><td class="num" style="color:var(--warn)">4.4%</td></tr>
+        </table>
+        <div class="item warn"><div class="t">짐작되는 원인 — 표본이 없다</div><div class="d">학습셋 소실점 어노테이션 <b style="color:var(--ink)">213건</b>. 박리 2,703건의 <b style="color:var(--ink)">1/13</b> 이다</div></div>
       </div>
       <div class="vr"></div>
-      <div class="stack" style="gap:.8em">
-        <div class="lbl">왜 이렇게 컸나</div>
-        <div class="item warn"><div class="t">시험지에 나온 관로를 이미 외우고 있었다</div><div class="d">같은 지점을 순/역 × 전진/후진으로 네 번 찍은 영상이 학습과 시험에 나뉘어 들어갔다.<br><b style="color:var(--ink)">134개 지점 중 84개가 걸쳐 있었고 프레임의 75.9%가 거기 속했다</b></div></div>
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">그래서 지금 무엇이 성립하지 않나</div>
+        <div class="item warn"><div class="t">곡면 보정 지표는 아직 자동으로 안 돈다</div><div class="d">사람이 찍은 소실점 원을 빌려 쓰고 있다. 그 라벨은 <b style="color:var(--ink)">4,916장 중 285장(5.8%)</b> 에만 있다</div></div>
+        <div class="item warn"><div class="t">곡면 기준 일치율 40~44%는 아직 읽지 않는다</div><div class="d">표본이 <b style="color:var(--ink)">45장</b>뿐이고, 전부 "이하" 로 찍은 것과 구분이 안 된다 (예측 "초과" 0~7 / 라벨 27)</div></div>
         <hr class="rule">
-        <div class="item warn"><div class="t">기존 44.6%는 쓸 수 없다</div><div class="d">이미 본 관로를 채점한 값이다. 보고·비교의 기준선에서 내린다</div></div>
-        <div class="item acc"><div class="t">3.6%가 진짜 출발선이다</div><div class="d">낮은 데서 시작해야 <b>올린 만큼이 진짜</b>다. 부풀린 숫자에서 시작하면 아무리 개선해도 그게 개선인지 알 수 없다</div></div>
+        <div class="lbl">다음 할 일 — 셋 다 <b style="color:var(--accent)">라벨보다 싸다</b></div>
+        <table class="dense">
+          <tr><td class="k">원 검출</td><td>결함이 아니라 <b>기하 구조</b>다</td></tr>
+          <tr><td class="k">라벨 보충</td><td>결함 라벨과 달리 <b>판단이 안 들어간다</b></td></tr>
+          <tr class="sum"><td class="k">카메라 제원</td><td>렌즈 왜곡 보정 → <b>원 피팅이 정확</b>해진다</td></tr>
+        </table>
       </div>
     </div>
   </div>
-  <div class="foot">숫자를 낮추는 작업이었지만, 이제부터의 개선은 전부 실제 개선이다</div>
+  <div class="foot">안 되는 것을 안 된다고 먼저 적어야, 다음에 무엇을 살지가 정해진다</div>
+</section>
+
+<section class="slide divider" data-title="이 숫자를 믿어도 되나" data-notes="마지막 묶음입니다. 숫자를 어디까지 믿을 수 있는지를 다룹니다. 여기서 앞의 결론 몇 개가 무너졌습니다.">
+  <div class="pt">4-4</div>
+  <h2>이 숫자를 믿어도 되나</h2>
+  <hr>
+  <p class="lead">델타를 읽기 전에 잡음을 먼저 쟀다. 그 자를 대보니 결론 몇 개가 무너졌다.</p>
+  <div class="items"><div><b>29</b>잡음 바닥선</div><div><b>30~32</b>지표 갈림 · 학습량 · 문지방</div><div><b>33</b>짝지은 검정</div></div>
 </section>
 
 <section class="slide tight" data-title="잡음 바닥선"
@@ -1035,48 +1099,6 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">답을 미리 정하지 않고 답이 갈리는 실험을 돌렸더니, 갈림길 자체가 틀렸다는 게 나왔다</div>
 </section>
 
-<section class="slide tight" data-title="소실점을 못 찾는다"
- data-notes="마지막으로 이번에 나온 부정적인 결과 하나를 정직하게 말씀드립니다. 앞에서 곡면 보정이 필수라고 말씀드렸습니다. 매뉴얼의 분모가 관 내면 실면적이고, 화면 기준으로 재면 프레임 일곱 장에 한 장꼴로 등급이 틀린다고 했습니다. 그 보정을 하려면 소실점이 필요합니다. 소실점에서 화면 반경을 재서 세제곱으로 가중치를 주니까, 소실점을 모르면 계산 자체가 시작이 안 됩니다. 지금은 사람이 찍은 소실점 라벨을 쓰고 있는데, 그게 4,916장 중 285장, 5.8퍼센트에만 있습니다. 나머지는 중앙값 원으로 대입하고 있습니다. 진짜 해법은 AI가 소실점을 직접 찾는 것이고, 그래서 소실점을 학습 클래스에 넣어뒀습니다. 오늘 그게 되는지 재봤습니다. 안 됩니다. 검증셋에 소실점 라벨이 있는 45장 중에 모델이 찾아낸 건 4장, 8.9퍼센트입니다. 라벨을 정리한 e3b 모델은 2장, 4.4퍼센트로 더 떨어졌습니다. 원인은 짐작이 갑니다. 학습셋에 소실점 어노테이션이 213건뿐입니다. 박리가 2,703건인 것과 비교하면 십분의 일도 안 됩니다. 이게 무슨 뜻이냐. 지금 곡면 보정 지표는 사람 라벨에 기대고 있어서 자동으로 돌아가지 않습니다. 표에 곡면 기준 일치율도 같이 적어놨는데 40에서 44퍼센트입니다. 표본이 45장뿐이고, 모델이 사실상 전부 이하로 찍은 것과 구분이 안 됩니다. 이 수치는 아직 읽으면 안 됩니다. 그래서 다음 할 일이 셋입니다. 첫째, 소실점은 결함이 아니라 기하 구조니까 학습으로 풀 게 아니라 원 검출로 직접 푸는 게 맞을 수 있습니다. 둘째, 소실점 라벨을 더 채우는 건 결함 라벨보다 훨씬 싸고 판단이 안 들어갑니다. 셋째, 카메라 제원을 받으면 렌즈 왜곡을 보정해서 원 피팅 자체가 정확해집니다. 이건 다음 주 받을 자료에 들어 있습니다.">
-  <div class="eyebrow">APPENDIX 12 · 2026-09-05 · 트랙 B · 신규</div>
-  <h2>소실점을 <b style="color:var(--warn)">8.9%</b>밖에 못 찾는다 — 곡면 보정의 병목</h2>
-  <hr class="rule">
-  <div class="body">
-    <div class="split" style="grid-template-columns:1fr auto 1.05fr;grid-template-rows:minmax(0,1fr)">
-      <div class="stack" style="gap:.75em">
-        <div class="lbl">왜 소실점이 필요한가</div>
-        <div class="card" style="padding:.9em 1.3em">
-          <div class="d" style="font-size:1.25em;line-height:1.6;color:var(--ink2)">
-            가중치 <span class="mono">w(ρ) = (ρ<sub>vp</sub>/ρ)³</span> — <b style="color:var(--ink)">소실점에서 잰 화면 반경</b>이 없으면
-            곡면 보정 계산이 시작되지 않는다
-          </div>
-        </div>
-        <div class="lbl" style="margin-top:.2em">OOS 45장(소실점 라벨 있는 프레임)에서 검출률</div>
-        <table class="dense">
-          <tr><th></th><th class="num">찾은 프레임</th><th class="num">검출률</th></tr>
-          <tr><td class="k">e2</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)"><b>8.9%</b></td></tr>
-          <tr><td class="k">e3</td><td class="num">4 / 45</td><td class="num" style="color:var(--warn)">8.9%</td></tr>
-          <tr class="sum"><td class="k">e3b</td><td class="num">2 / 45</td><td class="num" style="color:var(--warn)">4.4%</td></tr>
-        </table>
-        <div class="item warn"><div class="t">짐작되는 원인 — 표본이 없다</div><div class="d">학습셋 소실점 어노테이션 <b style="color:var(--ink)">213건</b>. 박리 2,703건의 <b style="color:var(--ink)">1/13</b> 이다</div></div>
-      </div>
-      <div class="vr"></div>
-      <div class="stack" style="gap:.75em">
-        <div class="lbl">그래서 지금 무엇이 성립하지 않나</div>
-        <div class="item warn"><div class="t">곡면 보정 지표는 아직 자동으로 안 돈다</div><div class="d">사람이 찍은 소실점 원을 빌려 쓰고 있다. 그 라벨은 <b style="color:var(--ink)">4,916장 중 285장(5.8%)</b> 에만 있다</div></div>
-        <div class="item warn"><div class="t">곡면 기준 일치율 40~44%는 아직 읽지 않는다</div><div class="d">표본이 <b style="color:var(--ink)">45장</b>뿐이고, 전부 "이하" 로 찍은 것과 구분이 안 된다 (예측 "초과" 0~7 / 라벨 27)</div></div>
-        <hr class="rule">
-        <div class="lbl">다음 할 일 — 셋 다 <b style="color:var(--accent)">라벨보다 싸다</b></div>
-        <table class="dense">
-          <tr><td class="k">원 검출</td><td>결함이 아니라 <b>기하 구조</b>다</td></tr>
-          <tr><td class="k">라벨 보충</td><td>결함 라벨과 달리 <b>판단이 안 들어간다</b></td></tr>
-          <tr class="sum"><td class="k">카메라 제원</td><td>렌즈 왜곡 보정 → <b>원 피팅이 정확</b>해진다</td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-  <div class="foot">안 되는 것을 안 된다고 먼저 적어야, 다음에 무엇을 살지가 정해진다</div>
-</section>
-
 <section class="slide tight" data-title="문지방을 의심했다"
  data-notes="앞 장에서 e3가 나쁘다고 말씀드렸는데, 그걸 그대로 두면 안 되는 이유가 있었습니다. 채점할 때 모델이 확신하는 정도, 신뢰도 문지방을 0.25로 잡고 있었는데 그건 라이브러리 기본값이지 저희가 정한 값이 아닙니다. 그리고 채점 결과를 보면 모든 모델이 면적을 낮게 부르고 있었습니다. 편향이 마이너스 6에서 마이너스 15퍼센트입니다. 낮게 부르면 10퍼센트 초과를 놓치니까 일치율이 떨어집니다. 그럼 e3가 나쁜 게 아니라 e3한테 문지방이 안 맞았던 것일 수도 있습니다. 이걸 확인 안 하고 넘어가면 지난번에 QA 결론이 두 번 뒤집힌 것과 똑같은 일이 됩니다. 그래서 다시 쟀습니다. 규율을 하나 지켰습니다. 문지방은 점검셋에서 고르고 검증셋으로는 딱 한 번만 잽니다. 검증셋에서 제일 좋은 값을 고르면 시험지를 보고 답을 맞추는 겁니다. 그리고 문지방 여덟 개를 재려고 여덟 번 돌리지 않았습니다. 가장 낮은 값으로 한 번 예측해두고 그걸 걸러서 썼습니다. 결과가 셋입니다. 첫째, 문지방으로 메울 수 있는 게 아닙니다. 0.1에서 0.25 사이에서 일치율이 거의 평평합니다. 제일 많이 오른 게 e3의 3.7퍼센트포인트입니다. 업무 지표를 올리는 건 문지방이 아니라 모델이라는 뜻이고, 이건 못 올린 게 아니라 올릴 여지가 거기 없다는 걸 확인한 겁니다. 둘째, 편향은 문지방이 만든 것이었습니다. e3b는 마이너스 5.8에서 마이너스 0.2로 사라집니다. 그러니까 모델이 체계적으로 낮게 부른다는 진단은 틀렸습니다. 기본 문지방이 낮게 부르게 만든 겁니다. 셋째, 이게 핵심인데, e3의 열세는 살아남았습니다. 다만 10.1퍼센트포인트에서 6.8로 줄었습니다. 그리고 근거가 하나 더 생겼습니다. e3만 곡선이 계속 내려갑니다. 제일 낮은 문지방인 0.05에서 최고점을 찍습니다. 마스크를 최대한 붙여도 면적이 모자란다는 뜻입니다. 큰 슬라임을 지웠으니 물리적으로 그릴 게 없는 겁니다. 이건 집계된 숫자가 아니라 곡선 모양에서 직접 보이는 거라 더 단단한 근거입니다. 그리고 제가 앞 장에서 e2와 e3b가 2.2퍼센트포인트 차이라고 했던 게 있는데, 보정하니까 0.3퍼센트포인트로 붙습니다. 그 2.2는 라벨 차이가 아니라 문지방 차이였습니다. 제 근거 하나가 틀렸던 거고, 고치니까 e3 결론은 오히려 더 단단해졌습니다.">
   <div class="eyebrow">APPENDIX 13 · 2026-09-05 · 트랙 B · 신규</div>
@@ -1149,6 +1171,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   </div>
   <div class="foot">같은 시험지를 풀렸으면 총점을 빼지 말고 문항별로 맞대야 한다 — 훨씬 적은 표본으로 답이 나온다</div>
 </section>
+
 
 
 
