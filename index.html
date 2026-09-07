@@ -238,6 +238,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>19</i><b>매뉴얼이 말하는 10%</b> <span style="color:var(--faint)">4장</span></li>
           <li><i>24</i><b>면적을 어떻게 세나</b> <span style="color:var(--faint)">3장</span></li>
           <li><i>28</i><b>이 숫자를 믿어도 되나</b> <span style="color:var(--faint)">5장</span></li>
+          <li><i>34</i><b>그래서 무엇을 할 것인가</b> <span style="color:var(--faint)">4장</span></li>
         </ol>
       </div>
     </div>
@@ -628,7 +629,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <h2>이번에 확인한 것</h2>
   <hr>
   <p class="lead">실제로 만들어 보면서 드러난 것들. 앞의 주장을 뒷받침하는 숫자와, 바로잡은 것이 여기 있다.</p>
-  <div class="items"><div><b>4-1</b>분할을 바로잡았다</div><div><b>4-2</b>매뉴얼이 말하는 10%</div><div><b>4-3</b>면적을 어떻게 세나</div><div><b>4-4</b>이 숫자를 믿어도 되나</div></div>
+  <div class="items"><div><b>4-1</b>분할을 바로잡았다</div><div><b>4-2</b>매뉴얼이 말하는 10%</div><div><b>4-3</b>면적을 어떻게 세나</div><div><b>4-4</b>이 숫자를 믿어도 되나</div><div><b>4-5</b>그래서 무엇을 할 것인가</div></div>
 </section>
 
 <section class="slide divider" data-title="분할을 바로잡았다" data-notes="4부 첫째 묶음입니다. 데이터를 자르는 방식을 바로잡은 이야기입니다.">
@@ -1170,6 +1171,144 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">같은 시험지를 풀렸으면 총점을 빼지 말고 문항별로 맞대야 한다 — 훨씬 적은 표본으로 답이 나온다</div>
+</section>
+
+<section class="slide divider" data-title="그래서 무엇을 할 것인가" data-notes="마지막 묶음입니다. 트랙 B를 끝까지 밀어붙인 결과와, 거기서 나온 실무 결론들입니다. 앞의 묶음들이 무엇을 확인했느냐였다면 여기는 그래서 무엇을 할 것인가입니다.">
+  <div class="pt">4-5</div>
+  <h2>그래서 무엇을 할 것인가</h2>
+  <hr>
+  <p class="lead">모델 쪽 손잡이를 전부 돌려 봤다. 하나도 안 움직였고, 대신 다른 것들이 보였다.</p>
+  <div class="items"><div><b>35</b>손잡이가 다 막혔다</div><div><b>36</b>PE는 떼어 낸다</div><div><b>37</b>소실점은 해상도</div><div><b>38</b>작게 보는 버릇</div></div>
+</section>
+
+<section class="slide tight" data-title="손잡이가 다 막혔다"
+ data-notes="트랙 B를 끝까지 밀어붙인 결과입니다. 실험 열두 개, GPU로 스무 시간쯤 돌렸습니다. 모델 쪽에서 할 수 있는 걸 다 해봤습니다. 학습을 더 시키고, 모델을 키우고, 해상도를 올리고, 라벨 품질 필터를 손봤습니다. 표를 보시면 전부 잡음 안입니다. 583분을 더 태워서 얻은 게 잡음과 구분이 안 되는 값입니다. 유일하게 통한 건 데이터량을 늘린 것 하나입니다. 그럼 왜 안 오르느냐. 오른쪽을 보시면 답이 있습니다. 학습을 30에폭에서 84에폭으로 늘렸더니 학습셋 성적은 36.6에서 42.2퍼센트로 올랐습니다. 그런데 새 관로 성적은 그대로입니다. 모델을 키워도 똑같습니다. 이게 무슨 뜻이냐면, 모델은 더 배울 능력이 있다는 겁니다. 학습 데이터는 더 잘 맞추게 됐으니까요. 그런데 더 배운 게 새 관로로 하나도 안 옮겨갑니다. 라벨이 일관돼 있다면 그걸 더 잘 배웠을 때 일부는 전이돼야 합니다. 박리는 이렇게 생겼다를 더 잘 익혔으면 다른 관에서도 박리를 더 잘 찾아야죠. 그게 0이라는 건, 추가로 외운 게 일반적인 규칙이 아니라 개별 판단의 흔들림이었다는 뜻입니다. 세션 1에서 판독 편차를 주제로 고르면서 치명적 제약을 하나 적어놨습니다. 학습 기준이 되는 정답 라벨을 편차 있는 사람에게서 가져오는 순환이라고요. 그 순환이 성능 천장으로 실제로 나타났습니다. 예상이 아니라 측정된 사실입니다.">
+  <div class="eyebrow">4-5 · 트랙 B 완주 · 실험 12개 · GPU 20시간</div>
+  <h2>모델 쪽 손잡이는 전부 막혔다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">무엇을 바꿔 봤나</div>
+        <table class="dense">
+          <tr><th>바꾼 것</th><th class="num">델타</th><th class="num">잡음 대비</th></tr>
+          <tr><td class="k" style="color:var(--accent)"><b>데이터량</b> 343→3,440장</td><td class="num" style="color:var(--accent)"><b>+6.2%p</b></td><td class="num" style="color:var(--accent)"><b>3.4배</b></td></tr>
+          <tr><td class="k">학습량 30→84ep</td><td class="num">−0.4%p</td><td class="num">0.2배</td></tr>
+          <tr><td class="k">모델 크기 n→s</td><td class="num">+0.8%p</td><td class="num">0.4배</td></tr>
+          <tr><td class="k">해상도 640→960px</td><td class="num">−1.1%p</td><td class="num">0.6배</td></tr>
+          <tr><td class="k">라벨 QA 손보기</td><td class="num">1.7%p 폭</td><td class="num">0.9배</td></tr>
+        </table>
+        <div class="src"><b style="color:var(--warn)">583분을 더 태워 얻은 것이 잡음과 구분되지 않는다.</b> 움직인 것은 데이터량 하나뿐</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.75em">
+        <div class="lbl">왜 안 오르나 — 외우기만 한다</div>
+        <table class="dense">
+          <tr><th></th><th class="num">에폭</th><th class="num">학습셋</th><th class="num">새 관로</th></tr>
+          <tr><td class="k">e3b</td><td class="num">30</td><td class="num">36.6%</td><td class="num">7.9%</td></tr>
+          <tr><td class="k">e4</td><td class="num">84</td><td class="num" style="color:var(--warn)"><b>42.2% ↑</b></td><td class="num">7.5% →</td></tr>
+          <tr><td class="k">e5s</td><td class="num">79</td><td class="num" style="color:var(--warn)"><b>41.7% ↑</b></td><td class="num">8.7% →</td></tr>
+        </table>
+        <div class="item warn"><div class="t">모델은 더 배울 능력이 있다</div><div class="d">학습 데이터는 더 잘 맞춘다. 그런데 <b>더 배운 것이 새 관로로 하나도 옮겨가지 않는다</b></div></div>
+        <div class="item warn"><div class="t">라벨이 일관됐다면 일부는 전이돼야 한다</div><div class="d">학습셋만 6%p 오르고 새 관로가 0%p라는 것은, 추가로 외운 것이 규칙이 아니라 <b>개별 판단의 흔들림</b>이었다는 뜻</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">세션 1에서 적어 둔 "정답 라벨을 편차 있는 사람에게서 가져오는 순환" — 예상이 아니라 측정된 사실이 되었다</div>
+</section>
+
+<section class="slide tight" data-title="PE는 떼어 낸다"
+ data-notes="여기부터가 부수적으로 나온 실무 결론입니다. 첫째, 관종별로 나눠 학습하는 게 이득인지 봤습니다. 강관은 나누면 손해였습니다. 마이너스 2.5퍼센트포인트요. PE는 반대로 이득이었습니다. 플러스 2.9퍼센트포인트고, 15.7퍼센트로 전체 실험 통틀어 가장 높은 수치가 나왔습니다. 처음엔 데이터량 문제라고 생각했습니다. 나누면 학습 데이터가 줄어드니까요. 그런데 강관이 669장, PE가 757장으로 규모가 비슷한데 정반대 결과가 나왔습니다. 데이터량으로는 설명이 안 됩니다. 답은 라벨 체계에 있었습니다. PE는 유효 클래스가 슬라임과 침전물뿐입니다. 결절이나 부식은 조사항목 자체가 없습니다. 그런데 통합 모델은 PE 프레임에서도 박리와 결절과 부식을 찾으려 합니다. 없는 걸 찾으려 하니 혼란이 생기고 성능이 깎였던 겁니다. 떼어놓으니 자기 문제에만 집중해서 15.7퍼센트가 나왔습니다. 강관은 반대입니다. 주철관과 클래스 체계가 같아서, 주철관의 2천 장이 강관을 돕고 있었습니다. 떼어내니 그 도움을 잃은 거죠. 그리고 이게 매뉴얼 구조와도 맞물립니다. 표 3-27 비금속관 항목을 보면 면적비 분기가 아예 없고 슬라임과 수질만 봅니다. 매뉴얼이 이미 PE를 다른 문제로 취급하고 있었던 겁니다. 그래서 결론은 PE는 분리하고 강관과 주철관은 묶는 겁니다.">
+  <div class="eyebrow">4-5 · 실무 결론 ① · E6 관종 분리</div>
+  <h2><b style="color:var(--accent)">PE는 떼어 내고</b>, 강관·주철관은 묶는다</h2>
+  <hr class="rule">
+  <div class="body">
+    <table class="dense" style="flex:none">
+      <tr><th style="width:9em">관종</th><th class="num" style="width:7em">학습 이미지</th><th class="num" style="width:6em">분리</th><th class="num" style="width:6em">통합</th><th class="num" style="width:6em">차이</th><th>판정</th></tr>
+      <tr><td class="k">강관 SP</td><td class="num">669</td><td class="num">2.4%</td><td class="num">4.8%</td><td class="num" style="color:var(--warn)"><b>−2.5%p</b></td><td>통합이 이득 — 떼면 손해</td></tr>
+      <tr><td class="k">주철관 DCIP</td><td class="num">2,006</td><td class="num">5.8%</td><td class="num">6.4%</td><td class="num">−0.6%p</td><td style="color:var(--mute)">잡음 안 — 판정 불가</td></tr>
+      <tr class="sum"><td class="k">PE관</td><td class="num">757</td><td class="num" style="color:var(--accent)"><b>15.7%</b></td><td class="num">12.8%</td><td class="num" style="color:var(--accent)"><b>+2.9%p</b></td><td style="color:var(--accent)"><b>분리가 이득</b> — 전체 실험 최고치</td></tr>
+    </table>
+    <hr class="rule" style="margin:1.1em 0 .9em">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.8em">
+        <div class="item warn"><div class="t">데이터량으로는 설명이 안 된다</div><div class="d">강관 669장, PE 757장으로 규모가 비슷한데 <b>정반대</b>다. "나누면 데이터가 줄어 손해"라는 설명이 깨진다</div></div>
+        <div class="item acc"><div class="t">PE는 애초에 다른 문제를 푼다</div><div class="d">유효 클래스가 <b>슬라임·침전물</b>뿐 — 결절·부식은 조사항목이 없다. 통합 모델은 PE에서도 박리·결절을 찾으려다 혼란을 겪고 있었다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.8em">
+        <div class="item acc"><div class="t">강관은 주철관에 업혀 있었다</div><div class="d">클래스 체계가 같아 <b>주철관 2,006장이 강관을 돕고 있었다.</b> 떼어 내니 그 도움을 잃었다</div></div>
+        <div class="item acc"><div class="t">매뉴얼이 이미 그렇게 나눠 놨다</div><div class="d">표 3-27(비금속관)에 <b>면적비 분기가 아예 없다.</b> 슬라임·수질만 본다 — 우리 결과와 같은 이야기</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">관종별 상한 PE 15.7% &gt; 주철관 6.4% &gt; 강관 4.8% — 판단 여지가 적은 결함일수록 잘 맞힌다</div>
+</section>
+
+<section class="slide tight" data-title="소실점은 해상도"
+ data-notes="둘째 실무 결론입니다. 소실점 검출이 무너져 있었습니다. 검증셋 45장 중 한두 장밖에 못 찾았습니다. 2에서 9퍼센트요. 이게 왜 심각하냐면 곡면 보정의 전제이기 때문입니다. 소실점 원이 없으면 픽셀 가중치를 계산할 수 없고, 그러면 매뉴얼 기준인 실면적으로 면적비를 낼 수가 없습니다. 처음엔 학습이 부족해서라고 봤습니다. 소실점 라벨이 전체 4916장 중 285장뿐이고 10클래스 중 하나로 묻혀 있으니까요. 그래서 1클래스로 떼어 학습하는 걸 첫 번째 대책으로 적어뒀습니다. 그런데 확정 학습을 960픽셀로 돌렸더니 42.2퍼센트가 나왔습니다. 다섯 배에서 스무 배가 뛴 겁니다. 말이 되는 얘기입니다. 소실점은 관 안쪽 끝의 작고 어두운 원이라 해상도를 낮추면 뭉개져서 사라집니다. 박리나 슬라임은 넓게 퍼져 있어서 640픽셀로도 보이지만 소실점은 그렇지 않았던 겁니다. 여기서 중요한 게 하나 더 있습니다. 이건 mAP로는 전혀 안 보였습니다. 960픽셀로 돌린 그 모델의 전체 mAP는 6.8퍼센트로 오히려 가장 낮았습니다. 해상도를 올린 게 다른 클래스에는 도움이 안 됐고 소실점 하나에만 결정적이었는데, 그게 평균에 묻혀버린 겁니다. 클래스별로 뜯어보지 않았으면 놓쳤습니다. 그래서 대책 순서를 바꿨습니다. 1클래스 분리 학습보다 해상도가 먼저입니다.">
+  <div class="eyebrow">4-5 · 실무 결론 ② · 소실점</div>
+  <h2>소실점은 학습이 아니라 <b style="color:var(--accent)">해상도</b> 문제였다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">검증셋 45장에서 소실점을 몇 장 찾았나</div>
+        <div class="grid g2" style="gap:1.4em">
+          <div class="stat warn"><div class="n">2~9%</div><div class="c">640px<br>1~4 / 45장</div></div>
+          <div class="stat"><div class="n" style="color:var(--accent)">42.2%</div><div class="c">960px<br>19 / 45장</div></div>
+        </div>
+        <div class="item acc"><div class="t">작고 어두운 원이라 뭉개진다</div><div class="d">소실점은 관 안쪽 끝의 작은 원이다. 해상도를 낮추면 사라진다. <b>박리·슬라임은 넓게 퍼져 640px로도 보이지만 소실점은 아니었다</b></div></div>
+        <div class="item warn"><div class="t">이게 무너지면 매뉴얼 기준을 못 쓴다</div><div class="d">원이 없으면 픽셀 가중치를 계산할 수 없고, 곡면 보정이 성립하지 않는다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">그런데 mAP로는 안 보였다</div>
+        <table class="dense">
+          <tr><th>모델</th><th class="num">전체 mAP</th><th class="num">소실점</th></tr>
+          <tr><td class="k">640px 셋</td><td class="num">7.5~8.7%</td><td class="num" style="color:var(--warn)">2~9%</td></tr>
+          <tr><td class="k">960px</td><td class="num" style="color:var(--warn)"><b>6.8%</b> 최저</td><td class="num" style="color:var(--accent)"><b>42.2%</b></td></tr>
+        </table>
+        <div class="card" style="padding:1.2em 1.4em;background:#f3e2d8">
+          <div class="d" style="font-size:1.3em;line-height:1.6;color:var(--warn)">해상도가 <b style="color:var(--ink)">소실점 하나에만</b> 결정적이었던 것이 평균에 묻혔다.<br><b style="color:var(--ink)">클래스별로 뜯어보지 않으면 놓친다.</b></div>
+        </div>
+        <div class="item acc"><div class="t">대책 순서를 바꿨다</div><div class="d">1클래스 분리 학습보다 <b>해상도가 먼저다.</b> 소실점 전용이면 1280px도 시도할 만하다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">전체 평균이 내려가도 필요한 클래스가 올라갔으면 그것이 진전이다 — 무엇을 위한 모델인지가 먼저다</div>
+</section>
+
+<section class="slide tight" data-title="작게 보는 버릇"
+ data-notes="셋째 실무 결론입니다. 주 지표를 처음 쟀습니다. 설계서에서 채택 판정은 10퍼센트 경계 등급 일치율로 한다고 못박아둔 그 지표입니다. 네 모델 다 60에서 63퍼센트가 나왔습니다. 그런데 여기서 조심해야 할 게, 시험지가 반반이라는 겁니다. 검증셋 732장 중 361장이 10퍼센트 초과고 나머지가 이하입니다. 그러니까 아무렇게나 찍어도 50퍼센트가 나옵니다. 60퍼센트는 동전 던지기보다 조금 나은 수준입니다. 더 중요한 게 편향입니다. 네 모델 전부 마이너스입니다. 라벨은 361장이 초과라고 하는데 모델은 204장에서 266장만 초과로 봅니다. 결함을 계속 작게 보는 겁니다. 이게 왜 나쁘냐면, 실무에서 과소평가는 개량 지연으로 이어지고 그건 사고로 갑니다. 세션 1에서 판독 편차의 영향을 적을 때 과소평가는 개량 지연에서 사고, 과대평가는 건전관 조기교체라고 썼는데, 지금 모델은 더 나쁜 쪽으로 치우쳐 있습니다. 그리고 마지막으로, mAP와 주 지표의 순위가 갈렸습니다. mAP로는 e5s가 1위인데 주 지표로는 e3b가 1위입니다. 결함 박스를 잘 찾는 것과 면적비를 맞게 재는 것은 다른 능력입니다. 설계서가 mAP는 스크리닝용이라고 못박아둔 이유가 이겁니다. mAP로 모델을 고르면 안 됩니다.">
+  <div class="eyebrow">4-5 · 실무 결론 ③ · 주 지표</div>
+  <h2>결함을 <b style="color:var(--warn)">작게 보는 버릇</b>이 있다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.8em">
+        <div class="lbl">10% 경계 판정 일치율 — 설계서가 정한 주 지표</div>
+        <table class="dense">
+          <tr><th>모델</th><th class="num">일치율</th><th class="num">편향</th><th class="num">초과 예측</th></tr>
+          <tr><td class="k">e3b</td><td class="num"><b>62.7%</b></td><td class="num">−5.8%</td><td class="num">266</td></tr>
+          <tr><td class="k">e4</td><td class="num">61.1%</td><td class="num" style="color:var(--warn)">−8.8%</td><td class="num">204</td></tr>
+          <tr><td class="k">e5s</td><td class="num">60.7%</td><td class="num">−6.1%</td><td class="num">255</td></tr>
+          <tr><td class="k">e4_final</td><td class="num">60.4%</td><td class="num">−7.5%</td><td class="num">213</td></tr>
+          <tr class="sum"><td class="k">정답 라벨</td><td class="num note">기준</td><td class="num">—</td><td class="num"><b>361</b></td></tr>
+        </table>
+        <div class="src">시험지가 <b style="color:var(--ink)">49.3% / 50.7%</b>로 반반이다 — <b style="color:var(--ink)">동전 던지기가 50%</b>. 60%는 그보다 조금 나은 수준</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.8em">
+        <div class="item warn"><div class="t">네 모델 전부 과소평가 쪽이다</div><div class="d">라벨은 <b>361장</b>이 10% 초과인데 모델은 <b>204~266장</b>만 초과로 본다. 결함을 작게 본다</div></div>
+        <div class="card" style="padding:1.2em 1.4em;background:#f3e2d8">
+          <div class="d" style="font-size:1.3em;line-height:1.6;color:var(--warn)">과소평가 → 개량 지연 → <b style="color:var(--ink)">사고</b><br>과대평가 → 건전관 조기교체<br><br><b style="color:var(--ink)">지금 모델은 더 나쁜 쪽으로 치우쳐 있다.</b></div>
+        </div>
+        <div class="item warn"><div class="t">mAP와 순위가 갈렸다</div><div class="d">mAP 1위는 e5s인데 주 지표 1위는 <b>e3b</b>다. 결함 박스를 잘 찾는 것과 면적비를 맞게 재는 것은 <b>다른 능력</b>이다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">mAP로 모델을 고르면 안 된다 — 설계서가 "채택 판정은 10% 일치율, mAP는 스크리닝용"이라 못박은 이유다</div>
 </section>
 
 
