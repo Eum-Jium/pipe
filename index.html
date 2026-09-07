@@ -239,6 +239,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <li><i>24</i><b>면적을 어떻게 세나</b> <span style="color:var(--faint)">3장</span></li>
           <li><i>28</i><b>이 숫자를 믿어도 되나</b> <span style="color:var(--faint)">5장</span></li>
           <li><i>34</i><b>그래서 무엇을 할 것인가</b> <span style="color:var(--faint)">4장</span></li>
+          <li><i>39</i><b>다시 재 보니 달랐다</b> <span style="color:var(--faint)">5장</span></li>
         </ol>
       </div>
     </div>
@@ -1312,6 +1313,150 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">mAP로 모델을 고르면 안 된다 — 설계서가 "채택 판정은 10% 일치율, mAP는 스크리닝용"이라 못박은 이유다</div>
+</section>
+
+<section class="slide divider" data-title="다시 재 보니 달랐다" data-notes="4부 마지막 묶음입니다. 앞의 결론들을 발표 직전에 다시 재봤는데, 세 자리에서 답이 달라졌습니다. 하나는 제가 숫자를 잘못 옮겨 적은 것이었고, 하나는 자를 잘못 대고 있었던 것이고, 하나는 표본 단위를 잘못 잡고 있었던 것입니다. 셋 다 결론의 방향이 바뀌었습니다. 이 묶음은 그래서 결과 발표라기보다 검산 기록에 가깝습니다. 그런데 저희는 이게 앞의 네 묶음보다 중요하다고 봅니다. 숫자가 맞느냐보다 그 숫자를 어떻게 믿을 수 있느냐가 이 과업의 핵심이기 때문입니다.">
+  <div class="pt">4-6</div>
+  <h2>다시 재 보니 달랐다</h2>
+  <hr>
+  <p class="lead">앞의 결론을 발표 직전에 검산했다. 세 자리에서 답이 바뀌었다 — 잘못 옮긴 숫자, 잘못 댄 자, 잘못 잡은 표본 단위.</p>
+  <div class="items"><div><b>40</b>소실점 — 병목은 검출률이 아니었다</div><div><b>41</b>PE는 상수보다 못하다</div><div><b>42</b>표본은 프레임이 아니라 지점</div><div><b>43</b>학습 잡음을 처음 쟀다</div></div>
+</section>
+
+<section class="slide tight" data-title="소실점 병목은 중심이다"
+ data-notes="소실점부터입니다. 앞에서 소실점 검출률이 42퍼센트라 곡면 보정이 자동으로 안 돈다고 말씀드렸습니다. 그래서 다음 단계로 해상도를 1280까지 올려보자는 계획이었는데, 학습을 걸기 전에 두 가지를 먼저 갈랐습니다. 못 찾는 것이냐 문지방에 잘린 것이냐, 그리고 찾은 원이 쓸 만하냐입니다. 첫 번째는 금방 답이 나왔습니다. 신뢰도 문지방을 0.25에서 0.05로 내리니까 45장 중 19장에서 34장으로 늘었습니다. 검출률은 병목이 아니었습니다. 문지방이 잘라내고 있었던 겁니다. 문제는 두 번째였습니다. 검출률은 찾았다 못 찾았다만 셉니다. 그런데 곡면 보정은 원의 중심과 반지름으로 가중치를 만듭니다. 원이 틀리면 찾아도 소용없습니다. 그래서 합격 기준을 업무로 옮겼습니다. 같은 라벨 마스크를 예측한 원과 라벨 원으로 각각 보정해서 면적비가 얼마나 달라지는지를 쟀습니다. 이걸 아무도 재 본 적이 없었습니다. 결과가 표에 있습니다. 중심 오차가 0.29에서 0.46r입니다. 목표로 잡았던 0.1r과 거리가 멉니다. 여기서 두 가지를 시도했는데 둘 다 반대로 나왔습니다. 첫째, 소실점만 1클래스로 떼어서 학습했습니다. mAP는 6.8퍼센트에서 60.8퍼센트로 뛰었고 커버리지도 100퍼센트가 됐습니다. 그런데 중심은 0.29에서 0.36으로 나빠졌습니다. 짝지어 검정하니 40장 중 27장에서 원래 모델이 더 정확합니다. 용량을 소실점에만 몰아줘도 중심은 안 좋아진 겁니다. 10클래스 모델이 이기는데, 결함이나 관벽 같은 맥락이 소실점 위치를 잡는 데 도움이 되는 것으로 보입니다. 둘째, 전용 모델에서 해상도를 960으로 올렸더니 더 나빠졌습니다. 학습셋이 211장뿐이라 960픽셀은 과했습니다. 해상도를 올리면 좋아진다는 건 10클래스 모델 안에서만 참이었던 겁니다. 그리고 마지막 줄이 중요합니다. 라벨 자체가 흔들립니다. 같은 프레임에 라벨이 두 번 붙은 게 한 건 있는데 중심이 1.23r 차이납니다. 1초 이내 이웃 프레임 사이에서도 0.22r 움직입니다. 표본이 1건과 4건이라 결론은 못 내지만, 모델 오차 0.29r과 같은 자릿수입니다. 그렇다면 지금은 모델을 더 밀어도 나아졌는지 확인할 기준이 없습니다. 그래서 결론은 검출은 쓰되 더 투자하지 않고 라벨을 보충한다입니다. 라벨을 늘릴 때 같은 프레임을 두 사람이 찍는 중복분을 꼭 넣어야 이걸 제대로 잽니다.">
+  <div class="eyebrow">4-6 · 소실점 · 2026-09-07 · 합격선 미달</div>
+  <h2>병목은 <b style="color:var(--warn)">검출률이 아니라 중심</b>이었다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.05fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">학습을 걸기 전에 두 가지를 갈랐다</div>
+        <div class="item acc"><div class="t">① 검출률은 병목이 아니었다</div><div class="d">문지방을 <b style="color:var(--ink)">0.25 → 0.05</b> 로 내리니 45장 중 <b style="color:var(--ink)">19 → 34장</b>. 잘라내고 있었던 것이다</div></div>
+        <div class="item warn"><div class="t">② 찾은 원이 못 쓸 만하다 — 아무도 안 재 봤다</div><div class="d">검출률은 "찾았다/못 찾았다"만 센다. 곡면 보정은 <b style="color:var(--ink)">중심·반지름</b>으로 가중치를 만든다</div></div>
+        <div class="lbl">같은 라벨 마스크를 두 원으로 보정해 맞댔다</div>
+        <table class="dense">
+          <tr><th></th><th class="num">mAP50</th><th class="num">커버리지</th><th class="num">중심 오차</th></tr>
+          <tr class="sum"><td class="k">e4_final <span style="color:var(--mute)">10종·960px</span></td><td class="num">6.8%</td><td class="num">42~89%</td><td class="num" style="color:var(--accent)"><b>0.29r</b></td></tr>
+          <tr><td class="k">vp640 <span style="color:var(--mute)">전용·640px</span></td><td class="num"><b>60.8%</b></td><td class="num"><b>100%</b></td><td class="num">0.36r</td></tr>
+          <tr><td class="k">vp960 <span style="color:var(--mute)">전용·960px</span></td><td class="num">39.2%</td><td class="num">100%</td><td class="num">0.37r</td></tr>
+        </table>
+        <div class="src">고전 영상처리는 0.46r · 합격선 <b style="color:var(--ink)">0.1r</b> · 최선 0.33r</div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">제안 둘이 <b style="color:var(--warn)">반대로</b> 나왔다</div>
+        <div class="item warn"><div class="t">"소실점만 떼어 학습" → 더 나쁘다</div><div class="d">mAP 는 6.8 → <b style="color:var(--ink)">60.8%</b> 로 뛰는데 중심은 0.29 → 0.36r. 짝지어 재면 <b style="color:var(--ink)">27/40 으로 10종 모델이 이긴다</b>(p 0.039)<br>결함·관벽 같은 <b style="color:var(--ink)">맥락이 도움이 된다</b></div></div>
+        <div class="item warn"><div class="t">"해상도를 올린다" → 전용에서는 반대</div><div class="d">960px 가 640px 보다 나쁘다(mAP 60.8 → 39.2). 학습셋 211장에 과하다 — 그 명제는 <b style="color:var(--ink)">10종 모델 안에서만</b> 참이었다</div></div>
+        <div class="big" style="color:var(--warn);font-size:1.22em;margin:.1em 0">mAP 60.8%인데 중심은 더 나쁘다</div>
+        <div class="src">곡면 보정에 필요한 건 "찾았다"가 아니라 "중심이 어디냐"인데 mAP 는 그걸 안 잰다</div>
+        <hr class="rule">
+        <div class="item acc"><div class="t">천장이 라벨일 수 있다 → <b>라벨 보충이 먼저</b></div><div class="d">같은 프레임 중복 라벨 1건이 <b style="color:var(--ink)">1.23r</b> 차이 · 1초 이내 이웃 4쌍이 <b style="color:var(--ink)">0.22r</b>.<br>표본이 1건·4건이라 결론은 못 내지만 <b style="color:var(--ink)">모델 오차와 같은 자릿수</b>다 — 지금은 개선을 확인할 기준이 없다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">합격선을 미리 적어 뒀기에 "그럼 1280px 도 해 보자" 로 흐르지 않았다 — 검출은 쓰되 투자를 멈춘다</div>
+</section>
+
+<section class="slide tight" data-title="PE는 상수보다 못하다"
+ data-notes="다음은 관종 분리입니다. 앞의 36장에서 강관 숫자를 잘못 옮겨 적었다고 정정했는데, 이번엔 아예 다시 쟀습니다. 두 가지를 고쳤습니다. 첫째, mAP 대신 주 지표인 10퍼센트 경계 일치율로 쟀습니다. 둘째, 짝지어 검정했습니다. 관종별 조각이 143장, 429장, 160장이라 732장에서 잰 잡음 자를 그대로 대면 안 되는데, 같은 조각을 두 모델이 푸니까 프레임마다 누가 맞았나를 세면 표본이 작아도 답이 나옵니다. 결과가 위 표입니다. 셋 다 판정 불가입니다. p값이 0.23, 0.21, 0.64입니다. 분리가 이득이라는 결론은 어느 관종에서도 서지 않습니다. 그런데 더 중요한 게 아래 표입니다. 관종마다 바닥값이 다릅니다. 바닥값이란 무조건 한쪽으로 찍었을 때의 정답률입니다. 강관은 51퍼센트, 주철관은 59퍼센트인데 PE는 70.6퍼센트입니다. PE 프레임의 70퍼센트가 이미 10퍼센트를 넘거든요. 그러면 전부 초과라고 찍기만 해도 70.6퍼센트입니다. 그런데 모델은 56.2퍼센트입니다. 즉 PE에서는 모델이 상수보다 못합니다. 등급 판정에 기여하는 바가 마이너스입니다. 그리고 이게 mAP 순위와 정확히 반대입니다. mAP로는 PE가 15.7퍼센트로 제일 높았고 강관이 4.8로 제일 낮았습니다. 그래서 앞에서 PE가 제일 잘 맞는다고 했던 겁니다. 그런데 바닥값을 빼고 보면 강관이 플러스 13.3으로 제일 좋고 PE가 마이너스 14.4로 제일 나쁩니다. 왜 이런 일이 생기냐면, PE는 슬라임이 화면을 뒤덮어서 결함을 찾기는 쉽고 10퍼센트 판정은 자명합니다. mAP는 큰 얼룩을 잘 찾는지를 재니까 높게 나오는데, 정작 판정에서는 과소평가로 틀리는 겁니다. 마지막으로 문지방을 관종별로 따로 잡아봤는데 그것도 안 됩니다. PE는 점검셋과 검증셋의 곡선이 정반대입니다. 원인을 찾았는데, 10퍼센트 초과 기저율이 점검셋 47.6퍼센트, 검증셋 70.6퍼센트로 23퍼센트포인트 어긋납니다. PE의 검증 지점이 5개뿐이라 지점 하나가 통째로 기저율을 흔듭니다. 프레임 160장은 독립 표본 160개가 아닙니다. 그래서 PE에 대한 어떤 결론도 지금 표본으로는 못 냅니다. 살아남는 실무 결론은 하나입니다. PE에서는 지금 모델을 쓰면 안 됩니다.">
+  <div class="eyebrow">4-6 · E6 재검정 · 2026-09-07 · 주 지표로 다시</div>
+  <h2>PE는 <b style="color:var(--warn)">상수보다 못하다</b> — mAP 순위와 정반대</h2>
+  <hr class="rule">
+  <div class="body">
+    <table class="dense" style="flex:none">
+      <tr><th style="width:8em">관종</th><th class="num" style="width:5em">OOS</th><th class="num" style="width:5em">분리</th><th class="num" style="width:5em">통합</th><th class="num" style="width:4.5em">차이</th><th class="num" style="width:4em">p</th><th class="num" style="width:5em">바닥값</th><th class="num">바닥 대비</th></tr>
+      <tr><td class="k">강관 SP</td><td class="num">143장</td><td class="num">64.3%</td><td class="num">57.3%</td><td class="num">+7.0</td><td class="num">.23</td><td class="num">51.0%</td><td class="num" style="color:var(--accent)"><b>+13.3%p</b></td></tr>
+      <tr><td class="k">주철관 DCIP</td><td class="num">429장</td><td class="num">62.0%</td><td class="num">65.0%</td><td class="num">−3.0</td><td class="num">.21</td><td class="num">59.2%</td><td class="num">+2.8%p</td></tr>
+      <tr class="sum"><td class="k">PE관</td><td class="num">160장</td><td class="num">56.2%</td><td class="num">53.8%</td><td class="num">+2.5</td><td class="num">.64</td><td class="num" style="color:var(--warn)"><b>70.6%</b></td><td class="num" style="color:var(--warn)"><b>−14.4%p</b></td></tr>
+    </table>
+    <div class="src" style="margin-top:.5em">분리 vs 통합은 <b style="color:var(--ink)">셋 다 판정 불가</b>(p .23 · .21 · .64). 바닥값 = 무조건 한쪽으로 찍었을 때의 정답률</div>
+    <hr class="rule" style="margin:.9em 0 .8em">
+    <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="item warn"><div class="t">mAP 순위와 <b>정확히 반대</b>다</div><div class="d">mAP 로는 PE 15.7% &gt; 주철관 6.4% &gt; 강관 4.8% 였다. 바닥값을 빼면 <b style="color:var(--ink)">강관 +13.3 · PE −14.4</b><br>PE 는 슬라임이 화면을 덮어 <b style="color:var(--ink)">찾기는 쉽고 판정은 자명</b>하다 — 거기서 과소평가로 틀린다</div></div>
+        <div class="item warn"><div class="t">문지방을 관종별로 잡아도 안 된다</div><div class="d">PE 는 점검셋과 검증셋의 곡선이 <b style="color:var(--ink)">정반대</b>다</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="item warn"><div class="t">원인 — 조각마다 기저율이 다르다</div><div class="d">10% 초과 비율이 점검셋 <b style="color:var(--ink)">47.6%</b> · 검증셋 <b style="color:var(--ink)">70.6%</b> 로 <b style="color:var(--ink)">23%p</b> 어긋난다.<br>PE 의 검증 지점은 <b style="color:var(--ink)">5개</b> — 지점 하나가 통째로 기저율을 흔든다. 프레임 160장은 독립 표본 160개가 아니다</div></div>
+        <div class="item acc"><div class="t">살아남는 실무 결론은 하나</div><div class="d"><b style="color:var(--ink)">PE 에서는 지금 모델을 쓰면 안 된다.</b> "PE 를 떼어 낸다" 는 서지 않는다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">바닥값을 안 빼면 "제일 잘 맞는 관종" 과 "제일 못 맞는 관종" 이 뒤바뀐다</div>
+</section>
+
+<section class="slide tight" data-title="표본은 지점이다"
+ data-notes="세 번째입니다. 이건 방법론 이야기인데, 앞의 결론 하나를 되살렸습니다. 저희가 데이터를 지점 단위로 잘랐다고 계속 말씀드렸습니다. 같은 지점을 여러 방향에서 찍은 영상이 학습과 검증에 갈리면 안 되니까요. 그런데 정작 통계 검정은 프레임 732장을 독립 표본 732개로 놓고 하고 있었습니다. 같은 지점의 프레임은 같은 관, 같은 조명, 같은 오염 상태입니다. 독립이 아닙니다. 분할에서는 그걸 알고 잘라놓고 검정에서는 그 사실을 안 쓰고 있었던 겁니다. 처음에 누수를 만들었던 것과 같은 종류의 실수입니다. 그때는 분할에서, 이번엔 검정에서요. 그래서 지점을 표본 단위로 놓고 다시 쟀습니다. 결과 표를 보시면 대부분은 판정이 안 바뀌는데 하나가 뒤집힙니다. 데이터량입니다. 프레임으로 보면 p값이 0.18이라 확인이 안 됐는데, 지점 단위로 보면 26곳 중 20곳에서 나아집니다. p값 0.0094입니다. 프레임 검정은 큰 지점 몇 곳이 반대로 나오면 묻히는데, 부호검정은 방향이 지점마다 일관되는지를 봅니다. 다만 정확하게 말씀드려야 할 게 있습니다. 방향은 일관되는데 크기는 여전히 못 잡습니다. 신뢰구간이 마이너스 0.1에서 플러스 4.7로 0을 간신히 스칩니다. 그러니까 정확한 문장은 데이터를 열 배 넣으면 대부분의 관로에서 조금씩 나아지는데 얼마나 나아지는지는 못 박는다입니다. 그리고 고치는 과정에서 함정이 하나 더 있었습니다. 지점을 표본으로 놓겠다고 지점별 평균을 그냥 평균 내면 안 됩니다. 지점 크기가 1장에서 50장까지 벌어져 있어서, 1장짜리 지점 하나가 플러스마이너스 100퍼센트포인트를 기여합니다. 실제로 데이터량 비교에서 1장짜리와 4장짜리 지점 둘이 마이너스 100퍼센트씩 내면서 평균을 플러스 2.7에서 마이너스 2.3으로 뒤집고 있었습니다. 그래서 점추정은 프레임 기준으로 두고 표준오차만 지점으로 묶는 방식으로 갔습니다. 지점을 다시 뽑는 부트스트랩 4천 번으로 검증했고 값이 거의 정확히 일치합니다.">
+  <div class="eyebrow">4-6 · 방법론 정정 · 2026-09-07</div>
+  <h2>표본은 프레임이 아니라 <b style="color:var(--accent)">지점</b>이다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.1fr auto .95fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="item warn"><div class="t">분할은 지점으로 잘라 놓고 검정은 프레임을 독립으로 놨다</div><div class="d">같은 지점의 프레임은 <b style="color:var(--ink)">같은 관·조명·오염</b>이다. <b style="color:var(--ink)">처음에 누수를 만든 것과 같은 종류의 실수</b> — 그때는 분할에서, 이번엔 검정에서</div></div>
+        <table class="dense">
+          <tr><th></th><th class="num">Δ</th><th class="num">프레임 p</th><th class="num">지점 p</th><th class="num">이긴 지점</th></tr>
+          <tr class="sum"><td class="k">데이터량 <span style="color:var(--mute)">e0→e1</span></td><td class="num">+2.3%p</td><td class="num" style="color:var(--warn)">.18</td><td class="num" style="color:var(--accent)"><b>.0094</b></td><td class="num"><b>20/6</b></td></tr>
+          <tr><td class="k">클래스 체계 <span style="color:var(--mute)">e1→e2</span></td><td class="num">+9.6%p</td><td class="num">&lt;.001</td><td class="num">.0015</td><td class="num">22/5</td></tr>
+          <tr><td class="k">QA 넓은 <span style="color:var(--mute)">e2→e3</span></td><td class="num">−10.1%p</td><td class="num">&lt;.001</td><td class="num">.0001</td><td class="num">4/25</td></tr>
+          <tr><td class="k">학습량 <span style="color:var(--mute)">e3b→e4</span></td><td class="num">−1.6%p</td><td class="num">.37</td><td class="num">.064</td><td class="num">7/17</td></tr>
+          <tr><td class="k">모델 크기 <span style="color:var(--mute)">e4→e5s</span></td><td class="num">−0.4%p</td><td class="num">.88</td><td class="num">1.00</td><td class="num">12/13</td></tr>
+        </table>
+        <div class="src">대부분은 판정이 안 바뀌는데 <b style="color:var(--ink)">데이터량 하나가 뒤집힌다</b></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="item acc"><div class="t">데이터량이 살아났다</div><div class="d">프레임 검정은 큰 지점 몇 곳이 반대로 나오면 묻힌다. 부호검정은 <b style="color:var(--ink)">방향이 지점마다 일관되나</b>를 본다 — <b style="color:var(--ink)">26곳 중 20곳</b></div></div>
+        <div class="item warn"><div class="t">그래도 크기는 못 잡는다</div><div class="d">CI 가 <span class="mono">[−0.1, +4.7]</span> 로 0 을 간신히 스친다.<br>정확한 말은 <b style="color:var(--ink)">"방향은 일관되지만 크기는 못 박는다"</b></div></div>
+        <hr class="rule">
+        <div class="item warn"><div class="t">고치는 과정의 함정 — 지점 평균을 그냥 내면 안 된다</div><div class="d">지점 크기가 <b style="color:var(--ink)">1~50장</b>이라 1장짜리 지점이 ±100%p 를 기여한다. 실제로 1장·4장 지점 둘이 <b style="color:var(--ink)">평균을 +2.7 → −2.3 으로 뒤집고</b> 있었다</div></div>
+        <div class="item acc"><div class="t">점추정은 프레임 · 표준오차만 지점으로 묶는다</div><div class="d">군집-강건 SE. <b style="color:var(--ink)">지점 재표집 부트스트랩 4,000회</b>로 검증했다 (1.2/2.7/2.4 vs 1.2/2.6/2.3)</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">자를 어디에 대느냐가 결론을 바꾼다 — 지점 단위로 자른 이유를 검정에서도 써야 했다</div>
+</section>
+
+<section class="slide tight" data-title="학습 잡음을 처음 쟀다"
+ data-notes="마지막 장입니다. 지금까지 델타를 볼 때마다 잡음 바닥선 1.8퍼센트포인트와 비교했습니다. 그런데 그 값은 mAP에서 배치 크기 하나를 바꿔 잰 것이었습니다. 시드는 오히려 고정돼 있었고요. 주 지표인 10퍼센트 경계 일치율에는 그 자를 댈 근거가 없었습니다. 그래서 같은 실험을 시드만 바꿔 세 번 더 돌렸습니다. 본판까지 네 점입니다. 62.7, 62.7, 60.1, 61.9. 폭이 2.6퍼센트포인트입니다. 그런데 여기서 중요한 게 있습니다. 이 폭을 그대로 자로 쓰면 안 됩니다. 교환 가능한 표본 n개의 범위 안에 다음 관측이 들어갈 확률은 정확히 n 마이너스 1 나누기 n 플러스 1입니다. 네 점이면 60퍼센트입니다. 95퍼센트가 아니라 60퍼센트 구간인 겁니다. 모의실험 20만 번으로 확인했습니다. 무가정으로 95퍼센트를 원하면 시드를 39번 돌려야 합니다. 그리고 하나 더 있습니다. 우리가 읽는 건 한 조건의 흔들림이 아니라 서로 다른 두 실행의 차이입니다. 둘 다 단일 실행이면 분산이 두 배가 되니까 루트 2가 곱해집니다. 이 둘을 반영하면 실제 자는 5.5퍼센트포인트입니다. 관측한 폭 2.6의 두 배가 넘습니다. 결과가 오른쪽입니다. 여덟 짝 중 셋이 확실, 다섯이 판정 불가입니다. 확실한 셋은 클래스 체계를 10종으로 정리한 것, QA를 넓게 걸면 해롭다는 것, 그리고 그 기준을 좁히면 회복된다는 것입니다. 여기서 두 가지를 정직하게 말씀드려야 합니다. 첫째, 판정 불가는 효과 없음이 아닙니다. 효과가 없다고 주장하려면 별도의 동등성 기준이 필요한데, 지금 표본으로는 여덟 짝 중 어느 것도 그 조건을 못 채웁니다. 그래서 앞에서 모델 쪽 손잡이가 전부 막혔다고 했던 문장을 측정 능력 밖이라고 고쳤습니다. 둘째, 판정 불가 다섯 중 넷은 시드가 죽인 게 아니라 지점이 죽였습니다. 시드 잡음이 아무리 작아도 안 살아납니다. 그러니까 다음에 투자할 곳은 시드를 더 돌리는 게 아니라 지점을 더 받는 겁니다. 관로 아이디를 받아서 검증셋을 넓히는 것이요. 데이터량 하나만 시드가 죽였는데, 이건 짝의 양쪽 팔에 시드를 여러 번 돌려 평균끼리 비교하면 살아날 수 있습니다. 마지막으로 규칙은 이 숫자들을 보기 전에 커밋했습니다. 커밋 해시가 사전등록 증거입니다. 폭이 1, 3, 6퍼센트포인트일 때 각각 무엇이 살고 죽는지도 미리 표로 적어뒀습니다. 실제로는 2.6이 나왔고 예측한 대로 확실 등급 셋이 살아남았습니다.">
+  <div class="eyebrow">4-6 · seed 잡음 · 2026-09-07 · 사전 등록한 규칙</div>
+  <h2>학습 잡음을 <b style="color:var(--accent)">처음 쟀다</b> — 자가 관측 폭의 두 배다</h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:.95fr auto 1.1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">같은 실험 · <b style="color:var(--ink)">seed 만</b> 바꿔 네 번</div>
+        <table class="dense">
+          <tr><th></th><th class="num">10% 일치율</th><th class="num">MAE</th></tr>
+          <tr><td class="k">e3b <span style="color:var(--mute)">본판</span></td><td class="num">62.7%</td><td class="num">15.8%</td></tr>
+          <tr><td class="k">seed 11</td><td class="num">62.7%</td><td class="num">15.4%</td></tr>
+          <tr><td class="k">seed 22</td><td class="num">60.1%</td><td class="num">15.7%</td></tr>
+          <tr class="sum"><td class="k">seed 33</td><td class="num">61.9%</td><td class="num">16.1%</td></tr>
+        </table>
+        <div class="item warn"><div class="t">관측 폭 2.6%p 를 자로 쓰면 안 된다</div><div class="d">표본 n개의 범위에 다음 관측이 들 확률은 <span class="mono">(n−1)/(n+1)</span> — n=4 면 <b style="color:var(--ink)">60% 구간</b>이다(모의 20만회 확인). 무가정 95% 에는 <b style="color:var(--ink)">seed 39회</b>가 필요하다</div></div>
+        <div class="src">그리고 <b style="color:var(--ink)">√2</b> 가 붙는다 — 읽는 건 한 조건의 흔들림이 아니라 <b style="color:var(--ink)">단일 실행 둘의 차이</b>다 (Var(Δ)=2σ²)</div>
+        <div class="big" style="color:var(--warn);font-size:1.3em">자 = 5.5%p<span style="font-size:.6em;color:var(--mute)"> (폭 2.6%p 의 2배)</span></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">8개 짝 판정 — <b style="color:var(--accent)">확실 3</b> · 판정 불가 5</div>
+        <table class="dense">
+          <tr><th></th><th class="num">Δ</th><th class="num">seed</th><th class="num">지점</th><th>등급</th></tr>
+          <tr class="sum"><td class="k">클래스 체계</td><td class="num">+9.6%p</td><td class="num">✓</td><td class="num">✓</td><td style="color:var(--accent)"><b>확실</b></td></tr>
+          <tr class="sum"><td class="k">QA 넓은 기준</td><td class="num">−10.1%p</td><td class="num">✓</td><td class="num">✓</td><td style="color:var(--accent)"><b>확실</b></td></tr>
+          <tr class="sum"><td class="k">기준 좁힘</td><td class="num">+7.9%p</td><td class="num">✓</td><td class="num">✓</td><td style="color:var(--accent)"><b>확실</b>*</td></tr>
+          <tr><td class="k">데이터량</td><td class="num">+2.3%p</td><td class="num" style="color:var(--warn)">✗</td><td class="num">△</td><td style="color:var(--mute)">판정 불가</td></tr>
+          <tr><td class="k">QA 좁힌 · 학습량<br>모델 크기 · 크기(기준)</td><td class="num">≤2.2%p</td><td class="num" style="color:var(--warn)">✗</td><td class="num" style="color:var(--warn)">✗</td><td style="color:var(--mute)">판정 불가</td></tr>
+        </table>
+        <div class="src">* 본판을 뺀 자(8.1%p)로는 <b style="color:var(--ink)">기준 좁힘이 "방향만"</b>이 된다</div>
+        <div class="item warn"><div class="t">판정 불가는 <b>효과 없음이 아니다</b> — 여덟 짝 다 동등성 기준 미달</div></div>
+        <div class="item acc"><div class="t">판정 불가 다섯 중 <b>넷은 지점이 죽였다</b></div><div class="d">seed 를 더 돌려도 안 산다 → 다음 투자는 <b style="color:var(--ink)">지점 확보</b></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">규칙을 숫자 보기 전에 커밋했다 — 폭이 1·3·6%p 일 때 무엇이 살고 죽는지까지 미리 적었고, 실제 2.6%p 에서 예측대로 나왔다</div>
 </section>
 
 
