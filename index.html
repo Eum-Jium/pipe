@@ -1217,32 +1217,35 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <div class="foot">세션 1에서 적어 둔 "정답 라벨을 편차 있는 사람에게서 가져오는 순환" — 예상이 아니라 측정된 사실이 되었다</div>
 </section>
 
-<section class="slide tight" data-title="PE는 떼어 낸다"
- data-notes="여기부터가 부수적으로 나온 실무 결론입니다. 첫째, 관종별로 나눠 학습하는 게 이득인지 봤습니다. 강관은 나누면 손해였습니다. 마이너스 2.5퍼센트포인트요. PE는 반대로 이득이었습니다. 플러스 2.9퍼센트포인트고, 15.7퍼센트로 전체 실험 통틀어 가장 높은 수치가 나왔습니다. 처음엔 데이터량 문제라고 생각했습니다. 나누면 학습 데이터가 줄어드니까요. 그런데 강관이 669장, PE가 757장으로 규모가 비슷한데 정반대 결과가 나왔습니다. 데이터량으로는 설명이 안 됩니다. 답은 라벨 체계에 있었습니다. PE는 유효 클래스가 슬라임과 침전물뿐입니다. 결절이나 부식은 조사항목 자체가 없습니다. 그런데 통합 모델은 PE 프레임에서도 박리와 결절과 부식을 찾으려 합니다. 없는 걸 찾으려 하니 혼란이 생기고 성능이 깎였던 겁니다. 떼어놓으니 자기 문제에만 집중해서 15.7퍼센트가 나왔습니다. 강관은 반대입니다. 주철관과 클래스 체계가 같아서, 주철관의 2천 장이 강관을 돕고 있었습니다. 떼어내니 그 도움을 잃은 거죠. 그리고 이게 매뉴얼 구조와도 맞물립니다. 표 3-27 비금속관 항목을 보면 면적비 분기가 아예 없고 슬라임과 수질만 봅니다. 매뉴얼이 이미 PE를 다른 문제로 취급하고 있었던 겁니다. 그래서 결론은 PE는 분리하고 강관과 주철관은 묶는 겁니다.">
-  <div class="eyebrow">4-5 · 실무 결론 ① · E6 관종 분리</div>
-  <h2><b style="color:var(--accent)">PE는 떼어 내고</b>, 강관·주철관은 묶는다</h2>
+<section class="slide tight" data-title="PE는 다른 문제다"
+ data-notes="부수적으로 나온 실무 결론 첫 번째입니다. 관종별로 나눠 학습하는 게 이득인지 봤습니다. 먼저 정정할 게 있습니다. 이 장의 강관 숫자가 처음에 잘못 적혀 있었습니다. 분리 학습이 2.4퍼센트라고 적었는데 결과 파일의 실제 값은 6.4퍼센트입니다. 그러면 차이가 마이너스 2.5가 아니라 플러스 1.5가 되고, 부호가 반대가 됩니다. 그래서 강관은 통합이 이득이다, 떼면 손해다라고 했던 게 성립하지 않습니다. 거기 붙여뒀던 강관이 주철관 2천 장에 업혀 있었다는 설명도 틀린 숫자에 맞춰 지은 이야기라 같이 내렸습니다. 바로잡고 보면 이렇습니다. 강관 플러스 1.5, 주철관 마이너스 0.6, PE 플러스 2.9. 잡음 바닥선이 1.8퍼센트포인트니까 강관과 주철관은 판정 불가입니다. PE만 잡음 위인데 1.6배라 빠듯합니다. 그리고 여기서 한 가지 더 조심할 게 있습니다. 잡음 바닥선 1.8퍼센트포인트는 검증셋 732장 전체에서 잰 값입니다. 그런데 관종별로 자르면 강관이 143장, PE가 160장입니다. 표본이 작아지면 잡음은 커집니다. 같은 자를 그대로 대면 안 되고, 그렇게 보면 PE의 2.9퍼센트포인트도 안심할 수 없습니다. 그래서 분리가 이득이냐 아니냐는 지금 근거로는 못 박습니다. 제대로 매듭지으려면 같은 관종 조각에서 두 모델을 면적비로 프레임별로 채점해서 짝지어 검정해야 합니다. 그건 표본이 작아도 답이 나옵니다. 대신 확실한 게 하나 있습니다. 분리냐 통합이냐와 무관하게, PE가 다른 관종보다 두 배 반 잘 맞습니다. 15.7 대 6.4입니다. 이 격차는 잡음과 비교할 필요도 없이 큽니다. 왜 그러냐. PE는 애초에 다른 문제를 풉니다. 유효 클래스가 슬라임과 침전물뿐이고 결절이나 부식은 조사항목 자체가 없습니다. 매뉴얼 표 3-27 비금속관에 면적비 분기가 아예 없는 것과 같은 이야기입니다. 판단 여지가 적은 결함일수록 잘 맞힌다는 거고, 이건 관종별 라벨 일관성 차이로 읽힙니다. 앞에서 천장이 라벨에 있다고 말씀드린 것과 같은 방향입니다.">
+  <div class="eyebrow">4-5 · 실무 결론 ① · E6 관종 분리 · 2026-09-07 정정</div>
+  <h2><b style="color:var(--accent)">PE는 다른 문제</b>를 푼다 — 분리 여부는 아직 못 박는다</h2>
   <hr class="rule">
   <div class="body">
     <table class="dense" style="flex:none">
-      <tr><th style="width:9em">관종</th><th class="num" style="width:7em">학습 이미지</th><th class="num" style="width:6em">분리</th><th class="num" style="width:6em">통합</th><th class="num" style="width:6em">차이</th><th>판정</th></tr>
-      <tr><td class="k">강관 SP</td><td class="num">669</td><td class="num">2.4%</td><td class="num">4.8%</td><td class="num" style="color:var(--warn)"><b>−2.5%p</b></td><td>통합이 이득 — 떼면 손해</td></tr>
-      <tr><td class="k">주철관 DCIP</td><td class="num">2,006</td><td class="num">5.8%</td><td class="num">6.4%</td><td class="num">−0.6%p</td><td style="color:var(--mute)">잡음 안 — 판정 불가</td></tr>
-      <tr class="sum"><td class="k">PE관</td><td class="num">757</td><td class="num" style="color:var(--accent)"><b>15.7%</b></td><td class="num">12.8%</td><td class="num" style="color:var(--accent)"><b>+2.9%p</b></td><td style="color:var(--accent)"><b>분리가 이득</b> — 전체 실험 최고치</td></tr>
+      <tr><th style="width:8em">관종</th><th class="num" style="width:5.5em">OOS 조각</th><th class="num" style="width:5em">분리</th><th class="num" style="width:5em">통합</th><th class="num" style="width:5.5em">차이</th><th>판정 (잡음 1.8%p)</th></tr>
+      <tr><td class="k">강관 SP</td><td class="num">143장</td><td class="num">6.4%</td><td class="num">4.8%</td><td class="num">+1.5%p</td><td style="color:var(--mute)">0.9배 — 판정 불가</td></tr>
+      <tr><td class="k">주철관 DCIP</td><td class="num">429장</td><td class="num">5.8%</td><td class="num">6.4%</td><td class="num">−0.6%p</td><td style="color:var(--mute)">0.3배 — 판정 불가</td></tr>
+      <tr class="sum"><td class="k">PE관</td><td class="num">160장</td><td class="num" style="color:var(--accent)"><b>15.7%</b></td><td class="num">12.8%</td><td class="num">+2.9%p</td><td style="color:var(--warn)">1.6배 — 빠듯하다</td></tr>
     </table>
     <hr class="rule" style="margin:1.1em 0 .9em">
     <div class="split" style="grid-template-columns:1fr auto 1fr;grid-template-rows:minmax(0,1fr)">
-      <div class="stack" style="gap:.8em">
-        <div class="item warn"><div class="t">데이터량으로는 설명이 안 된다</div><div class="d">강관 669장, PE 757장으로 규모가 비슷한데 <b>정반대</b>다. "나누면 데이터가 줄어 손해"라는 설명이 깨진다</div></div>
-        <div class="item acc"><div class="t">PE는 애초에 다른 문제를 푼다</div><div class="d">유효 클래스가 <b>슬라임·침전물</b>뿐 — 결절·부식은 조사항목이 없다. 통합 모델은 PE에서도 박리·결절을 찾으려다 혼란을 겪고 있었다</div></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">이 장은 <b style="color:var(--warn)">한 번 틀렸다</b> — 2026-09-07 정정</div>
+        <div class="item warn"><div class="t">강관 분리값을 2.4%로 잘못 적었다</div><div class="d">결과 파일의 실제 값은 <b style="color:var(--ink)">6.4%</b>. 차이가 −2.5 → <b style="color:var(--ink)">+1.5%p</b> 로 <b style="color:var(--ink)">부호가 뒤집힌다.</b><br>"강관은 통합이 이득 · 떼면 손해" 와 "주철관 2,006장에 업혀 있었다" 는 <b style="color:var(--ink)">둘 다 내린다</b> — 틀린 숫자에 맞춰 지은 이야기였다</div></div>
+        <div class="item warn"><div class="t">잡음 자를 그대로 대면 안 된다</div><div class="d">1.8%p 는 <b style="color:var(--ink)">OOS 732장</b>에서 잰 값인데 관종별 조각은 143·429·160장이다 — 표본이 작으면 잡음은 커진다. <b style="color:var(--ink)">PE 의 2.9%p 도 안심할 수 없다.</b><br>매듭지으려면 같은 조각에서 <b style="color:var(--ink)">면적비 프레임별 채점 → 짝지어 검정</b>(33장)</div></div>
       </div>
       <div class="vr"></div>
-      <div class="stack" style="gap:.8em">
-        <div class="item acc"><div class="t">강관은 주철관에 업혀 있었다</div><div class="d">클래스 체계가 같아 <b>주철관 2,006장이 강관을 돕고 있었다.</b> 떼어 내니 그 도움을 잃었다</div></div>
-        <div class="item acc"><div class="t">매뉴얼이 이미 그렇게 나눠 놨다</div><div class="d">표 3-27(비금속관)에 <b>면적비 분기가 아예 없다.</b> 슬라임·수질만 본다 — 우리 결과와 같은 이야기</div></div>
+      <div class="stack" style="gap:.7em">
+        <div class="lbl">분리·통합과 <b style="color:var(--accent)">무관하게 확실한 것</b></div>
+        <div class="item acc"><div class="t">PE가 다른 관종보다 <b>2.5배</b> 잘 맞는다</div><div class="d"><b style="color:var(--ink)">15.7%</b> vs 주철관·강관 <b style="color:var(--ink)">6.4%</b>. 이 격차는 잡음과 대볼 필요도 없이 크다 — <b style="color:var(--ink)">판단 여지가 적은 결함일수록 잘 맞힌다.</b> 관종별 <b style="color:var(--ink)">라벨 일관성 차이</b>로 읽힌다</div></div>
+        <div class="item acc"><div class="t">PE는 애초에 다른 문제를 푼다</div><div class="d">유효 클래스가 <b>슬라임·침전물</b>뿐 — 결절·부식은 조사항목이 없다</div></div>
+        <div class="item acc"><div class="t">매뉴얼이 이미 그렇게 나눠 놨다</div><div class="d">표 3-27(비금속관)에 <b>면적비 분기가 아예 없다.</b> 슬라임·수질만 본다</div></div>
       </div>
     </div>
   </div>
-  <div class="foot">관종별 상한 PE 15.7% &gt; 주철관 6.4% &gt; 강관 4.8% — 판단 여지가 적은 결함일수록 잘 맞힌다</div>
+  <div class="foot">틀린 숫자 하나가 설명 두 개를 만들어 냈다 — 원천 파일과 맞대 보지 않으면 이야기가 먼저 선다</div>
 </section>
 
 <section class="slide tight" data-title="소실점은 해상도"
