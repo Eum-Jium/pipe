@@ -479,39 +479,39 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 </section>
 
 <section class="slide tight" data-title="무엇을 시험하나"
- data-notes="트랙 A에서 무엇을 돌려 볼지입니다. 순서보다 중요한 게 무엇을 시험하느냐입니다. 네 가지입니다. 첫째, 박리면적 일치율입니다. 이게 주 지표입니다. 모델이 부른 면적비가 10퍼센트 경계에서 사람 라벨과 같은 판정을 내느냐를 봅니다. 검증용 732장에 추론을 걸고, 폴리곤을 합집합으로 묶습니다. 겹친 자리를 두 번 세면 면적비가 100퍼센트를 넘어가서 그렇습니다. 그리고 반드시 바닥값과 같이 봅니다. 시험지가 반반이면 무조건 한쪽으로 찍어도 50퍼센트가 나오니까요. 그걸 못 넘으면 모델을 쓸 이유가 없습니다. 둘째, 소실점 일치율입니다. 매뉴얼이 말하는 면적은 화면 픽셀이 아니라 관 내면의 실제 면적입니다. 평면을 곡면으로 펴려면 관 안쪽 끝의 원, 그러니까 소실점이 있어야 합니다. 여기서 중요한 건 검출률만 세면 안 된다는 겁니다. 찾았다 못 찾았다가 아니라 중심이 어디냐가 곡면 가중치를 정합니다. 그래서 검출률과 중심 오차를 같이 잽니다. 셋째, 학습량 증가입니다. 더 태우면 새 관로에서도 오르느냐입니다. 여기서 규율이 하나 있습니다. 검증 점수만 보면 안 됩니다. 학습셋 점수를 같이 봐야 합니다. 둘 다 안 오르면 아직 덜 배운 거고, 학습셋만 오르고 검증이 그대로면 외우기만 한 겁니다. 완전히 다른 이야기인데 검증만 보면 구분이 안 됩니다. 넷째, 라벨 품질입니다. 라벨을 걸러내면 성능이 오르느냐입니다. 학습 조건을 전부 고정해 놓고 QA 기준만 바꿉니다. 넓게 거는 것과 좁게 거는 것 두 가지입니다. 그리고 나온 차이를 그냥 믿지 않고 잡음과 대봅니다. 실제로 이 시험에서 기준을 바꿔 가며 재다가 부호가 두 번 뒤집힌 적이 있습니다. 차이가 잡음보다 작으면 어느 쪽으로도 읽힙니다. 네 가지에 공통으로 걸리는 규율은 아래에 적어뒀습니다. 한 번에 손잡이 하나만 바꾸고, 검증 732장은 마지막에 한 번만 보고, 판정 규칙은 숫자를 보기 전에 먼저 못박습니다.">
+ data-notes="트랙 A에서 무엇을 돌려 볼지입니다. 순서보다 중요한 게 무엇을 시험하느냐입니다. 네 가지입니다. 첫째, 박리면적 일치율입니다. 주 지표입니다. 검증용 732장에 추론을 걸어 결함 면적을 따고, 폴리곤을 합집합으로 묶습니다. 겹친 자리를 두 번 세면 면적비가 100퍼센트를 넘어가거든요. 그걸 10퍼센트에서 자르고 라벨과 맞대 봅니다. 여기서 반드시 바닥값을 같이 봐야 합니다. 시험지가 반반이면 무조건 한쪽으로 찍어도 50퍼센트가 나옵니다. 그걸 못 넘으면 모델을 쓸 이유가 없습니다. 둘째, 소실점 일치율입니다. 매뉴얼이 말하는 면적은 화면 픽셀이 아니라 관 내면의 실제 면적입니다. 평면을 곡면으로 펴려면 관 안쪽 끝의 원이 있어야 하고요. 여기서 중요한 건 검출률만 세면 안 된다는 겁니다. 찾았다 못 찾았다가 아니라 원의 중심이 어디냐가 곡면 가중치를 정합니다. 그래서 검출률과 중심 오차를 같이 잽니다. 셋째, 학습량 증가입니다. 질문을 쉽게 말씀드리면 이겁니다. 데이터를 더 주고 더 오래 태우면 실력이 느느냐, 아니면 외우기만 하느냐. 이걸 가르려면 두 점수를 같이 봐야 합니다. 학습에 쓴 데이터에서의 점수와, 한 번도 안 본 새 관로에서의 점수요. 둘 다 오르면 실력이 는 겁니다. 학습셋만 오르고 새 관로가 그대로면 외운 겁니다. 둘 다 안 오르면 아직 덜 배운 거고요. 새 관로 점수만 보면 이 셋이 구분이 안 됩니다. 넷째, 라벨 품질입니다. 이것도 쉽게 말하면, 사람이 그린 라벨이 못 미더운 게 문제냐는 겁니다. 폴리곤이 화면을 지나치게 덮었거나 자막을 침범한 것들이 있습니다. 그런 의심스러운 라벨을 빼고 학습시켜 봅니다. 학습 조건은 전부 고정하고 걸러내는 기준만 넓게, 좁게 바꿉니다. 빼고 나서 좋아지면 라벨이 발목을 잡고 있던 겁니다. 다만 차이가 잡음보다 커야 읽을 수 있습니다. 실제로 이 시험에서 기준을 바꿔 가며 재다가 부호가 두 번 뒤집힌 적이 있습니다. 네 가지에 공통으로 거는 규율은 하나입니다. 한 번에 하나씩만 바꿔 가며 돌립니다. 두 개를 같이 바꾸면 어느 쪽이 효과를 냈는지 알 수가 없습니다.">
   <div class="eyebrow">4-0 · 트랙 A · 시험 설계</div>
   <h2>무엇을 돌려 볼 것인가 — <b style="color:var(--accent)">시험 넷</b></h2>
   <hr class="rule">
   <div class="body">
-    <div class="grid" style="grid-template-columns:.82fr 1.3fr;gap:.6em 1.5em;align-items:start">
-      <div class="card" style="padding:.65em .85em">
-        <div class="mono" style="font-size:1.05em;color:var(--accent2);font-weight:700">시험 01</div>
-        <div style="font-size:1.4em;font-weight:700;margin:.1em 0 .12em">박리면적 일치율</div>
-        <div class="d">모델이 부른 면적비가 <b>10% 경계</b>에서 사람 라벨과 같은 판정을 내는가</div>
+    <div class="grid" style="grid-template-columns:.86fr 1.26fr;gap:.75em 1.5em;align-items:start">
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 01</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">박리면적 일치율</div>
+        <div class="d" style="font-size:1.12em">모델이 부른 면적비가 <b>10% 경계</b>에서 사람 라벨과 같은 판정을 내는가</div>
       </div>
-      <div class="item"><div class="d">검증 732장에 추론 → 폴리곤을 <b style="color:var(--ink)">합집합</b>으로 묶어 겹친 자리를 한 번만 센다 → 10% 초과/이하로 자른다<br><b style="color:var(--ink)">바닥값(무조건 한쪽으로 찍기)과 반드시 같이 본다</b> — 그걸 못 넘으면 모델을 쓸 이유가 없다</div></div>
-      <div class="card" style="padding:.65em .85em">
-        <div class="mono" style="font-size:1.05em;color:var(--accent2);font-weight:700">시험 02</div>
-        <div style="font-size:1.4em;font-weight:700;margin:.1em 0 .12em">소실점 일치율</div>
-        <div class="d">관 안쪽 끝 원을 찾아 <b>곡면으로 펼 수 있는가</b></div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">검증 732장에 추론을 걸어 결함 면적을 딴다<br>폴리곤을 <b style="color:var(--ink)">합집합</b>으로 묶어 겹친 자리를 한 번만 센다 — 두 번 세면 면적비가 100%를 넘는다<br>10% 초과/이하로 자르고 라벨과 맞댄다 · <b style="color:var(--ink)">바닥값(무조건 한쪽으로 찍기)과 반드시 같이 본다</b></div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 02</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">소실점 일치율</div>
+        <div class="d" style="font-size:1.12em">관 안쪽 끝 원을 찾아 <b>곡면으로 펼 수 있는가</b></div>
       </div>
-      <div class="item"><div class="d">소실점 라벨이 있는 프레임에서 <b style="color:var(--ink)">검출률과 중심 오차를 같이</b> 잰다<br>"찾았다/못 찾았다"만 세면 안 된다 — 곡면 가중치는 <b style="color:var(--ink)">중심과 반지름</b>에서 나온다</div></div>
-      <div class="card" style="padding:.65em .85em">
-        <div class="mono" style="font-size:1.05em;color:var(--accent2);font-weight:700">시험 03</div>
-        <div style="font-size:1.4em;font-weight:700;margin:.1em 0 .12em">학습량 증가</div>
-        <div class="d">더 태우면 <b>새 관로에서도</b> 오르는가</div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">매뉴얼이 말하는 면적은 화면 픽셀이 아니라 <b style="color:var(--ink)">관 내면의 실면적</b>이다<br>평면을 곡면으로 펴려면 관 안쪽 끝의 <b>원</b>이 먼저 있어야 한다<br><b style="color:var(--ink)">검출률과 중심 오차를 같이</b> 잰다 — 가중치는 "찾았다"가 아니라 <b style="color:var(--ink)">중심과 반지름</b>에서 나온다</div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 03</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">학습량 증가</div>
+        <div class="d" style="font-size:1.12em">더 주고 더 태우면 <b>실력이 느는가, 외우기만 하는가</b></div>
       </div>
-      <div class="item"><div class="d">에폭·데이터량을 키우며 <b style="color:var(--ink)">학습셋과 검증을 같이</b> 잰다<br>검증만 보면 "안 올랐다"로 끝난다 — 학습셋을 같이 봐야 <b style="color:var(--ink)">덜 배운 것인지 외우기만 한 것인지</b>가 갈린다</div></div>
-      <div class="card" style="padding:.65em .85em">
-        <div class="mono" style="font-size:1.05em;color:var(--accent2);font-weight:700">시험 04</div>
-        <div style="font-size:1.4em;font-weight:700;margin:.1em 0 .12em">라벨 품질</div>
-        <div class="d">라벨을 걸러내면 <b>성능이 오르는가</b></div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">데이터량과 학습량을 키워 가며 돌린다<br>학습에 쓴 데이터 점수와 <b style="color:var(--ink)">한 번도 안 본 새 관로 점수를 같이</b> 본다<br>둘 다 오르면 실력 · <b style="color:var(--ink)">학습셋만 오르면 외운 것</b> · 둘 다 그대로면 덜 배운 것</div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 04</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">라벨 품질</div>
+        <div class="d" style="font-size:1.12em">사람이 그린 라벨이 <b>못 미더운 게 문제인가</b></div>
       </div>
-      <div class="item"><div class="d">학습 조건을 전부 고정하고 <b style="color:var(--ink)">QA 기준만</b> 바꾼다 (넓게 / 좁게)<br>나온 차이를 <b style="color:var(--ink)">잡음과 대본다</b> — 잡음보다 작으면 어느 쪽으로도 읽힌다</div></div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">폴리곤이 화면을 지나치게 덮었거나 자막을 침범한 <b style="color:var(--ink)">의심스러운 라벨을 빼고</b> 학습시킨다<br>학습 조건은 전부 고정하고 <b style="color:var(--ink)">걸러내는 기준만</b> 넓게 / 좁게 바꾼다<br>빼고 나서 좋아지면 <b style="color:var(--ink)">라벨이 발목을 잡고 있던 것</b> — 다만 차이가 잡음보다 커야 읽을 수 있다</div></div>
     </div>
   </div>
-  <div class="foot">넷에 공통으로 거는 규율 — 한 번에 손잡이 하나만 · 검증 732장은 마지막에 한 번만 · <b>판정 규칙은 숫자를 보기 전에</b></div>
+  <div class="foot">넷에 공통으로 거는 규율 — <b>한 번에 하나씩만 바꿔 가며 돌린다</b></div>
 </section>
 
 <section class="slide divider" data-title="분할을 바로잡았다" data-notes="4부 첫째 묶음입니다. 데이터를 자르는 방식을 바로잡은 이야기입니다.">
