@@ -526,7 +526,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
   <h2>라벨 없이 어디까지 갈까</h2>
   <hr>
   <p class="lead">판정 기준부터 AI가 스스로 찾는다. <b>원본 영상이 와야 열린다</b> — 트랙 A 가 쓴 표본 프레임을 그대로 따라가면 B 가 아니다.</p>
-  <div class="items"><div><b>전제</b>원본 영상 · 관경 · 카메라 제원</div><div><b>5-0</b>3D 를 먼저 세운다</div><div><b>5-1</b>안 섰다 — 대조군이 원인을 갈랐다</div></div>
+  <div class="items"><div><b>전제</b>원본 영상 · 관경 · 카메라 제원</div><div><b>5-0</b>3D 를 먼저 세운다</div><div><b>5-1</b>이 영상으로는 안 섰다</div><div><b>5-2</b>원인은 촬영 시선 — 축방향이면 선다</div></div>
 </section>
 
 <section class="slide tight" data-title="3D 를 먼저 세운다"
@@ -560,9 +560,9 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 </section>
 
 <section class="slide tight" data-title="3D 는 안 섰다"
- data-notes="5부 두 번째 장입니다. 앞 장에서 3D 가 서는지부터 보겠다고 말씀드렸는데 답이 나왔습니다. 안 섭니다. 먼저 전제 하나가 어긋났습니다. 원본 영상이 왔는데 한 편이고, 검증에 쓰는 33지점 95개와 겹치는 게 하나도 없습니다. 2025년 11월 촬영이라 데이터셋 밖의 새 영상입니다. 그래서 채점은 여전히 막혀 있습니다. 다만 막힌 건 채점이지 탐침이 아니었습니다. 3D 탐침을 막고 있던 사유는 연속 프레임이 없다는 것 하나였는데, 받은 영상이 10분 연속이라 그게 풀립니다. 되느냐 안 되느냐는 어느 지점 영상이냐와 무관하니까 채점에서 멈추고 탐침만 돌렸습니다. 도구는 MapAnything 아파치 판입니다. 코드와 가중치가 둘 다 아파치 2.0이고, 메트릭이라 크기가 딸려 나온다고 알려진 모델입니다. 왼쪽 표를 보시면 실제 영상 세 구간에서 전부 안 섭니다. 그런데 여기서 멈추면 왜 안 되는지를 못 가릅니다. 제가 설치를 잘못했을 수도 있고, 모델이 관을 못 하는 걸 수도 있고, 이 영상이 상한 걸 수도 있습니다. 그래서 정답을 정확히 아는 가짜 장면 셋을 직접 렌더해서 같은 모델에 태웠습니다. 이게 오른쪽입니다. 첫째, 평범한 방에서는 맞힙니다. 가장 가까운 면까지 거리를 1.13배로, 화각을 89.7도로 냅니다. 정답이 100도입니다. 설치는 멀쩡합니다. 둘째, 그런데 이상 조건의 관에서도 관경이 7배 틀립니다. 300밀리 관을 2미터 관으로 봅니다. 조명도 균일하고 텍스처도 선명하고 화각도 정확한데 그렇습니다. 모양은 봅니다. 둘레를 100퍼센트 덮고 깊이도 벌어집니다. 크기만 틀립니다. 셋째, 여기에 카메라 동행 조명만 얹으면 더 무너집니다. 기하는 완전히 같은데 궤적이 5.3배에서 9배로 갑니다. 그리고 실제 영상은 한 단계 더 갑니다. 크기가 틀린 게 아니라 원통이라는 것 자체를 못 봅니다. 둘레 커버가 6퍼센트고 깊이 폭이 10퍼센트입니다. 관을 60미터 앞의 평평한 면으로 읽은 겁니다. 여기서 가장 무거운 수는 두 번째입니다. 이상 조건에서 이미 7배 틀린다는 것. 이건 조명이나 화질이나 화각을 전부 고친 영상을 새로 찍어 와도 쓸 수 없다는 뜻입니다. 3D 노선은 촬영 개선으로 되살아나지 않습니다. 메트릭이라 스케일이 딸려 나온다는 전제가 관 안쪽에서 성립하지 않습니다. 저희가 시작하기 전에 위험으로 적어 뒀던 자리인데, 예상이 아니라 측정된 사실이 됐습니다.">
+ data-notes="5부 두 번째 장입니다. 앞 장에서 3D 가 서는지부터 보겠다고 말씀드렸는데 답이 나왔습니다. 안 섭니다. 먼저 전제 하나가 어긋났습니다. 원본 영상이 왔는데 한 편이고, 검증에 쓰는 33지점 95개와 겹치는 게 하나도 없습니다. 2025년 11월 촬영이라 데이터셋 밖의 새 영상입니다. 그래서 채점은 여전히 막혀 있습니다. 다만 막힌 건 채점이지 탐침이 아니었습니다. 3D 탐침을 막고 있던 사유는 연속 프레임이 없다는 것 하나였는데, 받은 영상이 10분 연속이라 그게 풀립니다. 되느냐 안 되느냐는 어느 지점 영상이냐와 무관하니까 채점에서 멈추고 탐침만 돌렸습니다. 도구는 MapAnything 아파치 판입니다. 코드와 가중치가 둘 다 아파치 2.0이고, 메트릭이라 크기가 딸려 나온다고 알려진 모델입니다. 왼쪽 표를 보시면 실제 영상 세 구간에서 전부 안 섭니다. 그런데 여기서 멈추면 왜 안 되는지를 못 가릅니다. 제가 설치를 잘못했을 수도 있고, 모델이 관을 못 하는 걸 수도 있고, 이 영상이 상한 걸 수도 있습니다. 그래서 정답을 정확히 아는 가짜 장면 셋을 직접 렌더해서 같은 모델에 태웠습니다. 이게 오른쪽입니다. 첫째, 평범한 방에서는 맞힙니다. 가장 가까운 면까지 거리를 1.13배로, 화각을 89.7도로 냅니다. 정답이 100도입니다. 설치는 멀쩡합니다. 둘째, 그런데 이상 조건의 관에서도 관경이 7배 틀립니다. 300밀리 관을 2미터 관으로 봅니다. 조명도 균일하고 텍스처도 선명하고 화각도 정확한데 그렇습니다. 모양은 봅니다. 둘레를 100퍼센트 덮고 깊이도 벌어집니다. 크기만 틀립니다. 셋째, 여기에 카메라 동행 조명만 얹으면 더 무너집니다. 기하는 완전히 같은데 궤적이 5.3배에서 9배로 갑니다. 그리고 실제 영상은 한 단계 더 갑니다. 크기가 틀린 게 아니라 원통이라는 것 자체를 못 봅니다. 둘레 커버가 6퍼센트고 깊이 폭이 10퍼센트입니다. 관을 60미터 앞의 평평한 면으로 읽은 겁니다. 여기서 한 가지를 조심해야 합니다. 7배라는 건 전체 스케일이 틀렸다는 뜻인데, 저희가 내야 하는 값은 박리 비율입니다. 비율은 분자와 분모가 같이 k배로 늘면 약분돼서 안 틀립니다. 그러니까 7배 자체는 치명적이지 않습니다. 실제로 해가 되는 건 반경 방향과 축 방향이 서로 다르게 늘어나는 것, 그리고 관을 따라가면서 그 배율이 흔들리는 겁니다. 메트릭이라 스케일이 딸려 나온다는 전제는 관 안쪽에서 성립하지 않는 게 맞습니다. 그건 측정된 사실입니다. 하지만 그것만으로 3D를 접을 수는 없습니다. 그러면 실제 영상은 왜 크기만이 아니라 모양까지 잃었을까요. 다음 장에서 그걸 갈랐습니다.">
   <div class="eyebrow">5-1 · 트랙 B · 2026-09-11 · 탐침 완주</div>
-  <h2>3D 는 <b style="color:var(--warn)">안 섰다</b> — 촬영을 고쳐도 안 된다</h2>
+  <h2>3D 는 <b style="color:var(--warn)">이 영상으로는</b> 안 섰다</h2>
   <hr class="rule">
   <div class="body">
     <div class="split" style="grid-template-columns:1fr auto 1.12fr;grid-template-rows:minmax(0,1fr)">
@@ -580,7 +580,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
       </div>
       <div class="vr"></div>
       <div class="stack" style="gap:.58em">
-        <div class="lbl">정답이 없으니 → <b style="color:var(--accent)">정답을 아는 가짜 장면</b>을 렌더해 같이 태웠다</div>
+        <div class="lbl">정답이 없으니 → <b style="color:var(--accent)">정답을 아는 가짜 장면</b>을 같이 태웠다</div>
         <table class="dense">
           <tr><th></th><th class="num">둘레커버</th><th class="num">궤적배율</th><th class="num">크기배율</th></tr>
           <tr><td class="k">평범한 방 <span style="color:var(--mute)">관 아님</span></td><td class="num">100%</td><td class="num">0.55배</td><td class="num" style="color:var(--accent)"><b>1.13배</b></td></tr>
@@ -588,14 +588,12 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
           <tr><td class="k">같은 관 + 동행조명</td><td class="num">100%</td><td class="num">9.02배</td><td class="num">6.13배</td></tr>
         </table>
         <div class="src">배율은 <b style="color:var(--ink)">1.00 이 정답</b> · 크기는 방=최근접면(1.5m) · 관=관경(300mm)</div>
-        <div class="item acc"><div class="t">ㄱ 설치 — <b>지워졌다</b> <span style="color:var(--mute);font-weight:400">방에서 거리 1.13배 · 화각 89.7°(정답 100°)</span></div></div>
-        <div class="item warn"><div class="t">ㄴ 모델 — <b>이상 조건에서도 관경이 7배</b></div><div class="d">300mm 를 <b style="color:var(--ink)">2,098mm</b> 로 본다 — 모양은 보는데(둘레 100%) <b style="color:var(--ink)">크기만 틀린다</b></div></div>
-        <div class="item warn"><div class="t">ㄷ 영상 — 더 무너뜨린다</div><div class="d">기하가 같은데 <b style="color:var(--ink)">조명만</b> 얹어도 궤적 5.3 → 9.0배 · 실제 영상은 <b style="color:var(--ink)">모양까지</b> 잃는다</div></div>
-        <div class="big" style="color:var(--warn);font-size:1.2em;margin:.1em 0">이상 조건에서 이미 7배 틀린다</div>
+        <div class="item acc"><div class="t">설치는 멀쩡하다 <span style="color:var(--mute);font-weight:400">방에서 거리 1.13배 · 화각 89.7°(정답 100°)</span></div></div><div class="item warn"><div class="t">이상 조건의 관도 <b>크기는 7배</b> — 다만 <b>모양은 본다</b> <span style="color:var(--mute);font-weight:400">둘레 100%</span></div></div>
+        <div class="item acc"><div class="t">전체 스케일 오차는 <b>비율에서 약분된다</b></div><div class="d">낼 값이 박리 <b style="color:var(--ink)">비율</b>이라 분자·분모가 같이 k 배면 안 틀린다 — 해가 되는 건 <b style="color:var(--ink)">비등방·드리프트</b></div></div><div class="big" style="color:var(--accent);font-size:1.18em;margin:.1em 0">그러면 실제 영상은 왜 모양까지 잃었나 →</div>
         </div>
     </div>
   </div>
-  <div class="foot">"메트릭이라 스케일이 딸려 나온다"는 전제가 <b>관 안쪽에서 성립하지 않는다</b> — 시작 전 위험으로 적어 둔 자리가 예상이 아니라 <b>측정된 사실</b>이 됐다</div>
+  <div class="foot">"메트릭이라 스케일이 딸려 나온다"는 전제는 <b>관 안쪽에서 성립하지 않는다</b> — 다만 그것만으로 3D 를 접을 수는 없다. <b>다음 장에서 원인을 갈랐다</b></div>
 </section>
 
 <section class="slide tight" data-title="돌아간다 ≠ 섰다"
@@ -629,6 +627,44 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">다음에 이런 모델을 쓸 때 <b>먼저 확인할 것</b> — 마스크와 신뢰도가 같은 말을 하는가, 그리고 <b>장면 밖에 자가 있는가</b></div>
+</section>
+
+<section class="slide tight" data-title="원인은 촬영 시선이었다"
+ data-notes="앞 장 오른쪽 마지막 줄에서 물음을 남겼습니다. 전체 스케일이 틀린 건 비율에서 약분되는데, 그럼 실제 영상은 왜 모양까지 잃었느냐입니다. 답을 찾았고, 앞 장에서 저희가 내렸던 결론 하나를 정정합니다. 처음에 저희는 이상 조건의 합성 관에서도 관경이 7배 틀리니까 촬영을 고쳐도 안 된다고 적었습니다. 그게 틀렸습니다. 이 표를 보시면 관도 같고 텍스처도 같고 조명도 같고 화각도 같고 주행거리도 같습니다. 딱 하나, 카메라가 어디를 보느냐만 바꿨습니다. 축을 따라 정면을 보면 둘레가 한 장에 다 들어옵니다. 커버리지 100퍼센트입니다. 카메라를 벽 가까이 옮기고 비스듬히 돌리면 초승달만 보입니다. 17퍼센트로 떨어집니다. 그리고 실제 영상이 6퍼센트입니다. 바로 그 자리입니다. 한 번도 안 보인 둘레는 어떤 방법으로도 복원할 수 없습니다. 이건 모델의 한계가 아니라 정보가 없는 겁니다. 저희가 왜 이걸 놓쳤냐면 구간을 하나만 골랐기 때문입니다. 그것도 이 영상에는 축방향으로 보면서 움직이는 구간이 아예 없어서 어쩔 수 없이 비스듬한 구간이었습니다. 영상 끝에 축방향 프레임이 있긴 한데 거기서는 카메라가 정지해 있습니다. 프레임 간 흐름이 0.4픽셀 미만입니다. 시차가 없으면 3D는 원리적으로 안 섭니다. 카메라 제원도 확인했습니다. 화각을 90도, 100도, 110도, 120도로 직접 넣어봤는데 실제 영상의 깊이폭과 둘레커버가 안 움직입니다. 오히려 실제 영상에서는 준 값을 따르지도 않습니다. 120도를 줬는데 48.6도를 냅니다. 제원은 병목이 아니었습니다. 그래서 결론이 바뀝니다. 3D 노선은 살아 있습니다. 조건은 축방향 고정 카메라로 전진하면서 찍은 영상입니다. 그리고 오른쪽이 중요한데, 그런 영상이 어느 것인지 미리 알 수 있는 단서가 데이터셋 안에 이미 있었습니다. 소실점 라벨입니다. 소실점이 보였다는 건 관 안쪽 끝이 화면에 들어왔다는 뜻이고, 그건 축방향으로 보고 있었다는 뜻입니다. 검증용 95개 영상 중에 10개에서 소실점이 잡혔고, 2024년 4월 2일 1지점 계열은 표본의 86퍼센트입니다. 95개를 다 기다릴 필요가 없습니다. 이 네 개만 먼저 받으면 3D를 바로 시험할 수 있습니다. 다만 한계가 하나 있습니다. 라벨이 말해주는 건 둘레가 보였다까지입니다. 그 구간에 이동이 있었는지는 원본을 받아봐야 압니다. 방금 말씀드린 영상 끝 구간이 정확히 그 함정이었습니다. 둘레는 보이는데 안 움직였습니다.">
+  <div class="eyebrow">5-2 · 트랙 B · 2026-09-11 · 앞 장 결론 정정</div>
+  <h2>원인은 <b style="color:var(--accent)">촬영 시선</b>이었다 — 축방향이면 <b style="color:var(--accent)">둘레가 다 보인다</b></h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="split" style="grid-template-columns:1.12fr auto 1fr;grid-template-rows:minmax(0,1fr)">
+      <div class="stack" style="gap:.6em">
+        <div class="lbl">같은 관(300mm)·텍스처·조명·화각·주행(2.7m) — <b style="color:var(--accent)">시선만 바꿨다</b></div>
+        <table class="dense">
+          <tr><th></th><th class="num">둘레커버</th><th class="num">비등방</th><th class="num">드리프트</th></tr>
+          <tr class="sum"><td class="k">축방향 <span style="color:var(--mute)">균일조명</span></td><td class="num" style="color:var(--accent)"><b>100%</b></td><td class="num">1.33</td><td class="num">1.25배</td></tr>
+          <tr><td class="k">축방향 <span style="color:var(--mute)">동행조명</span></td><td class="num" style="color:var(--accent)"><b>100%</b></td><td class="num">0.68</td><td class="num">1.56배</td></tr>
+          <tr><td class="k">비스듬히 <span style="color:var(--mute)">균일조명</span></td><td class="num" style="color:var(--warn)"><b>17%</b></td><td class="num">4.34</td><td class="num">1.05배</td></tr>
+          <tr><td class="k">실제 segA</td><td class="num" style="color:var(--warn)"><b>6%</b></td><td class="num">—</td><td class="num">—</td></tr>
+        </table>
+        <div class="big" style="color:var(--accent);font-size:1.16em;margin:.1em 0">안 보인 둘레는 복원할 수 없다</div>
+        <div class="src">모델의 한계가 아니라 <b style="color:var(--ink)">정보가 없는 것</b>이다</div>
+        <div class="item warn"><div class="t">왜 놓쳤나 — <b>이 영상엔 쓸 구간이 없다</b></div><div class="d">"둘레가 보이면서 움직이는" 구간이 하나도 없다. 끝(18140~)에 축방향 프레임은 있지만 카메라가 <b style="color:var(--ink)">정지</b>해 있다(흐름 0.4px 미만)</div></div>
+      </div>
+      <div class="vr"></div>
+      <div class="stack" style="gap:.5em">
+        <div class="item warn"><div class="t">카메라 제원은 <b>병목이 아니다</b></div><div class="d">화각을 <b style="color:var(--ink)">90·100·110·120°</b> 로 넣어도 둘레커버 6~8% 가 안 움직인다</div></div>
+        <div class="lbl">어느 영상이 축방향인지 <b style="color:var(--accent)">이미 알 수 있다</b> — 소실점이 보였다 = 축방향이다</div>
+        <table class="dense">
+          <tr><th>OOS 95개 중 소실점 10개 — 위 셋</th><th class="num">표본 중</th></tr>
+          <tr class="sum"><td class="k">20240402_1지점 역방향 후진</td><td class="num" style="color:var(--accent)"><b>86%</b></td></tr>
+          <tr class="sum"><td class="k">20240402_1지점 역방향 전진</td><td class="num" style="color:var(--accent)"><b>86%</b></td></tr>
+          <tr><td class="k">20240402_1지점 순방향 후진</td><td class="num">43%</td></tr>
+          </table>
+        
+        <div class="item acc"><div class="t"><b>95개를 다 기다릴 필요가 없다</b> — 셋만 먼저 받으면 바로 시험한다</div></div><div class="item warn"><div class="t">한계 — 라벨은 <b>"둘레가 보였다"까지</b></div><div class="d">그 구간에 <b style="color:var(--ink)">이동이 있었는지</b>는 원본을 받아야 안다</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">정정 — <b>"촬영을 고쳐도 안 된다"를 내린다.</b> 3D 노선은 살아 있고 조건은 하나다: <b>축방향 고정 카메라로 전진하며 찍은 영상</b></div>
 </section>
 
 <section class="slide divider" data-title="분할을 바로잡았다" data-notes="4부 첫째 묶음입니다. 데이터를 자르는 방식을 바로잡은 이야기입니다.">
