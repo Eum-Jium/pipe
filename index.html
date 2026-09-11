@@ -169,7 +169,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 .divider .items div{font-size:1.35em;color:#7d878f}
 .divider .items b{display:block;color:#c6ced4;font-weight:400;margin-bottom:.2em;font-family:var(--mono);font-size:.82em}
 
-.tocwrap{display:grid;grid-template-columns:repeat(4,1fr);gap:1.8em;flex:1;min-height:0;align-content:start}
+.tocwrap{display:grid;grid-template-columns:repeat(5,1fr);gap:1.25em;flex:1;min-height:0;align-content:start}
 .tocwrap .col{display:flex;flex-direction:column;gap:.55em;min-height:0}
 .tocwrap .ph{font-family:var(--mono);font-size:1.25em;color:var(--accent2);letter-spacing:.08em}
 .tocwrap .pn{font-size:1.77em;font-weight:700;line-height:1.2;margin-bottom:.25em}
@@ -203,7 +203,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 <section class="slide tight" data-title="목차"
  data-notes="전체 흐름을 먼저 보여드립니다. 네 부로 되어 있습니다. 1부는 무엇을 문제로 잡았는가입니다. 관로 진단 업무 전 단계에서 후보 열두 개를 뽑고 그중 판독자별 판정 편차를 골랐습니다. 2부는 그래서 어떤 데이터를 가지고 있는가, 3부는 그걸로 무엇을 어떻게 할 것인가입니다. 4부는 이번에 실제로 만들어 보면서 확인한 것들인데, 여기가 이번 발표의 새로운 내용입니다. 분할을 다시 자른 것, 매뉴얼 원문을 확보해서 10퍼센트의 정체를 확인한 것, 면적 계산 모듈을 만들면서 나온 것들입니다. 4부는 부록 성격이라 시간이 부족하면 건너뛰셔도 되지만, 앞의 주장을 뒷받침하는 숫자가 거기 있습니다.">
   <div class="eyebrow">CONTENTS</div>
-  <h2>네 부로 말씀드립니다</h2>
+  <h2>다섯 부로 말씀드립니다</h2>
   <hr class="rule">
   <div class="body">
     <div class="tocwrap">
@@ -232,18 +232,24 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
         <div class="ph">PART 4 · 트랙 A</div><div class="pn">기존 라벨로<br>어디까지 갔나</div>
         <ol>
           <li><i>13</i><b>무엇을 시험하나</b> <span style="color:var(--faint)">시험 넷</span></li>
-          <li><i>14</i><b>분할을 바로잡았다</b> <span style="color:var(--faint)">2장</span></li>
-          <li><i>17</i><b>매뉴얼이 말하는 10%</b> <span style="color:var(--faint)">4장</span></li>
-          <li><i>22</i><b>면적을 어떻게 세나</b> <span style="color:var(--faint)">3장</span></li>
-          <li><i>26</i><b>이 숫자를 믿어도 되나</b> <span style="color:var(--faint)">5장</span></li>
-          <li><i>32</i><b>그래서 무엇을 할 것인가</b> <span style="color:var(--faint)">4장</span></li>
-          <li><i>37</i><b>다시 재 보니 달랐다</b> <span style="color:var(--faint)">5장</span></li>
-          <li><i>42</i><b>판정 화면 · 결론</b> <span style="color:var(--faint)">미정</span></li>
+          <li><i>16</i><b>분할을 바로잡았다</b></li>
+          <li><i>19</i><b>매뉴얼이 말하는 10%</b></li>
+          <li><i>24</i><b>면적을 어떻게 세나</b></li>
+          <li><i>28</i><b>이 숫자를 믿어도 되나</b></li>
+          <li><i>34</i><b>그래서 무엇을 할 것인가</b></li>
+          <li><i>39</i><b>다시 재 보니 달랐다</b></li>
+          <li><i>44</i><b>판정 화면 · 결론</b> <span style="color:var(--faint)">미정</span></li>
+        </ol>
+      </div>
+      <div class="col">
+        <div class="ph">PART 5</div><div class="pn">라벨 없이<br>어디까지 갈까</div>
+        <ol>
+          <li><i>15</i><b>무엇을 시험하나</b> <span style="color:var(--faint)">착수 전</span></li>
         </ol>
       </div>
     </div>
   </div>
-  <div class="foot">1~3부가 무엇을 왜 하는가, 4부가 실제로 만들어 보고 확인한 숫자다</div>
+  <div class="foot">1~3부가 무엇을 왜 하는가 · 4부가 기존 라벨로 실제 돌려 본 숫자 · <b>5부는 아직 설계만 있다</b></div>
 </section>
 
 <section class="slide divider" data-title="무엇을 문제로 잡았나" data-notes="1부입니다. 무엇을 문제로 잡았는지부터 말씀드립니다.">
@@ -512,6 +518,51 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     </div>
   </div>
   <div class="foot">넷에 공통으로 거는 규율 — <b>한 번에 하나씩만 바꿔 가며 돌린다</b></div>
+</section>
+
+<section class="slide divider" data-title="트랙 B — 라벨 없이"
+ data-notes="여기서 트랙 B로 넘어갑니다. 트랙 B는 라벨을 아예 주지 않는 갈래입니다. 판정 기준부터 AI가 스스로 찾아서 라벨까지 만들고 학습합니다. 아직 착수 전이고요, 여는 조건은 앞에서 말씀드린 게이트 둘입니다. 트랙 A가 최대치에 도달하고, 담당자가 방향성을 결정하면 그때 엽니다. 그래서 이 부에는 결과가 없습니다. 무엇을 시험할지만 적어 뒀습니다. 요구정의서는 이미 초안까지 써 뒀지만 보류 상태입니다. 트랙 A의 최대치를 모르는 상태에서 B에 무엇을 요구할지 정하면 그게 다시 추측이 되니까요.">
+  <div class="pt">PART 5 · 트랙 B</div>
+  <h2>라벨 없이 어디까지 갈까</h2>
+  <hr>
+  <p class="lead">판정 기준부터 AI가 스스로 찾는다. <b>아직 착수 전</b>이라 결과가 없다 — 무엇을 시험할지만 적어 둔다.</p>
+  <div class="items"><div><b>5-0</b>무엇을 시험하나</div></div>
+</section>
+
+<section class="slide tight" data-title="무엇을 시험하나 (B)"
+ data-notes="트랙 B에서 무엇을 시험할지입니다. 여기도 네 가지입니다. 순서가 중요합니다. 첫째, 기준서 대조입니다. 라벨도, 클래스 정의도, 10퍼센트라는 숫자도 주지 않고 먼저 기준서를 제출받습니다. 여기서 한 번 멈춥니다. 학습을 돌리기 전입니다. 임계값이 얼마인지, 어떤 결함을 판정 대상으로 잡았는지, 관종을 구분했는지, 평가 단위를 무엇으로 잡았는지를 매뉴얼과 항목별로 대조합니다. 이게 사실 헤드라인 결과입니다. 학습을 한 번도 안 돌리고도 답이 나오는 부분입니다. 둘째, 면적비 순위입니다. 이게 안전망입니다. AI가 임계값을 10퍼센트가 아니라 15퍼센트로 잡았다고 해봅시다. 이분 판정만 보면 전부 틀린 것처럼 나옵니다. 그런데 면적비 자체가 사람 판단과 같은 방향으로 움직이면, 보는 눈은 맞았고 자만 달랐다고 말할 수 있습니다. 그래서 임계값을 몰라도 잴 수 있는 순위 일치를 따로 봅니다. 셋째, 이분 판정 일치입니다. AI가 정한 기준으로 자른 판정을 우리 정답지와 맞댑니다. 트랙 A와 같은 검증 732장에서 잽니다. 그래야 두 트랙 결과를 나란히 놓을 수 있습니다. AI 규칙이 이분이 아니면 변환해야 하는데, 변환이 불가능하면 그것도 결과입니다. 억지로 맞추지 않고 왜 대응이 안 되는지를 적습니다. 넷째, 오염 점검입니다. 우리가 주는 건 관종, 관경, 카메라 제원까지입니다. 매뉴얼 피디에프나 10퍼센트라는 수치, 관종별 판정 대상은 주지 않습니다. 그런데 AI가 스스로 검색해서 같은 매뉴얼에 닿는 건 정상이고 오히려 성공입니다. 우리가 건네주는 것만 막는 겁니다. 예상되는 함정이 하나 있습니다. 하수관 기준은 자료가 훨씬 많습니다. 그걸 가져오면 상수관과 결함 양상이 달라서 엉뚱한 체계가 나옵니다. 그것도 결과입니다. 공개 자료만으로는 도메인 구분이 안 된다는 증거니까요.">
+  <div class="eyebrow">5-0 · 트랙 B · 시험 설계</div>
+  <h2>무엇을 돌려 볼 것인가 — <b style="color:var(--accent)">시험 넷</b></h2>
+  <hr class="rule">
+  <div class="body">
+    <div class="grid" style="grid-template-columns:.86fr 1.26fr;gap:.75em 1.5em;align-items:start">
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 01</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">기준서 대조</div>
+        <div class="d" style="font-size:1.12em">스스로 찾은 판정 기준이 <b>매뉴얼과 얼마나 같은가</b></div>
+      </div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">라벨 · 클래스 정의 · "10%" 를 주지 않고 <b style="color:var(--ink)">기준서를 먼저 받는다</b> — 여기서 한 번 멈춘다<br>임계값 · 판정 대상 · 관종별 구분 · 평가 단위를 항목별로 매뉴얼과 대조한다<br><b style="color:var(--ink)">이것 자체가 헤드라인 결과다</b> — 학습을 한 번도 안 돌리고 답이 나온다</div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 02</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">면적비 순위</div>
+        <div class="d" style="font-size:1.12em">자가 달라도 <b>보는 눈은 맞았는가</b></div>
+      </div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">AI가 낸 면적비를 사람 판정과 <b style="color:var(--ink)">순위로만</b> 맞댄다 — 임계값을 몰라도 잰다<br>10%가 아니라 15%로 잘랐어도 면적비가 같은 방향으로 움직이면 읽을 수 있다<br><b style="color:var(--ink)">이게 안전망이다</b> — 이분 판정만 보면 임계값 하나 때문에 전부 틀린 것처럼 나온다</div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 03</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">이분 판정 일치</div>
+        <div class="d" style="font-size:1.12em">스스로 정한 기준으로 자른 판정이 <b>정답지와 맞는가</b></div>
+      </div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">AI 가 낸 초과/이하 판정을 프레임마다 정답지와 맞댄다<br>트랙 A 와 <b style="color:var(--ink)">같은 검증 732장</b>에서 잰다 — 그래야 두 트랙을 나란히 놓을 수 있다<br>규칙이 이분이 아니면 변환한다 · <b style="color:var(--ink)">변환이 불가능하면 그것도 결과다</b></div></div>
+      <div class="card" style="padding:.95em 1.1em">
+        <div class="mono" style="font-size:1.15em;color:var(--accent2);font-weight:700">시험 04</div>
+        <div style="font-size:1.62em;font-weight:700;margin:.14em 0 .2em">오염 점검</div>
+        <div class="d" style="font-size:1.12em">우리가 <b>안 준 것에 스스로 닿았는가</b></div>
+      </div>
+      <div class="item"><div class="d" style="font-size:1.06em;line-height:1.62">주는 것은 관종 · 관경 · 카메라 제원까지 — <b style="color:var(--ink)">매뉴얼 · "10%" · 판정 대상은 안 준다</b><br>스스로 검색해 같은 매뉴얼에 닿으면 <b style="color:var(--ink)">정상이고 오히려 성공</b>이다. 건네주는 것만 막는다<br>자료가 많은 <b style="color:var(--ink)">하수관 기준을 가져오면</b> 그것도 결과 — 공개 자료로는 도메인 구분이 안 된다는 증거</div></div>
+    </div>
+  </div>
+  <div class="foot">트랙 A 와 다른 점은 하나 — <b>기준서에서 한 번 멈추고, 그 기준을 매뉴얼과 먼저 대조한다</b></div>
 </section>
 
 <section class="slide divider" data-title="분할을 바로잡았다" data-notes="4부 첫째 묶음입니다. 데이터를 자르는 방식을 바로잡은 이야기입니다.">
