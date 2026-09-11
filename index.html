@@ -443,21 +443,21 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     <div class="lbl">라벨을 믿을 수 있는지 확인할 방법이 없다. 그래서 두 쪽을 나란히 돌린다.</div>
     <div class="grid g2">
       <div class="card">
+        <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK B</div>
+        <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">기존 라벨로</div>
+        <div class="stack" style="gap:.75em">
+          <div class="item"><div class="d"><b style="color:var(--ink)">주는 것</b> — 관종 · 관경 · 카메라 제원 + <b style="color:var(--ink)">기존 라벨 4,916장</b></div></div>
+          <div class="item"><div class="d"><b style="color:var(--ink)">학습 3,440 · 점검 744 · 검증 732장</b><br>지점 단위로 잘라 같은 관로가 섞이지 않게 한다</div></div>
+          <div class="item"><div class="d">라벨이 바뀌면 데이터만 갈아끼운다<br>원본 라벨명을 보존해 두었다</div></div>
+        </div>
+      </div>
+      <div class="card">
         <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK A</div>
         <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">라벨 없이</div>
         <div class="stack" style="gap:.75em">
           <div class="item"><div class="d"><b style="color:var(--ink)">주는 것</b> — 관종 · 관경 · 카메라 제원</div></div>
           <div class="item"><div class="d"><b style="color:var(--warn)">안 주는 것</b> — 라벨 · 클래스 정의</div></div>
           <div class="item"><div class="d">판정 기준을 <b style="color:var(--ink)">AI가 스스로 찾아</b> 라벨까지 만들고 학습한다<br><b style="color:var(--ink)">검증 732장</b>에는 라벨을 만들지 않는다</div></div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK B</div>
-        <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">기존 라벨로</div>
-        <div class="stack" style="gap:.75em">
-          <div class="item"><div class="d"><b style="color:var(--ink)">주는 것</b> — 위와 동일 + 기존 라벨 4,916장</div></div>
-          <div class="item"><div class="d"><b style="color:var(--ink)">학습 3,440 · 점검 744 · 검증 732장</b><br>지점 단위로 잘라 같은 관로가 섞이지 않게 한다</div></div>
-          <div class="item"><div class="d">라벨이 바뀌면 데이터만 갈아끼운다<br>원본 라벨명을 보존해 두었다</div></div>
         </div>
       </div>
     </div>
@@ -479,7 +479,7 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
 </section>
 
 <section class="slide tight" data-title="어떻게 키우나"
- data-notes="두 트랙은 서로 다른 것을 바꿔가며 자랍니다. 트랙 A는 데이터를 늘려서 자랍니다. 트랙 A 결과와 기존 라벨을 학습셋에서 맞대어 크게 어긋난 프레임부터 전문가가 확인합니다. 732장을 다 볼 필요가 없습니다. 대부분은 둘 다 맞다로 끝나서 정보가 없고, 정보는 갈리는 곳에 몰려 있으니까요. 확인해서 확정된 정답은 다시 학습에 넣고, 그 상태로 또 비교합니다. AI가 사람이 봐야 할 곳을 골라주는 순환입니다. 트랙 B는 반대입니다. 라벨은 그대로 두고 모델 쪽을 바꿉니다. 모델 크기, 학습량, 해상도, 클래스를 어떻게 묶느냐를 하나씩 바꿔가며 어디서 성능이 오르는지 가릅니다. 라벨을 건드리지 않는 게 핵심입니다. 그래야 지금 가진 라벨로 어디까지 갈 수 있는지가 나옵니다. 그리고 이 과정에서 정답지가 남습니다. AI와 사람 라벨이 크게 갈린 자리는 라벨이 틀렸을 가능성이 높은 곳입니다. 우리가 폴리곤 규칙으로 재검수 대상 783건을 뽑아뒀는데, 이건 모델이 실제로 헷갈리는 곳을 고르는 것이라 우선순위가 더 정확합니다. 그 자리를 확정해두면 트랙 A의 학습 재료로만 끝나지 않습니다. 기존 라벨을 고치는 근거가 되니까 트랙 B도 그걸로 다시 학습할 수 있습니다. 품이 드는 일이지만 한 번 만들어두면 양쪽에 다 쓰입니다. 결국 성능을 올리려면 라벨을 고쳐야 하는가 모델을 바꿔야 하는가, 이 질문에도 답이 나옵니다.">
+ data-notes="두 트랙은 서로 다른 것을 바꿔가며 자랍니다. 트랙 B는 라벨을 그대로 두고 모델 쪽을 바꿉니다. 모델 크기, 학습량, 해상도, 클래스를 어떻게 묶느냐를 하나씩 바꿔가며 어디서 성능이 오르는지 가릅니다. 라벨을 건드리지 않는 게 핵심입니다. 그래야 지금 가진 라벨로 어디까지 갈 수 있는지가 나옵니다. 트랙 A는 반대입니다. 데이터를 늘려서 자랍니다. 트랙 A 결과와 기존 라벨을 학습셋에서 맞대어 크게 어긋난 프레임부터 전문가가 확인합니다. 732장을 다 볼 필요가 없습니다. 대부분은 둘 다 맞다로 끝나서 정보가 없고, 정보는 갈리는 곳에 몰려 있으니까요. 확인해서 확정된 정답은 다시 학습에 넣고, 그 상태로 또 비교합니다. AI가 사람이 봐야 할 곳을 골라주는 순환입니다. 그리고 이 과정에서 정답지가 남습니다. AI와 사람 라벨이 크게 갈린 자리는 라벨이 틀렸을 가능성이 높은 곳입니다. 우리가 폴리곤 규칙으로 재검수 대상 783건을 뽑아뒀는데, 이건 모델이 실제로 헷갈리는 곳을 고르는 것이라 우선순위가 더 정확합니다. 그 자리를 확정해두면 트랙 A의 학습 재료로만 끝나지 않습니다. 기존 라벨을 고치는 근거가 되니까 트랙 B도 그걸로 다시 학습할 수 있습니다. 품이 드는 일이지만 한 번 만들어두면 양쪽에 다 쓰입니다. 결국 성능을 올리려면 라벨을 고쳐야 하는가 모델을 바꿔야 하는가, 이 질문에도 답이 나옵니다.">
   <div class="eyebrow">DESIGN 05 · 발전 방향</div>
   <h2>각각 어떻게 키우나</h2>
   <hr class="rule">
@@ -487,21 +487,21 @@ tr.sum td.note{font-weight:400;color:var(--mute)}
     <div class="lbl">두 트랙은 서로 다른 것을 바꿔가며 자란다</div>
     <div class="grid g2">
       <div class="card">
-        <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK A</div>
-        <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">데이터를 늘린다</div>
-        <div class="stack" style="gap:.75em">
-          <div class="item"><div class="d">AI 결과와 기존 라벨을 맞대어<br><b style="color:var(--ink)">크게 어긋난 것부터</b> 전문가가 확인</div></div>
-          <div class="item"><div class="d">그 자리에 <b style="color:var(--ink)">정답지를 만들어 둔다</b><br>다시 학습에 넣고 같은 비교를 반복한다</div></div>
-          <div class="item"><div class="d"><b style="color:var(--warn)">전부 볼 필요가 없다</b> — 사람이 봐야 할<br>곳을 AI가 먼저 골라낸다</div></div>
-        </div>
-      </div>
-      <div class="card">
         <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK B</div>
         <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">모델을 바꾼다</div>
         <div class="stack" style="gap:.75em">
           <div class="item"><div class="d"><b style="color:var(--ink)">라벨은 그대로 둔다</b><br>고칠 방법이 없으니 고정값으로 취급</div></div>
           <div class="item"><div class="d">모델 크기 · 학습량 · 해상도 ·<br>클래스 묶음을 하나씩 바꾼다</div></div>
           <div class="item"><div class="d">지금 가진 라벨로<br><b style="color:var(--warn)">어디까지 갈 수 있는지</b>가 나온다</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="mono" style="font-size:1.25em;color:var(--accent2);font-weight:700">TRACK A</div>
+        <div style="font-size:1.77em;font-weight:700;margin:.25em 0 .5em">데이터를 늘린다</div>
+        <div class="stack" style="gap:.75em">
+          <div class="item"><div class="d">AI 결과와 기존 라벨을 맞대어<br><b style="color:var(--ink)">크게 어긋난 것부터</b> 전문가가 확인</div></div>
+          <div class="item"><div class="d">그 자리에 <b style="color:var(--ink)">정답지를 만들어 둔다</b><br>다시 학습에 넣고 같은 비교를 반복한다</div></div>
+          <div class="item"><div class="d"><b style="color:var(--warn)">전부 볼 필요가 없다</b> — 사람이 봐야 할<br>곳을 AI가 먼저 골라낸다</div></div>
         </div>
       </div>
     </div>
