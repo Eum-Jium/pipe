@@ -19,6 +19,9 @@
     · 라벨 기본값 = 부식(새 구역마다 골라져 있다) · 전개도 위 ▼ = 지금 영상이 보는 자리
     · 한 화면에 전개도 · 영상 · 구역 체크가 다 보이게(아래 판은 높이 고정, 남는 높이는 전개도)
     · 오른쪽 위 💾 저장하기 — 자동 저장과 같은 곳에 쓰고 다시 읽어 확인한 뒤 "✓ 저장됨" (Ctrl+S 도 같다)
+      UPLOAD_URL 이 있으면 이 기기에 구역이 있는 관을 모두 네 구글 드라이브로 올린다(label/apps_script/Code.gs)
+    · 실시간 — UPLOAD_URL 이 있으면 ✓ · 지우기 뒤 3초에 지금 관을 자동으로 올린다(끊기면 30초마다 다시)
+    · 저장본 지키기 — 바뀐 게 없으면 안 쓴다 · 쓰기 전에 저장본과 합친다 · 지운 구역은 표시해 되살리지 않는다
     · 라벨은 구역마다 하나(원형 버튼). 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
   화면 그리기: 구역은 그림 사각형 안으로 잘라 그리고, 테두리는 칠한 면 **안쪽 가장자리**에 긋는다
   (테두리 = 면적으로 세는 경계. 전에는 바깥에 그어 그림 끝 밖으로 삐져나왔다 — 2026-10-02 사용자).
@@ -40,10 +43,13 @@
   .saveBox{ margin-left:auto; display:flex; align-items:center; gap:8px; }   /* 줄이 넘어가도 오른쪽에 붙는다 */
   #saveState{ color:var(--mute); font-size:12px; white-space:nowrap; }
   #saveState.bad{ color:var(--bad); }
+  #saveState.warn{ color:#e3b341; }
   /* 저장하기 — 자동 저장이 있어도 손으로 눌러 확인받는 자리(2026-10-02 사용자 "심리적으로") */
   #btnSave{ min-height:30px; padding:3px 14px; border-radius:8px; border:1px solid #2ea043; background:#12261b; color:#d2f4dc; font-size:13.5px; font-weight:600; white-space:nowrap; transition:background .2s; }
   #btnSave.saved{ background:#1f6f3a; color:#fff; }
   #btnSave.fail{ background:#5a1f1f; border-color:#8a2b2b; color:#fff; }
+  #btnSave.warn{ background:#4d3a12; border-color:#9e6a03; color:#fff; }
+  #btnSave:disabled{ opacity:.8; }
 
   #stage{ position:relative; flex:1 1 auto; min-height:220px; background:#07090d; }
   #cv{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
@@ -168,7 +174,7 @@
     <div class="btns small" style="margin-top:6px">
       <button id="btnShare" title="JSON 과 그림을 공유 시트로 보낸다">📤 보내기</button>
       <button id="btnCopy" title="JSON 을 클립보드로">복사</button>
-      <label class="btn" title="보낸 JSON 을 다시 불러온다">불러오기<input type="file" id="fileIn" accept=".json,application/json"></label>
+      <label class="btn" title="보낸 JSON 을 다시 불러온다">불러오기<input type="file" id="fileIn" accept=".json,.txt,application/json,text/plain"></label>
       <button id="btnClear" title="이 관의 구역을 전부 지운다">전부 지우기</button>
     </div>
     <div class="hint" style="margin-top:4px">이 브라우저에 자동 저장 · 다 하면 <b>보내기</b>로 전달해 주세요</div>
@@ -194,6 +200,9 @@ const LBY=Object.fromEntries(LABELS.map(l=>[l.key,l]));
 const R_MIN=1, R_MAX=60;      // 붓 반지름(그림 화소) — 막대는 로그 눈금이라 작은 붓도 고르기 쉽다
 const A_ON=128;               // 면적으로 세는 화소 = 마스크 불투명도 절반 이상(가장자리 흐림은 반만)
 const DEFAULT_LABEL='corrosion';   // 라벨 기본값 — 새 구역마다 이것이 골라져 있다(2026-10-02 사용자 "기본은 부식"). 바꾸려면 여기만
+let UPLOAD_URL='';   // 결과 받는 곳 — label/apps_script/Code.gs 를 웹 앱으로 배포한 주소(…/exec). 비면 이 기기에만 저장
+const BUILD='2b482dd517';   // deploy.py 가 올릴 때 채운다 — 열 때 version.json 과 다르면 새 판으로 다시 받는다
+let DATASETS=[];     // index.json — 저장하기는 이 기기에 구역이 있는 관을 모두 올린다
 const BRUSH_STEP=5;                // +/- 키 한 번에 붓 막대 몇 칸(로그 눈금 100칸 중 — 한 번에 약 1.2배)
 
 // ── 상태 ──────────────────────────────────────────────────────────
@@ -203,6 +212,12 @@ let SEEN=null;         // Uint8Array(img_w*img_h) — 분모(계기가 본 화�
 let regions=[];        // 확정한 구역 [{id, labels:[key], strokes:[{r, pts:[[x,y],…], erase?}], area_m2, pct, at}]
 let active=null;       // 칠하는 중 {strokes, editId(고치는 구역 id | null), base(고치기 전 획 수), empty}
 let lastSaved=null, saveFailed=false;   // 마지막 저장 시각 · 저장 실패(브라우저 저장공간)
+// 저장본을 지키는 셋(2026-10-02 — 전문가가 탭에서 작업 중. 날아가면 안 된다):
+//   dirty   이 탭에서 바뀌었는데 아직 못 쓴 것 — 없으면 닫기 · 숨기기 때 쓰지 않는다(옛 내용으로 덮지 않게)
+//   tomb    지운 구역 id — 합칠 때 되살리지 않는다. 저장본에 같이 남긴다
+//   합치기  쓰기 전에 저장본을 다시 읽어, 다른 탭이 남긴 구역이 있으면 지우지 않고 더한다
+let dirty=false, tomb=new Set(), pendingSync=false;
+let lastUploaded=null;  // 마지막 업로드 시각(드라이브)
 let regVer=0;          // 구역이 바뀔 때마다 +1 — 화면 캐시 열쇠
 let tool='paint';      // 'paint' | 'erase'
 let view={s:1, ox:0, oy:0};   // 그림 화소 → 화면(css px): sx = ox + x*s
@@ -224,12 +239,13 @@ function mkCanvasR(w,h){ const c=mkCanvas(w,h); mctx(c); return c; }   // 읽기
 
 // ── 자료 불러오기 ──────────────────────────────────────────────────
 async function loadDataset(name, push=true){
-  saveNow();
+  saveNow();                                  // 바뀐 게 있을 때만 쓴다(dirty)
+  flushUpload();                              // 올리다 만 것이 있으면 이 관이 열려 있을 때 바로
   const r=await fetch(`data/${name}.json?t=${Date.now()}`, {cache:'no-store'});
   M=await r.json();
   document.title=`관 벽 라벨링 · ${M.title}`;
   document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-current', b.dataset.name===name?'true':'false'));
-  if(push) history.replaceState(null,'',`?data=${name}`);
+  if(push){ const u=new URL(location.href); u.searchParams.set('data', name); history.replaceState(null,'',u.search); }
   IMG=await loadImage(`data/${name}.jpg`);
   const seenIm=await loadImage(`data/${name}.seen.png`);
   const sc=mkCanvasR(M.img_w, M.img_h), sg=mctx(sc); sg.imageSmoothingEnabled=false;
@@ -240,7 +256,7 @@ async function loadDataset(name, push=true){
   maskA=mkCanvasR(M.img_w, M.img_h); scratch=mkCanvasR(M.img_w, M.img_h); work=mkCanvasR(M.img_w, M.img_h);
   for(const k in counts) delete counts[k];
   active=null; resetLabel(); vidX=null;
-  regions=loadSaved(name).map(normRegion).filter(Boolean);
+  regions=loadSaved(name).map(normRegion).filter(Boolean); dirty=false; pendingSync=false;
   for(const rg of regions) computeRegionArea(rg);
   rebuildAll(); regVer++;
   const v=$('vid'); v.src=`data/${M.video}`; v.load();
@@ -262,8 +278,23 @@ function normRegion(r){
   return o;
 }
 
+// GitHub Pages 는 페이지를 10분 캐시한다(max-age=600, 바꿀 수 없다). 열 때 한 번 새 판이 있는지 묻고 있으면 새로 받는다.
+// 이때는 아직 아무것도 안 그렸으니 잃을 것이 없다. 저장본(localStorage)은 주소가 같으니 그대로 읽힌다
+async function newerBuild(){
+  if(BUILD.startsWith('__')) return false;
+  try{
+    const j=await (await fetch(`version.json?t=${Date.now()}`, {cache:'no-store'})).json();
+    if(!j.v || j.v===BUILD) return false;
+    const u=new URL(location.href);
+    if(u.searchParams.get('v')===j.v) return false;      // 이미 그 판을 달라고 했는데도 옛 판이면 그만(되풀이 방지)
+    u.searchParams.set('v', j.v); location.replace(u.toString()); return true;
+  }catch(e){ return false; }
+}
 async function init(){
+  if(await newerBuild()) return;
   const list=await (await fetch(`data/index.json?t=${Date.now()}`,{cache:'no-store'})).json();
+  DATASETS=list;
+  try{ const u=localStorage.getItem('pipelabel:uploaded'); if(u) lastUploaded=new Date(u); }catch(e){}
   const tabs=$('tabs');
   for(const d of list){
     const b=document.createElement('button'); b.textContent=d.title; b.dataset.name=d.name;
@@ -281,50 +312,173 @@ async function init(){
   try{ const b=localStorage.getItem('pipelabel:brush'); if(b!==null) $('brush').value=b; }catch(e){}
   const q=new URLSearchParams(location.search).get('data');
   await loadDataset((q && list.some(d=>d.name===q)) ? q : list[0].name);
+  if(UPLOAD_URL && !labeler(false)){ labeler(true); showSaveState(); }   // 결과가 자동으로 올라가니 이름을 먼저 받아 둔다
 }
 
 // ── 저장 ──────────────────────────────────────────────────────────
 function skey(name){ return 'pipelabel:'+name; }
-function loadSaved(name){
-  lastSaved=null;
-  try{ const j=JSON.parse(localStorage.getItem(skey(name))||'null');
-       if(j && Array.isArray(j.regions)){ if(j.saved_at) lastSaved=new Date(j.saved_at); return j.regions; } }catch(e){}
-  return [];
+function readStored(name){
+  try{ const j=JSON.parse(localStorage.getItem(skey(name))||'null'); if(j && Array.isArray(j.regions)) return j; }catch(e){}
+  return null;
 }
-// 저장 — 쓰고 나서 다시 읽어 구역 수가 맞는지 본다. 맞아야 true(저장하기 버튼이 "저장됨" 을 띄우는 근거)
-function saveNow(){
+function loadSaved(name){
+  lastSaved=null; tomb=new Set();
+  const j=readStored(name); if(!j) return [];
+  if(j.saved_at) lastSaved=new Date(j.saved_at);
+  for(const id of (j.deleted||[])) tomb.add(id);
+  return j.regions;
+}
+// 두 목록을 합친다 — id 로 합집합, 같은 id 는 나중에 고친 쪽, 지운 표시(tomb)는 뺀다. 만든 순서대로
+function rStamp(r){ return r.edited_at || r.at || ''; }
+function mergeRegions(mine, theirs){
+  const by=new Map();
+  for(const r of theirs) if(!tomb.has(r.id)) by.set(r.id, r);
+  for(const r of mine){ if(tomb.has(r.id)) continue; const o=by.get(r.id); if(!o || rStamp(r)>=rStamp(o)) by.set(r.id, r); }
+  return [...by.values()].sort((a,b)=> (a.at||'')<(b.at||'') ? -1 : (a.at||'')>(b.at||'') ? 1 : 0);
+}
+// 저장본과 합쳐 이 탭 목록을 바꾼다. 저장본에 없던 것이 이 탭에 있으면 true(다시 써야 한다)
+function absorbStored(){
+  const cur=readStored(M.name); if(!cur) return regions.length>0;
+  for(const id of (cur.deleted||[])) tomb.add(id);
+  const theirs=cur.regions.map(normRegion).filter(Boolean);
+  const merged=mergeRegions(regions, theirs);
+  const before=new Set(regions), fresh=merged.filter(r=>!before.has(r));
+  const changed = fresh.length>0 || merged.length!==regions.length;
+  if(changed){ for(const r of fresh) computeRegionArea(r); regions=merged; rebuildAll(); regVer++; }
+  const theirById=new Map(theirs.map(r=>[r.id, rStamp(r)]));
+  return merged.some(r=>theirById.get(r.id)!==rStamp(r)) || theirs.some(r=>tomb.has(r.id));
+}
+// 저장 — force 가 아니면 바뀐 게 있을 때만(dirty) 쓴다. 쓰기 전에 저장본과 합치고, 쓰고 나서 다시 읽어 구역 수를 맞춰 본다
+function saveNow(force){
   if(!M) return false;
+  if(!force && !dirty){ showSaveState(); return !saveFailed; }
   try{
+    absorbStored();
     const rs=regions.map(r=>({id:r.id, labels:r.labels, strokes:r.strokes, at:r.at, ...(r.edited_at?{edited_at:r.edited_at}:{})}));
     const at=new Date();
-    localStorage.setItem(skey(M.name), JSON.stringify({regions:rs, saved_at:at.toISOString()}));
+    localStorage.setItem(skey(M.name), JSON.stringify({regions:rs, deleted:[...tomb], saved_at:at.toISOString()}));
     const back=JSON.parse(localStorage.getItem(skey(M.name))||'null');
     if(!back || !Array.isArray(back.regions) || back.regions.length!==rs.length) throw new Error('다시 읽은 구역 수가 다름');
-    lastSaved=at; saveFailed=false;
+    lastSaved=at; saveFailed=false; dirty=false;
   }catch(e){ saveFailed=true; }
   showSaveState();
   return !saveFailed;
 }
+function changed(){ dirty=true; const ok=saveNow(); if(ok) scheduleUpload(); return ok; }   // 이 탭에서 구역이 바뀌었다 — 바로 쓰고, 드라이브엔 3초 뒤
+// 다른 탭(같은 기기)이 이 관을 저장했다 — 합쳐서 따라간다. 이 탭에만 있는 구역이 있으면(옛 탭이 덮었다) 다시 쓴다
+function syncFromStorage(){
+  pendingSync=false;
+  if(!M) return;
+  const need=absorbStored();
+  if(need){ dirty=true; saveNow(); }
+  else { const cur=readStored(M.name); if(cur && cur.saved_at) lastSaved=new Date(cur.saved_at); }
+  updateUI(); render();
+}
+window.addEventListener('storage', e=>{
+  if(!M || e.key!==skey(M.name)) return;
+  if(active){ pendingSync=true; return; }      // 칠하는 중이면 끝난 뒤에
+  syncFromStorage();
+});
 function hhmm(d){ const p=n=>String(n).padStart(2,'0'); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
 function showSaveState(){
   if(!M) return;
-  const el=$('saveState');
+  const el=$('saveState'), who=labeler(false);
   el.classList.toggle('bad', saveFailed);
-  el.textContent = saveFailed ? '저장 못 함 — 보내기로 파일을 받아 두세요'
-    : lastSaved ? `${hhmm(lastSaved)} 저장 · 구역 ${regions.length}` : `구역 ${regions.length}`;
+  el.classList.toggle('warn', !saveFailed && !!UPLOAD_URL && upFail);
+  el.style.cursor = UPLOAD_URL ? 'pointer' : '';
+  el.title = UPLOAD_URL ? '누르면 이름을 바꾼다' : '';
+  if(saveFailed){ el.textContent='저장 못 함 — 보내기로 파일을 받아 두세요'; return; }
+  const parts=[];
+  if(UPLOAD_URL && who) parts.push(who);
+  if(UPLOAD_URL) parts.push(upFail ? '⚠ 업로드 대기(인터넷 확인)' : lastUploaded ? `${hhmm(lastUploaded)} 업로드` : '아직 안 올림');
+  else if(lastSaved) parts.push(`${hhmm(lastSaved)} 저장`);
+  parts.push(`구역 ${regions.length}`);
+  el.textContent=parts.join(' · ');
 }
-function doSave(){
-  const ok=saveNow(), b=$('btnSave');
-  clearTimeout(doSave._t);
-  b.classList.remove('saved','fail');
-  if(ok){
-    b.classList.add('saved'); b.textContent='✓ 저장됨';
-    toast(`저장했어요 — ${M.title} · 구역 ${regions.length}개 · ${hhmm(lastSaved)}` + (active?' (칠하는 중인 구역은 ✓ 뒤에 들어가요)':''), true);
-  } else {
-    b.classList.add('fail'); b.textContent='✕ 저장 실패';
-    toast('저장 못 했어요 — 보내기로 파일을 받아 두세요');
+$('saveState').onclick=()=>{
+  if(!UPLOAD_URL) return;
+  const n=prompt('이름(올린 결과 파일 이름에 들어갑니다)', labeler(false));
+  if(n!==null && n.trim()){ try{ localStorage.setItem('pipelabel:labeler', n.trim()); }catch(e){} showSaveState(); }
+};
+
+// ── 업로드 — 네 구글 드라이브(앱스 스크립트 웹 앱, label/apps_script/Code.gs)로. 주소가 비면 이 기기에만 저장 ──
+function labeler(ask){
+  let n=''; try{ n=localStorage.getItem('pipelabel:labeler')||''; }catch(e){}
+  if(!n && ask){
+    n=(prompt('이름을 적어 주세요 — 올린 결과 파일 이름에 들어갑니다', '')||'').trim();
+    if(n){ try{ localStorage.setItem('pipelabel:labeler', n); }catch(e){} }
   }
-  doSave._t=setTimeout(()=>{ b.classList.remove('saved','fail'); b.textContent='💾 저장하기'; }, 2200);
+  return n;
+}
+// 올릴 것 — 지금 열린 관은 면적 요약까지, 다른 관은 이 기기 저장본의 구역(획) 그대로
+function payloadFor(name){
+  if(M && name===M.name) return exportJSON();
+  const j=readStored(name); if(!j) return null;
+  const d=DATASETS.find(x=>x.name===name)||{name};
+  return {format:'pipe-label/2', dataset:name, title:d.title, exported_at:new Date().toISOString(), saved_at:j.saved_at,
+          regions:j.regions, deleted:j.deleted||[], ua:navigator.userAgent,
+          note:'저장하기 때 열려 있지 않은 관이라 면적 요약 없이 구역(획)만 — 페이지에서 불러오면 다시 센다'};
+}
+async function postOne(p){
+  const r=await fetch(UPLOAD_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(p)});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  const j=await r.json(); if(!j.ok) throw new Error(j.error||'받는 쪽이 거절');
+  return j;
+}
+function flashSave(cls, text, ms){
+  const b=$('btnSave'); clearTimeout(flashSave._t);
+  b.classList.remove('saved','fail','warn'); if(cls) b.classList.add(cls); b.textContent=text;
+  flashSave._t=setTimeout(()=>{ b.classList.remove('saved','fail','warn'); b.textContent='💾 저장하기'; }, ms||2400);
+}
+// 실시간 올리기 — 바뀔 때마다 3초 기다렸다 지금 관을 올린다(연달아 바뀌면 마지막 한 번). 끊기면 30초마다 · 인터넷이 돌아오면 다시
+let upT=0, upName=null, upBusy=false, upAgain=false, upFail=false;
+function scheduleUpload(){
+  if(!UPLOAD_URL || !M || !labeler(false)) return;
+  upName=M.name; clearTimeout(upT); upT=setTimeout(()=>autoUpload(upName), 3000);
+}
+function flushUpload(){ if(upName && upT){ clearTimeout(upT); upT=0; autoUpload(upName); } }   // 관을 옮기기 전에 남은 것을 바로
+async function autoUpload(name){
+  upT=0;
+  if(upBusy){ upAgain=true; return; }
+  const p=payloadFor(name); if(!p) return;          // 지금 관이면 면적 요약까지 — 기다리기 전에 만든다
+  p.labeler=labeler(false); p.trigger='auto';
+  upBusy=true;
+  try{
+    await postOne(p);
+    lastUploaded=new Date(); upFail=false; if(upName===name) upName=null;
+    try{ localStorage.setItem('pipelabel:uploaded', lastUploaded.toISOString()); }catch(e){}
+  }catch(err){
+    console.warn('자동 업로드 실패', err); upFail=true; upName=name;
+    clearTimeout(upT); upT=setTimeout(()=>autoUpload(name), 30000);
+  }finally{
+    upBusy=false; showSaveState();
+    if(upAgain){ upAgain=false; scheduleUpload(); }
+  }
+}
+window.addEventListener('online', ()=>{ if(upFail && upName) autoUpload(upName); });
+
+async function doSave(){
+  const b=$('btnSave'); if(b.disabled) return;
+  if(!saveNow(true)){ flashSave('fail','✕ 저장 실패'); toast('저장 못 했어요 — 보내기로 파일을 받아 두세요'); return; }
+  const tail=active?' (칠하는 중인 구역은 ✓ 뒤에 들어가요)':'';
+  if(!UPLOAD_URL){ flashSave('saved','✓ 저장됨'); toast(`저장했어요 — ${M.title} · 구역 ${regions.length}개 · ${hhmm(lastSaved)}`+tail, true); return; }
+  const who=labeler(true);
+  if(!who){ flashSave('warn','✓ 이 기기에만 저장'); toast('이름이 없어 올리지 않았어요 — 이 기기엔 저장됨'); return; }
+  const names=DATASETS.map(d=>d.name).filter(n=> n===M.name || readStored(n));
+  b.disabled=true; b.textContent='⏳ 올리는 중…';
+  try{
+    let total=0;
+    for(const n of names){ const p=payloadFor(n); if(!p) continue; p.labeler=who; p.trigger='manual'; await postOne(p); total+=p.regions.length; }
+    clearTimeout(upT); upT=0; upName=null; upFail=false;
+    lastUploaded=new Date(); try{ localStorage.setItem('pipelabel:uploaded', lastUploaded.toISOString()); }catch(e){}
+    b.disabled=false; flashSave('saved','✓ 저장·업로드됨', 3000);
+    toast(`올렸어요 — ${who} · 관 ${names.length}개 · 구역 ${total}개 · ${hhmm(lastUploaded)}`+tail, true);
+  }catch(err){
+    console.warn('업로드 실패', err);
+    b.disabled=false; flashSave('warn','⚠ 업로드 실패 · 기기엔 저장됨', 4000);
+    toast('업로드 실패 — 이 기기엔 저장됐어요 · 인터넷 확인 후 다시 눌러요');
+  }
+  showSaveState();
 }
 $('btnSave').onclick=doSave;
 
@@ -690,7 +844,7 @@ function checkedLabel(){ const i=document.querySelector('#labelBoxes input:check
 function syncChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>i.parentElement.classList.toggle('on', i.checked)); }
 function setLabel(k){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=(i.value===k); }); syncChecks(); }
 function resetLabel(){ setLabel(DEFAULT_LABEL); }   // 구역이 끝나면 기본 라벨(부식)로 돌아간다
-function endActive(){ active=null; redrawActive(); resetLabel(); }
+function endActive(){ active=null; redrawActive(); resetLabel(); if(pendingSync) setTimeout(syncFromStorage, 0); }
 
 function confirmActive(){
   if(!active){ toast('먼저 전개도를 눌러 구역을 만들어요'); return; }
@@ -714,7 +868,7 @@ function confirmActive(){
   const wasEdit=!!active.editId;
   computeRegionArea(rg); endActive();
   for(const k of new Set([...old, lab])) rebuildLayer(k);
-  rebuildUnion(); regVer++; saveNow(); updateUI(); render();
+  rebuildUnion(); regVer++; changed(); updateUI(); render();
   toast(`${wasEdit?'고침':'완료'} — ${LBY[lab].ko} ${rg.pct.toFixed(2)}%`, true);
 }
 $('btnV').onclick=confirmActive;
@@ -747,15 +901,16 @@ window.addEventListener('keydown', e=>{
 function deleteRegion(id){
   const i=regions.findIndex(r=>r.id===id); if(i<0) return;
   if(active && active.editId===id) endActive();
-  const labs=regions[i].labels; regions.splice(i,1);
+  const labs=regions[i].labels; tomb.add(id); regions.splice(i,1);
   for(const k of labs) rebuildLayer(k);
-  rebuildUnion(); regVer++; saveNow(); updateUI(); render();
+  rebuildUnion(); regVer++; changed(); updateUI(); render();
 }
 $('btnClear').onclick=()=>{
   if(!regions.length) return;
   if(!confirm(`${M.title} 의 구역 ${regions.length}개를 전부 지울까요?`)) return;
   if(active && active.editId) endActive();
-  regions=[]; rebuildAll(); regVer++; saveNow(); updateUI(); render();
+  for(const r of regions) tomb.add(r.id);
+  regions=[]; rebuildAll(); regVer++; changed(); updateUI(); render();
 };
 
 // ── 면적 — 라벨마다 합집합(같은 라벨은 겹쳐도 한 번), 분모 = 본 화소 ─
@@ -838,7 +993,7 @@ function centerOn(rg){
 function exportJSON(){
   const per={}; for(const l of LABELS) per[l.key]={ko:l.ko, pct:+(seenCount?100*(counts[l.key]||0)/seenCount:0).toFixed(3), m2:+((counts[l.key]||0)*pxArea()).toFixed(4)};
   return {
-    format:'pipe-label/2', dataset:M.name, title:M.title, video_label:M.label, exported_at:new Date().toISOString(),
+    format:'pipe-label/2', dataset:M.name, title:M.title, video_label:M.label, exported_at:new Date().toISOString(), labeler:labeler(false)||undefined,
     pipe_dia_mm:M.pipe_dia_mm, len_mm:M.len_mm, img:{w:M.img_w,h:M.img_h, mm_per_px_x:M.mm_per_px_x, mm_per_px_y:M.mm_per_px_y},
     denominator:{seen_m2:+(seenCount*pxArea()).toFixed(4), note:'계기가 본 화소(q4≥4)만 센다 · 칠한 곳 중 못 본 화소는 면적에서 뺀다'},
     strokes_note:'구역마다 strokes 를 순서대로 그린다(지름 = 2r, 둥근 끝). erase=true 는 지우개 — 그 구역 안에서만 깎는다. 좌표 = 전개도 그림 화소(가로 관 길이 · 세로 둘레)',
@@ -866,10 +1021,13 @@ function snapshotBlob(){
 $('btnShare').onclick=async()=>{
   if(!regions.length){ toast('아직 완료한 구역이 없어요'); return; }
   const name=`라벨_${M.name}_${stamp()}`;
-  const jf=new File([JSON.stringify(exportJSON(),null,1)], name+'.json', {type:'application/json'});
+  const txt=JSON.stringify(exportJSON(),null,1);
+  const jf=new File([txt], name+'.json', {type:'application/json'});
+  // 안드로이드 크롬은 .json 공유를 막는다(허용 목록에 없음) — 공유창에는 같은 내용을 글 파일(.txt)로 보낸다. 불러오기에서 그대로 읽힌다
+  const tf=new File([txt], name+'.txt', {type:'text/plain'});
   const pf=new File([await snapshotBlob()], name+'.png', {type:'image/png'});
-  if(navigator.canShare && navigator.canShare({files:[jf,pf]})){
-    try{ await navigator.share({files:[jf,pf], title:name, text:`${M.title} 라벨링 결과`}); toast('보냈어요', true); return; }
+  if(navigator.canShare && navigator.canShare({files:[tf,pf]})){
+    try{ await navigator.share({files:[tf,pf], title:name, text:`${M.title} 라벨링 결과`}); toast('보냈어요', true); return; }
     catch(e){ if(e.name==='AbortError') return; }
   }
   for(const f of [jf,pf]){ const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=f.name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000); }
@@ -889,9 +1047,12 @@ $('fileIn').onchange=e=>{
       if(j.dataset!==M.name && !confirm(`이 파일은 ${j.title||j.dataset} 것입니다. 지금 탭(${M.title})에 불러올까요?`)) return;
       if(regions.length && !confirm(`지금 구역 ${regions.length}개를 지우고 파일의 ${j.regions.length}개로 바꿀까요?`)) return;
       endActive();
-      regions=j.regions.map(normRegion).filter(Boolean);
+      const incoming=j.regions.map(normRegion).filter(Boolean), keep=new Set(incoming.map(r=>r.id));
+      for(const r of regions) if(!keep.has(r.id)) tomb.add(r.id);
+      for(const id of keep) tomb.delete(id);
+      regions=incoming;
       for(const rg of regions) computeRegionArea(rg);
-      rebuildAll(); regVer++; saveNow(); updateUI(); render();
+      rebuildAll(); regVer++; changed(); updateUI(); render();
       toast(`불러왔어요 — 구역 ${regions.length}개`, true);
     }catch(err){ toast('JSON 을 못 읽었어요'); }
     e.target.value='';
@@ -899,7 +1060,8 @@ $('fileIn').onchange=e=>{
   rd.readAsText(f);
 };
 
-window.addEventListener('beforeunload', saveNow);
+// 닫기 · 숨기기 — 바뀐 게 있을 때만 쓴다(옛 탭이 빈 내용으로 덮는 일을 막는다)
+window.addEventListener('beforeunload', ()=>saveNow());
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') saveNow(); });
 init().catch(err=>{ $('saveState').textContent='자료를 못 열었다: '+err; });
 </script>
