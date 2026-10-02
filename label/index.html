@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>관 벽 라벨링</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2314314f%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%279%27 fill=%27none%27 stroke=%27%23ffa657%27 stroke-width=%273%27/%3E%3C/svg%3E">
+<!--
+  전문가 라벨링 페이지 — 전개도 위에 손가락으로 결함 구역을 칠하고 라벨을 단다 (2026-10-02).
+  갤럭시 탭 · 크롬 기준. 서버 없음(GitHub Pages) — 결과는 이 탭의 localStorage 에 자동 저장되고
+  "보내기" 로 JSON(+그림)을 공유 시트로 내보낸다.
+
+  구역 칠하기 규칙(사용자 요청):
+    · 전개도를 한 번 누르면 작은 구역(얇은 실선 폴리곤)이 생긴다
+    · 그 뒤로는 구역 안(또는 붓이 닿는 곳)에서 시작한 터치만 먹는다 — 밖을 눌러도 아무 일 없다(잘못 누름 방지)
+    · 손가락 둘 = 옮기기 · 확대(붓 아님)
+    · 라벨 체크 → ✓ 완료 / ✕ 취소. 구역은 여러 개. 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
+
+  자료는 label/build.py 가 dashboard/data 에서 뽑는다 (data/<이름>.jpg · .seen.png · .json · .mp4).
+-->
+<style>
+  :root{ --bg:#0d1117; --panel:#161b22; --line:#30363d; --ink:#e6edf3; --mute:#8b949e; --acc:#58a6ff; --ok:#3fb950; --bad:#f85149; }
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif; height:100%; overscroll-behavior:none; }
+  body{ display:flex; flex-direction:column; height:100dvh; }
+  header{ display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--line); flex:0 0 auto; flex-wrap:wrap; }
+  header h1{ font-size:17px; margin:0; white-space:nowrap; }
+  header h1 small{ color:var(--mute); font-weight:400; font-size:13px; margin-left:6px; }
+  #tabs{ display:flex; gap:6px; }
+  #tabs button{ background:var(--panel); color:var(--mute); border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:14px; }
+  #tabs button[aria-current=true]{ background:#14314f; color:var(--ink); border-color:var(--acc); }
+  #saveState{ margin-left:auto; color:var(--mute); font-size:13px; white-space:nowrap; }
+
+  #stage{ position:relative; flex:0 0 52dvh; min-height:220px; background:#07090d; border-bottom:1px solid var(--line); }
+  #cv{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
+  .zoomBtns{ position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; }
+  .zoomBtns button{ width:44px; height:44px; border-radius:10px; border:1px solid var(--line); background:rgba(22,27,34,.9); color:var(--ink); font-size:20px; }
+  #hint{ position:absolute; left:46px; bottom:26px; color:#b9c3cf; font-size:12.5px; background:rgba(13,17,23,.75); padding:3px 8px; border-radius:6px; pointer-events:none; }
+  #toast{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); background:rgba(248,81,73,.92); color:#fff; padding:8px 14px; border-radius:8px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; }
+  #toast.on{ opacity:1; }
+  #toast.good{ background:rgba(63,185,80,.92); }
+
+  #panel{ flex:1 1 auto; overflow:auto; padding:10px 14px 24px; display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
+  @media (max-width:820px){ #panel{ grid-template-columns:1fr; } }
+  section{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:0; }
+  section h2{ font-size:14px; color:var(--mute); margin:0 0 8px; font-weight:600; }
+  .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .hint{ color:var(--mute); font-size:12.5px; }
+
+  #labelBoxes{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:6px; margin:8px 0 10px; }
+  #labelBoxes label{ display:flex; align-items:center; gap:8px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:15px; min-height:44px; }
+  #labelBoxes label.on{ border-color:var(--acc); background:#14314f; }
+  #labelBoxes input{ width:20px; height:20px; margin:0; }
+  .sw{ display:inline-block; width:14px; height:14px; border-radius:3px; flex:0 0 auto; }
+  .btns{ display:flex; gap:8px; flex-wrap:wrap; }
+  .btns button, .btns label.btn{ min-height:46px; padding:8px 14px; border-radius:9px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:15px; display:inline-flex; align-items:center; gap:6px; }
+  .btns button:disabled{ opacity:.4; }
+  button.v{ background:#1f6f3a; border-color:#2ea043; font-weight:700; flex:1 1 120px; justify-content:center; }
+  button.x{ background:#5a1f1f; border-color:#8a2b2b; }
+  #brush{ flex:1 1 120px; min-width:100px; }
+  #regState{ font-weight:400; color:var(--acc); }
+  #vid{ width:100%; max-height:200px; background:#000; border-radius:6px; }
+
+  #bars{ display:flex; flex-direction:column; gap:5px; }
+  .bar{ display:grid; grid-template-columns:92px 1fr 118px; align-items:center; gap:8px; font-size:13.5px; }
+  .bar .trk{ height:16px; background:#0d1117; border-radius:4px; overflow:hidden; border:1px solid #262c35; }
+  .bar .fill{ height:100%; min-width:0; border-radius:3px; transition:width .25s; }
+  .bar .num{ text-align:right; color:var(--mute); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .bar.lead .num{ color:var(--ink); font-weight:600; }
+
+  #regList{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; max-height:220px; overflow:auto; }
+  #regList li{ display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:14px; }
+  #regList li .t{ flex:1; }
+  #regList li button{ min-height:36px; padding:4px 10px; border-radius:7px; border:1px solid var(--line); background:#21262d; color:var(--ink); }
+  #regList li.sel{ border-color:var(--acc); }
+  input[type=file]{ display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>관 벽 라벨링 <small>전개도 위에 결함 구역을 칠하고 라벨을 단다</small></h1>
+  <nav id="tabs"></nav>
+  <span id="saveState"></span>
+</header>
+
+<div id="stage">
+  <canvas id="cv"></canvas>
+  <div class="zoomBtns"><button id="zIn" title="확대">＋</button><button id="zOut" title="축소">－</button><button id="zFit" title="전체 보기">⤢</button></div>
+  <div id="hint">한 손가락 = 칠하기 · 두 손가락 = 옮기기·확대</div>
+  <div id="toast"></div>
+</div>
+
+<div id="panel">
+  <section id="secLabel">
+    <h2>구역 — <span id="regState">전개도를 한 번 누르면 작은 구역이 생긴다</span></h2>
+    <div class="row"><span class="hint">붓 굵기</span><input type="range" id="brush" min="3" max="30" value="8"><span class="hint" id="brushCm"></span></div>
+    <div id="labelBoxes"></div>
+    <div class="btns">
+      <button id="btnUndo" title="마지막으로 칠한 획을 되돌린다">↶ 되돌리기</button>
+      <button id="btnX" class="x" title="지금 구역을 버린다">✕ 취소</button>
+      <button id="btnV" class="v" title="체크한 라벨로 구역을 확정한다">✓ 완료</button>
+    </div>
+    <div class="hint" style="margin-top:8px">① 전개도를 한 번 누른다 → 작은 구역 ② 구역 <b>안쪽에서</b> 끌어 넓힌다 — 밖을 눌러도 아무 일 없다 ③ 라벨 체크 → ✓ 완료</div>
+  </section>
+
+  <section id="secVid">
+    <h2>영상 — <span id="vidHint">구역을 찍으면 그 자리를 찍은 장면으로 간다</span></h2>
+    <video id="vid" controls playsinline preload="metadata"></video>
+  </section>
+
+  <section id="secChart">
+    <h2>면적 비율 <span class="hint" id="chartDen"></span></h2>
+    <div id="bars"></div>
+  </section>
+
+  <section id="secList">
+    <h2>완료한 구역 <span id="nReg"></span></h2>
+    <ol id="regList"></ol>
+    <div class="btns" style="margin-top:10px">
+      <button id="btnShare" title="JSON 과 그림을 공유 시트로 보낸다">📤 보내기</button>
+      <button id="btnCopy" title="JSON 을 클립보드로">복사</button>
+      <label class="btn" title="보낸 JSON 을 다시 불러온다">불러오기<input type="file" id="fileIn" accept=".json,application/json"></label>
+      <button id="btnClear" title="이 관의 구역을 전부 지운다">전부 지우기</button>
+    </div>
+    <div class="hint" style="margin-top:6px">결과는 이 브라우저에 자동 저장된다. 다 하면 <b>보내기</b>로 전달해 주세요.</div>
+  </section>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const LABELS=[
+  {key:'coating_peel', ko:'박리(도장)', color:'#ff5c8a'},
+  {key:'corrosion',    ko:'부식',       color:'#f2cc60'},
+  {key:'nodule',       ko:'결절',       color:'#ffa657'},
+  {key:'rust_deposit', ko:'녹 침착',    color:'#e8590c'},
+  {key:'slime',        ko:'슬라임',     color:'#39d0d8'},
+  {key:'sediment',     ko:'침전물',     color:'#d2a8ff'},
+  {key:'deformation',  ko:'변형',       color:'#79c0ff'},
+  {key:'crack',        ko:'균열',       color:'#ffffff'},
+  {key:'other',        ko:'기타',       color:'#9aa4b2'},
+];
+const CLEAN={key:'clean', ko:'깨끗함', color:'#3fb950'};
+const LBY=Object.fromEntries(LABELS.map(l=>[l.key,l]));
+
+// ── 상태 ──────────────────────────────────────────────────────────
+let M=null;            // data/<이름>.json
+let IMG=null;          // 전개도 그림
+let SEEN=null;         // Uint8Array(img_w*img_h) — 분모(계기가 본 화소)
+let regions=[];        // 확정한 구역 [{id, labels:[key], strokes:[{r, pts:[[x,y],…]}], area_m2, pct, at}]
+let active=null;       // 칠하는 중인 구역 {strokes:[…]}
+let view={s:1, ox:0, oy:0};   // 그림 화소 → 화면(css px): sx = ox + x*s
+const PAD={l:40, t:8, r:8, b:22};
+let dpr=window.devicePixelRatio||1;
+const cv=$('cv'), g=cv.getContext('2d');
+let maskA=null;        // 활성 구역 마스크(그림 크기)
+const layer={};        // 라벨마다 확정 구역 합집합 마스크(그림 크기)
+const counts={};       // 라벨마다 본 화소 수
+let seenCount=0, unionCount=0;
+let offT=null, offO=null;   // 화면 크기 임시 캔버스(색 입히기 · 테두리)
+let selId=null;
+
+function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
+function mctx(c){ return c.getContext('2d',{willReadFrequently:true}); }
+
+// ── 자료 불러오기 ──────────────────────────────────────────────────
+async function loadDataset(name, push=true){
+  saveNow();
+  const r=await fetch(`data/${name}.json?t=${Date.now()}`, {cache:'no-store'});
+  M=await r.json();
+  document.title=`관 벽 라벨링 · ${M.title}`;
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-current', b.dataset.name===name?'true':'false'));
+  if(push) history.replaceState(null,'',`?data=${name}`);
+  IMG=await loadImage(`data/${name}.jpg`);
+  const seenIm=await loadImage(`data/${name}.seen.png`);
+  const sc=mkCanvas(M.img_w, M.img_h), sg=mctx(sc); sg.imageSmoothingEnabled=false;
+  sg.drawImage(seenIm,0,0,M.img_w,M.img_h);
+  const px=sg.getImageData(0,0,M.img_w,M.img_h).data;
+  SEEN=new Uint8Array(M.img_w*M.img_h); seenCount=0;
+  for(let i=0;i<SEEN.length;i++){ if(px[i*4]>127){ SEEN[i]=1; seenCount++; } }
+  maskA=mkCanvas(M.img_w, M.img_h);
+  for(const k in layer) delete layer[k];
+  for(const k in counts) delete counts[k];
+  active=null; selId=null;
+  regions=loadSaved(name);
+  for(const l of LABELS) rebuildLayer(l.key);
+  rebuildUnion();
+  const v=$('vid'); v.src=`data/${M.video}`; v.load();
+  $('vidHint').textContent='구역을 찍으면 그 자리를 찍은 장면으로 간다';
+  $('chartDen').textContent=`— 분모 = 계기가 본 벽 ${M.seen_m2.toFixed(2)} m² (어둡게 빈 곳 제외) · 관경 ${M.pipe_dia_mm} mm · 길이 ${(M.len_mm/1000).toFixed(2)} m`;
+  resize(); fitView(); updateUI(); render();
+}
+function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
+
+async function init(){
+  const list=await (await fetch(`data/index.json?t=${Date.now()}`,{cache:'no-store'})).json();
+  const tabs=$('tabs');
+  for(const d of list){
+    const b=document.createElement('button'); b.textContent=d.title; b.dataset.name=d.name;
+    b.onclick=()=>{ if(active && !confirm('칠하던 구역이 아직 완료되지 않았어요. 버리고 옮길까요?')) return; active=null; loadDataset(d.name); }; tabs.appendChild(b);
+  }
+  const box=$('labelBoxes');
+  for(const l of LABELS){
+    const lab=document.createElement('label');
+    lab.innerHTML=`<input type="checkbox" value="${l.key}"><i class="sw" style="background:${l.color}"></i>${l.ko}`;
+    lab.querySelector('input').addEventListener('change',e=>{ lab.classList.toggle('on',e.target.checked); updateUI(); });
+    box.appendChild(lab);
+  }
+  const q=new URLSearchParams(location.search).get('data');
+  await loadDataset((q && list.some(d=>d.name===q)) ? q : list[0].name);
+}
+
+// ── 저장 ──────────────────────────────────────────────────────────
+function skey(name){ return 'pipelabel:'+name; }
+function loadSaved(name){
+  try{ const j=JSON.parse(localStorage.getItem(skey(name))||'null'); if(j && Array.isArray(j.regions)) return j.regions; }catch(e){}
+  return [];
+}
+function saveNow(){
+  if(!M) return;
+  try{ localStorage.setItem(skey(M.name), JSON.stringify({regions, saved_at:new Date().toISOString()})); $('saveState').textContent=`저장됨 · 구역 ${regions.length}`; }
+  catch(e){ $('saveState').textContent='저장 못 함(브라우저 저장공간)'; }
+}
+
+// ── 화면 ──────────────────────────────────────────────────────────
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  const st=$('stage'), w=st.clientWidth, h=st.clientHeight;
+  cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
+  offT=mkCanvas(cv.width, cv.height); offO=mkCanvas(cv.width, cv.height);
+}
+function viewBox(){ return {x:PAD.l, y:PAD.t, w:cv.width/dpr-PAD.l-PAD.r, h:cv.height/dpr-PAD.t-PAD.b}; }
+function fitView(){
+  if(!IMG) return;
+  const vb=viewBox();
+  const s=Math.min(vb.w/IMG.width, vb.h/IMG.height);
+  view={s, ox:vb.x+(vb.w-IMG.width*s)/2, oy:vb.y+(vb.h-IMG.height*s)/2};
+}
+function clampView(){
+  const vb=viewBox(), fit=Math.min(vb.w/IMG.width, vb.h/IMG.height);
+  view.s=Math.max(fit*0.5, Math.min(16, view.s));
+  const W=IMG.width*view.s, H=IMG.height*view.s;
+  // 그림이 틀보다 작으면 가운데, 크면 틀 안에 적어도 1/4 은 보이게
+  if(W<=vb.w) view.ox=vb.x+(vb.w-W)/2; else view.ox=Math.min(vb.x+vb.w*0.25, Math.max(vb.x+vb.w*0.75-W, view.ox));
+  if(H<=vb.h) view.oy=vb.y+(vb.h-H)/2; else view.oy=Math.min(vb.y+vb.h*0.25, Math.max(vb.y+vb.h*0.75-H, view.oy));
+}
+function zoomAt(f, cx, cy){
+  const ix=(cx-view.ox)/view.s, iy=(cy-view.oy)/view.s;
+  view.s*=f; view.ox=cx-ix*view.s; view.oy=cy-iy*view.s; clampView(); render();
+}
+function toImg(cx,cy){ return [(cx-view.ox)/view.s, (cy-view.oy)/view.s]; }
+
+function render(){
+  if(!IMG) return;
+  g.setTransform(dpr,0,0,dpr,0,0);
+  const cw=cv.width/dpr, ch=cv.height/dpr;
+  g.fillStyle='#07090d'; g.fillRect(0,0,cw,ch);
+  const vb=viewBox();
+  g.save(); g.beginPath(); g.rect(vb.x,vb.y,vb.w,vb.h); g.clip();
+  g.imageSmoothingEnabled=view.s<2;
+  g.drawImage(IMG, view.ox, view.oy, IMG.width*view.s, IMG.height*view.s);
+  for(const l of LABELS){ if(layer[l.key] && counts[l.key]>0) drawLayer(layer[l.key], l.color, 0.30, 1); }
+  if(selId!==null){ const r=regions.find(x=>x.id===selId); if(r){ const t=mkCanvas(M.img_w,M.img_h); paintStrokes(mctx(t), r.strokes); drawLayer(t,'#ffffff',0.35,2); } }
+  if(active){ drawLayer(maskA, '#ffffff', 0.22, 1); }
+  g.restore();
+  drawAxes(vb);
+}
+// 마스크(그림 크기, 흰 획) → 화면에 색 입혀 옅게 채우고, 화면 화소 1px 두께의 실선 테두리
+function drawLayer(mask, color, alpha, lw){
+  const tg=offT.getContext('2d'), og=offO.getContext('2d');
+  const cw=cv.width/dpr, ch=cv.height/dpr;
+  tg.setTransform(dpr,0,0,dpr,0,0); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,cw,ch);
+  tg.imageSmoothingEnabled=false;
+  tg.drawImage(mask, view.ox, view.oy, mask.width*view.s, mask.height*view.s);
+  tg.globalCompositeOperation='source-in'; tg.fillStyle=color; tg.fillRect(0,0,cw,ch);
+  og.setTransform(dpr,0,0,dpr,0,0); og.globalCompositeOperation='source-over'; og.clearRect(0,0,cw,ch);
+  for(let dx=-lw;dx<=lw;dx++) for(let dy=-lw;dy<=lw;dy++){ if(dx||dy) og.drawImage(offT, dx, dy, cw, ch); }
+  og.globalCompositeOperation='destination-out'; og.drawImage(offT,0,0,cw,ch);
+  g.globalAlpha=alpha; g.drawImage(offT,0,0,cw,ch);
+  g.globalAlpha=1; g.drawImage(offO,0,0,cw,ch);
+}
+function drawAxes(vb){
+  g.font='11px system-ui'; g.fillStyle='#8b949e'; g.strokeStyle='#2a313c'; g.lineWidth=1;
+  const cw=cv.width/dpr, ch=cv.height/dpr;
+  g.fillStyle='#07090d'; g.fillRect(0,0,PAD.l,ch); g.fillRect(0,ch-PAD.b,cw,PAD.b);
+  g.fillStyle='#8b949e';
+  // 세로 = 둘레(°) · 가로 = 관 길이(m)
+  g.textAlign='right';
+  for(let d=0; d<=360; d+=45){
+    const y=view.oy+IMG.height*view.s*d/360; if(y<vb.y-4||y>vb.y+vb.h+4) continue;
+    g.fillText(d+'°', PAD.l-5, y+4);
+    g.beginPath(); g.moveTo(PAD.l,y); g.lineTo(PAD.l+3,y); g.stroke();
+  }
+  g.textAlign='center';
+  const mpx=M.mm_per_px_x; const stepM = view.s*1000/mpx > 90 ? 1 : (view.s*1000/mpx>36 ? 2 : 5);
+  for(let mtr=0; mtr*1000<=M.len_mm+1; mtr+=stepM){
+    const x=view.ox+mtr*1000/mpx*view.s; if(x<vb.x-10||x>vb.x+vb.w+10) continue;
+    g.fillText(mtr.toFixed(0)+' m', x, ch-7);
+    g.beginPath(); g.moveTo(x,ch-PAD.b); g.lineTo(x,ch-PAD.b+3); g.stroke();
+  }
+}
+
+// ── 칠하기 ──────────────────────────────────────────────────────────
+function brushR(){ return +$('brush').value; }
+function paintStrokes(ctx, strokes){
+  ctx.fillStyle='#fff'; ctx.strokeStyle='#fff'; ctx.lineCap='round'; ctx.lineJoin='round';
+  for(const s of strokes){
+    if(!s.pts.length) continue;
+    ctx.lineWidth=s.r*2; ctx.beginPath(); ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+    for(let i=1;i<s.pts.length;i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+    if(s.pts.length===1) ctx.lineTo(s.pts[0][0]+0.01, s.pts[0][1]);
+    ctx.stroke();
+  }
+}
+function redrawActive(){ const c=mctx(maskA); c.clearRect(0,0,maskA.width,maskA.height); if(active) paintStrokes(c, active.strokes); }
+function stampSeg(stroke, x, y){
+  const c=mctx(maskA); c.strokeStyle='#fff'; c.lineCap='round'; c.lineJoin='round'; c.lineWidth=stroke.r*2;
+  const p=stroke.pts[stroke.pts.length-1];
+  c.beginPath(); c.moveTo(p[0],p[1]); c.lineTo(x===p[0]&&y===p[1]?x+0.01:x, y); c.stroke();
+  stroke.pts.push([+x.toFixed(1), +y.toFixed(1)]);
+}
+// 붓이 지금 구역에 닿는가 — 마스크의 (x,y) 둘레 r+여유 안에 칠해진 화소가 있나
+function touchesActive(x,y,r){
+  if(!active) return false;
+  const m=Math.ceil(r)+2, x0=Math.max(0,Math.floor(x-m)), y0=Math.max(0,Math.floor(y-m));
+  const x1=Math.min(maskA.width, Math.ceil(x+m)+1), y1=Math.min(maskA.height, Math.ceil(y+m)+1);
+  if(x1<=x0||y1<=y0) return false;
+  const d=mctx(maskA).getImageData(x0,y0,x1-x0,y1-y0).data;
+  const w=x1-x0;
+  for(let j=0;j<y1-y0;j++) for(let i=0;i<w;i++){
+    if(d[(j*w+i)*4+3]>0){ const dx=x0+i-x, dy=y0+j-y; if(dx*dx+dy*dy<=m*m) return true; }
+  }
+  return false;
+}
+function inImage(x,y){ return x>=0&&y>=0&&x<M.img_w&&y<M.img_h; }
+
+const pointers=new Map();
+let stroke=null, strokeT0=0, gest=null;
+cv.addEventListener('pointerdown', e=>{
+  if(!IMG) return;
+  cv.setPointerCapture(e.pointerId);
+  pointers.set(e.pointerId, {x:e.offsetX, y:e.offsetY});
+  if(pointers.size===2){
+    // 두 번째 손가락 — 방금 시작한 획이면 지운다(옮기려던 손가락이 찍은 점)
+    if(stroke && performance.now()-strokeT0<350){ dropStroke(stroke); }
+    stroke=null;
+    const [a,b]=[...pointers.values()];
+    gest={d:Math.hypot(a.x-b.x,a.y-b.y), cx:(a.x+b.x)/2, cy:(a.y+b.y)/2, s:view.s, ox:view.ox, oy:view.oy};
+    return;
+  }
+  if(pointers.size>2 || gest) return;
+  if(e.button!==0 && e.pointerType==='mouse') return;
+  const [x,y]=toImg(e.offsetX,e.offsetY);
+  if(!inImage(x,y)) return;
+  const r=brushR();
+  if(!active){
+    active={strokes:[]};
+    stroke={r, pts:[[+x.toFixed(1),+y.toFixed(1)]]}; active.strokes.push(stroke); strokeT0=performance.now();
+    redrawActive(); seekVideoAt(x);
+    updateUI(); render();
+  } else if(touchesActive(x,y,r)){
+    stroke={r, pts:[[+x.toFixed(1),+y.toFixed(1)]]}; active.strokes.push(stroke); strokeT0=performance.now();
+    redrawActive(); render();
+  } else {
+    toast('구역 밖 — 구역 안쪽에서 끌어 넓혀요 (✕ 로 취소)');
+  }
+});
+cv.addEventListener('pointermove', e=>{
+  if(!pointers.has(e.pointerId)) return;
+  pointers.set(e.pointerId, {x:e.offsetX, y:e.offsetY});
+  if(gest && pointers.size>=2){
+    const [a,b]=[...pointers.values()];
+    const d=Math.hypot(a.x-b.x,a.y-b.y), cx=(a.x+b.x)/2, cy=(a.y+b.y)/2;
+    const f=Math.max(0.2, d/gest.d);
+    view.s=gest.s*f;
+    view.ox=cx-((gest.cx-gest.ox)/gest.s)*view.s;
+    view.oy=cy-((gest.cy-gest.oy)/gest.s)*view.s;
+    clampView(); render(); return;
+  }
+  if(stroke && active){
+    const [x,y]=toImg(e.offsetX,e.offsetY);
+    const p=stroke.pts[stroke.pts.length-1];
+    if(Math.hypot(x-p[0],y-p[1])<Math.max(1, stroke.r*0.3)) return;
+    stampSeg(stroke, Math.max(0,Math.min(M.img_w,x)), Math.max(0,Math.min(M.img_h,y))); render();
+  }
+});
+function endPointer(e){
+  pointers.delete(e.pointerId);
+  if(pointers.size<2) gest=null;
+  if(pointers.size===0){ stroke=null; }
+}
+cv.addEventListener('pointerup', endPointer);
+cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('wheel', e=>{ e.preventDefault(); zoomAt(e.deltaY<0?1.2:1/1.2, e.offsetX, e.offsetY); }, {passive:false});
+function dropStroke(s){
+  if(!active) return;
+  const i=active.strokes.indexOf(s); if(i>=0) active.strokes.splice(i,1);
+  if(!active.strokes.length) active=null;
+  redrawActive(); updateUI(); render();
+}
+
+$('zIn').onclick=()=>{ const vb=viewBox(); zoomAt(1.5, vb.x+vb.w/2, vb.y+vb.h/2); };
+$('zOut').onclick=()=>{ const vb=viewBox(); zoomAt(1/1.5, vb.x+vb.w/2, vb.y+vb.h/2); };
+$('zFit').onclick=()=>{
+  // 전체 보기(가로 맞춤) ↔ 꽉 채움(세로 맞춤 · 0 m 부터) — 긴 관은 전체 보기가 가는 띠라 번갈아 쓴다
+  const vb=viewBox(), fit=Math.min(vb.w/IMG.width, vb.h/IMG.height);
+  if(Math.abs(view.s-fit)<1e-6){ view.s=vb.h/IMG.height; view.ox=vb.x; view.oy=vb.y; clampView(); }
+  else fitView();
+  render();
+};
+window.addEventListener('resize', ()=>{ if(!IMG) return; resize(); clampView(); render(); });
+
+$('brush').addEventListener('input', ()=>updateUI());
+
+// ── 영상 — 그 station 을 가장 잘 찍은 장면으로 ────────────────────
+function seekVideoAt(x){
+  const k=Math.max(0, Math.min(M.nz-1, Math.floor(x*M.mm_per_px_x/M.z_bin_mm)));
+  const t=M.station_t[k]; const v=$('vid');
+  const go=()=>{ try{ v.pause(); v.currentTime=t; }catch(e){} };
+  if(v.readyState>=1) go(); else v.addEventListener('loadedmetadata', go, {once:true});
+  const mm=Math.floor(t/60), ss=Math.floor(t%60);
+  $('vidHint').textContent=`${(k*M.z_bin_mm/1000).toFixed(2)} m 자리 → 영상 ${mm}:${String(ss).padStart(2,'0')} 쯤 (멀리서부터 보려면 조금 앞으로)`;
+}
+
+// ── 확정 · 취소 · 되돌리기 ────────────────────────────────────────
+function checkedLabels(){ return [...document.querySelectorAll('#labelBoxes input:checked')].map(i=>i.value); }
+function clearChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=false; i.parentElement.classList.remove('on'); }); }
+$('btnV').onclick=()=>{
+  if(!active){ toast('먼저 전개도를 눌러 구역을 만들어요'); return; }
+  const labs=checkedLabels();
+  if(!labs.length){ toast('라벨을 하나 이상 체크해요'); return; }
+  const r={id:Date.now(), labels:labs, strokes:active.strokes, at:new Date().toISOString()};
+  r.area_m2=0; regions.push(r);
+  active=null; redrawActive(); clearChecks();
+  for(const k of labs) rebuildLayer(k);
+  rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+  toast(`완료 — ${labs.map(k=>LBY[k].ko).join('·')} ${r.pct.toFixed(2)}%`, true);
+};
+$('btnX').onclick=()=>{ if(!active) return; active=null; redrawActive(); clearChecks(); updateUI(); render(); };
+$('btnUndo').onclick=()=>{ if(!active) return; active.strokes.pop(); if(!active.strokes.length) active=null; redrawActive(); updateUI(); render(); };
+
+function deleteRegion(id){
+  const i=regions.findIndex(r=>r.id===id); if(i<0) return;
+  const labs=regions[i].labels; regions.splice(i,1); if(selId===id) selId=null;
+  for(const k of labs) rebuildLayer(k);
+  rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+}
+$('btnClear').onclick=()=>{
+  if(!regions.length) return;
+  if(!confirm(`${M.title} 의 구역 ${regions.length}개를 전부 지울까요?`)) return;
+  regions=[]; selId=null; for(const l of LABELS) rebuildLayer(l.key); rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+};
+
+// ── 면적 — 라벨마다 합집합(같은 라벨은 겹쳐도 한 번), 분모 = 본 화소 ─
+function countSeen(canvas){
+  const d=mctx(canvas).getImageData(0,0,canvas.width,canvas.height).data; let n=0;
+  for(let i=0,j=3;i<SEEN.length;i++,j+=4){ if(SEEN[i] && d[j]>0) n++; }
+  return n;
+}
+function rebuildLayer(key){
+  const rs=regions.filter(r=>r.labels.includes(key));
+  if(!rs.length){ delete layer[key]; counts[key]=0; return; }
+  const c=layer[key]||(layer[key]=mkCanvas(M.img_w,M.img_h));
+  const cc=mctx(c); cc.clearRect(0,0,c.width,c.height);
+  for(const r of rs) paintStrokes(cc, r.strokes);
+  counts[key]=countSeen(c);
+}
+function rebuildUnion(){
+  if(!regions.length){ unionCount=0; return; }
+  const c=mkCanvas(M.img_w,M.img_h), cc=mctx(c);
+  for(const r of regions) paintStrokes(cc, r.strokes);
+  unionCount=countSeen(c);
+}
+function pxArea(){ return M.mm_per_px_x*M.mm_per_px_y/1e6; }   // m² / 화소
+function recomputeAreas(){
+  for(const r of regions){
+    const c=mkCanvas(M.img_w,M.img_h); paintStrokes(mctx(c), r.strokes);
+    const n=countSeen(c); r.area_m2=+(n*pxArea()).toFixed(4); r.pct=seenCount?+(100*n/seenCount).toFixed(3):0;
+  }
+}
+
+// ── 화면 갱신 ──────────────────────────────────────────────────────
+function toast(msg, good){ const t=$('toast'); t.textContent=msg; t.className='on'+(good?' good':''); clearTimeout(toast._t); toast._t=setTimeout(()=>t.className='',1800); }
+function updateUI(){
+  if(!M) return;
+  const r=brushR(); $('brushCm').textContent=`≈ ${(2*r*M.mm_per_px_x/10).toFixed(0)} cm`;
+  const n=active?active.strokes.length:0;
+  $('regState').textContent= active ? `칠하는 중 — 획 ${n} · 라벨 체크 후 ✓` : '전개도를 한 번 누르면 작은 구역이 생긴다';
+  $('btnV').disabled=!active||!checkedLabels().length; $('btnX').disabled=!active; $('btnUndo').disabled=!active;
+  // 막대 — 깨끗함 먼저
+  const pct=k=>seenCount?100*(counts[k]||0)/seenCount:0;
+  const cleanPct=seenCount?100*(seenCount-unionCount)/seenCount:100;
+  const rows=[{...CLEAN, pct:cleanPct, m2:(seenCount-unionCount)*pxArea()}]
+    .concat(LABELS.map(l=>({...l, pct:pct(l.key), m2:(counts[l.key]||0)*pxArea()})));
+  $('bars').innerHTML=rows.map(x=>`<div class="bar${x.pct>0?' lead':''}"><span><i class="sw" style="background:${x.color};vertical-align:-2px"></i> ${x.ko}</span>
+      <div class="trk"><div class="fill" style="width:${x.pct.toFixed(2)}%;background:${x.color}"></div></div>
+      <span class="num">${x.pct.toFixed(x.key==='clean'?1:2)}% · ${x.m2.toFixed(2)} m²</span></div>`).join('');
+  // 구역 목록
+  $('nReg').textContent=regions.length?`${regions.length}개`:'— 아직 없음';
+  $('regList').innerHTML=regions.map((rg,i)=>`<li class="${rg.id===selId?'sel':''}" data-id="${rg.id}">
+      <span class="t">${i+1}. ${rg.labels.map(k=>`<i class="sw" style="background:${LBY[k].color};vertical-align:-2px"></i> ${LBY[k].ko}`).join(' · ')}
+      <span class="hint">${(rg.pct||0).toFixed(2)}% · ${(rg.area_m2||0).toFixed(2)} m²</span></span>
+      <button class="del">지우기</button></li>`).join('');
+  $('regList').querySelectorAll('li').forEach(li=>{
+    li.onclick=e=>{ if(e.target.classList.contains('del')) return; const id=+li.dataset.id; selId=(selId===id?null:id); if(selId!==null) centerOn(regions.find(x=>x.id===id)); updateUI(); render(); };
+    li.querySelector('.del').onclick=()=>{ const id=+li.dataset.id; const rg=regions.find(x=>x.id===id); if(confirm(`${rg.labels.map(k=>LBY[k].ko).join('·')} 구역을 지울까요?`)) deleteRegion(id); };
+  });
+  $('saveState').textContent=`저장됨 · 구역 ${regions.length}`;
+}
+function centerOn(rg){
+  let sx=0,sy=0,n=0; for(const s of rg.strokes) for(const p of s.pts){ sx+=p[0]; sy+=p[1]; n++; }
+  if(!n) return; const vb=viewBox(); view.ox=vb.x+vb.w/2-sx/n*view.s; view.oy=vb.y+vb.h/2-sy/n*view.s; clampView();
+}
+
+// ── 내보내기 · 불러오기 ────────────────────────────────────────────
+function exportJSON(){
+  const per={}; for(const l of LABELS) per[l.key]={ko:l.ko, pct:+(seenCount?100*(counts[l.key]||0)/seenCount:0).toFixed(3), m2:+((counts[l.key]||0)*pxArea()).toFixed(4)};
+  return {
+    format:'pipe-label/1', dataset:M.name, title:M.title, video_label:M.label, exported_at:new Date().toISOString(),
+    pipe_dia_mm:M.pipe_dia_mm, len_mm:M.len_mm, img:{w:M.img_w,h:M.img_h, mm_per_px_x:M.mm_per_px_x, mm_per_px_y:M.mm_per_px_y},
+    denominator:{seen_m2:+(seenCount*pxArea()).toFixed(4), note:'계기가 본 화소(q4≥4)만 센다 · 칠한 곳 중 못 본 화소는 면적에서 뺀다'},
+    summary:{clean_pct:+(seenCount?100*(seenCount-unionCount)/seenCount:100).toFixed(3), per_label:per},
+    regions:regions.map(r=>({id:r.id, labels:r.labels, area_m2:r.area_m2, pct:r.pct, at:r.at, strokes:r.strokes})),
+    ua:navigator.userAgent,
+  };
+}
+function stamp(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`; }
+function snapshotBlob(){
+  // 전개도 전체 + 구역 테두리를 그림으로 — 사람이 바로 볼 수 있게
+  const c=mkCanvas(M.img_w, M.img_h), cc=c.getContext('2d');
+  cc.drawImage(IMG,0,0);
+  for(const l of LABELS){ if(!layer[l.key]||!counts[l.key]) continue;
+    const t=mkCanvas(M.img_w,M.img_h), tg=t.getContext('2d'); tg.drawImage(layer[l.key],0,0); tg.globalCompositeOperation='source-in'; tg.fillStyle=l.color; tg.fillRect(0,0,t.width,t.height);
+    cc.globalAlpha=0.35; cc.drawImage(t,0,0); cc.globalAlpha=1;
+    const o=mkCanvas(M.img_w,M.img_h), og=o.getContext('2d');
+    for(let dx=-2;dx<=2;dx++) for(let dy=-2;dy<=2;dy++){ if(dx||dy) og.drawImage(t,dx,dy); }
+    og.globalCompositeOperation='destination-out'; og.drawImage(t,0,0); cc.drawImage(o,0,0);
+  }
+  return new Promise(res=>c.toBlob(res,'image/png'));
+}
+$('btnShare').onclick=async()=>{
+  if(!regions.length){ toast('아직 완료한 구역이 없어요'); return; }
+  const name=`라벨_${M.name}_${stamp()}`;
+  const jf=new File([JSON.stringify(exportJSON(),null,1)], name+'.json', {type:'application/json'});
+  const pf=new File([await snapshotBlob()], name+'.png', {type:'image/png'});
+  if(navigator.canShare && navigator.canShare({files:[jf,pf]})){
+    try{ await navigator.share({files:[jf,pf], title:name, text:`${M.title} 라벨링 결과`}); toast('보냈어요', true); return; }
+    catch(e){ if(e.name==='AbortError') return; }
+  }
+  for(const f of [jf,pf]){ const a=document.createElement('a'); a.href=URL.createObjectURL(f); a.download=f.name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),5000); }
+  toast('다운로드 폴더에 저장했어요 (json · png)', true);
+};
+$('btnCopy').onclick=async()=>{
+  try{ await navigator.clipboard.writeText(JSON.stringify(exportJSON())); toast('복사했어요', true); }
+  catch(e){ toast('복사 실패 — 보내기를 써요'); }
+};
+$('fileIn').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const j=JSON.parse(rd.result);
+      if(j.format!=='pipe-label/1' || !Array.isArray(j.regions)) throw new Error('형식');
+      if(j.dataset!==M.name && !confirm(`이 파일은 ${j.title||j.dataset} 것입니다. 지금 탭(${M.title})에 불러올까요?`)) return;
+      if(regions.length && !confirm(`지금 구역 ${regions.length}개를 지우고 파일의 ${j.regions.length}개로 바꿀까요?`)) return;
+      regions=j.regions.map(r=>({id:r.id||Date.now()+Math.random(), labels:r.labels, strokes:r.strokes, at:r.at}));
+      active=null; redrawActive(); selId=null;
+      for(const l of LABELS) rebuildLayer(l.key); rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+      toast(`불러왔어요 — 구역 ${regions.length}개`, true);
+    }catch(err){ toast('JSON 을 못 읽었어요'); }
+    e.target.value='';
+  };
+  rd.readAsText(f);
+};
+
+window.addEventListener('beforeunload', saveNow);
+init().catch(err=>{ $('saveState').textContent='자료를 못 열었다: '+err; });
+</script>
+</body>
+</html>
