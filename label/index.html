@@ -18,6 +18,7 @@
     · 손가락 둘 = 옮기기 · 확대(붓 아님) · ⌫(백스페이스) = 되돌리기 · Enter = ✓ · + / − = 붓 크기
     · 라벨 기본값 = 부식(새 구역마다 골라져 있다) · 전개도 위 ▼ = 지금 영상이 보는 자리
     · 한 화면에 전개도 · 영상 · 구역 체크가 다 보이게(아래 판은 높이 고정, 남는 높이는 전개도)
+    · 오른쪽 위 💾 저장하기 — 자동 저장과 같은 곳에 쓰고 다시 읽어 확인한 뒤 "✓ 저장됨" (Ctrl+S 도 같다)
     · 라벨은 구역마다 하나(원형 버튼). 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
   화면 그리기: 구역은 그림 사각형 안으로 잘라 그리고, 테두리는 칠한 면 **안쪽 가장자리**에 긋는다
   (테두리 = 면적으로 세는 경계. 전에는 바깥에 그어 그림 끝 밖으로 삐져나왔다 — 2026-10-02 사용자).
@@ -36,7 +37,13 @@
   #tabs{ display:flex; gap:5px; }
   #tabs button{ background:var(--panel); color:var(--mute); border:1px solid var(--line); border-radius:7px; padding:5px 10px; font-size:13px; }
   #tabs button[aria-current=true]{ background:#14314f; color:var(--ink); border-color:var(--acc); }
-  #saveState{ margin-left:auto; color:var(--mute); font-size:12px; white-space:nowrap; }
+  .saveBox{ margin-left:auto; display:flex; align-items:center; gap:8px; }   /* 줄이 넘어가도 오른쪽에 붙는다 */
+  #saveState{ color:var(--mute); font-size:12px; white-space:nowrap; }
+  #saveState.bad{ color:var(--bad); }
+  /* 저장하기 — 자동 저장이 있어도 손으로 눌러 확인받는 자리(2026-10-02 사용자 "심리적으로") */
+  #btnSave{ min-height:30px; padding:3px 14px; border-radius:8px; border:1px solid #2ea043; background:#12261b; color:#d2f4dc; font-size:13.5px; font-weight:600; white-space:nowrap; transition:background .2s; }
+  #btnSave.saved{ background:#1f6f3a; color:#fff; }
+  #btnSave.fail{ background:#5a1f1f; border-color:#8a2b2b; color:#fff; }
 
   #stage{ position:relative; flex:1 1 auto; min-height:220px; background:#07090d; }
   #cv{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
@@ -106,9 +113,9 @@
     #secRight{ grid-column:1 / -1; }
     #vid{ flex:none; height:auto; aspect-ratio:16/9; max-height:240px; }
   }
+  @media (max-width:1000px){ header h1 small{ display:none; } }
   @media (max-width:560px){
     #panel{ grid-template-columns:1fr; }
-    header h1 small{ display:none; }
   }
 </style>
 </head>
@@ -116,7 +123,8 @@
 <header>
   <h1>관 벽 라벨링 <small>전개도 위에 결함 구역을 칠하고 라벨을 단다</small></h1>
   <nav id="tabs"></nav>
-  <span id="saveState"></span>
+  <div class="saveBox"><span id="saveState"></span>
+  <button id="btnSave" title="지금 구역들을 이 브라우저에 저장하고, 다시 읽어 확인한다 — 완료할 때마다 자동으로도 저장된다 · Ctrl+S">💾 저장하기</button></div>
 </header>
 
 <div id="stage">
@@ -194,6 +202,7 @@ let IMG=null;          // 전개도 그림
 let SEEN=null;         // Uint8Array(img_w*img_h) — 분모(계기가 본 화소)
 let regions=[];        // 확정한 구역 [{id, labels:[key], strokes:[{r, pts:[[x,y],…], erase?}], area_m2, pct, at}]
 let active=null;       // 칠하는 중 {strokes, editId(고치는 구역 id | null), base(고치기 전 획 수), empty}
+let lastSaved=null, saveFailed=false;   // 마지막 저장 시각 · 저장 실패(브라우저 저장공간)
 let regVer=0;          // 구역이 바뀔 때마다 +1 — 화면 캐시 열쇠
 let tool='paint';      // 'paint' | 'erase'
 let view={s:1, ox:0, oy:0};   // 그림 화소 → 화면(css px): sx = ox + x*s
@@ -277,17 +286,47 @@ async function init(){
 // ── 저장 ──────────────────────────────────────────────────────────
 function skey(name){ return 'pipelabel:'+name; }
 function loadSaved(name){
-  try{ const j=JSON.parse(localStorage.getItem(skey(name))||'null'); if(j && Array.isArray(j.regions)) return j.regions; }catch(e){}
+  lastSaved=null;
+  try{ const j=JSON.parse(localStorage.getItem(skey(name))||'null');
+       if(j && Array.isArray(j.regions)){ if(j.saved_at) lastSaved=new Date(j.saved_at); return j.regions; } }catch(e){}
   return [];
 }
+// 저장 — 쓰고 나서 다시 읽어 구역 수가 맞는지 본다. 맞아야 true(저장하기 버튼이 "저장됨" 을 띄우는 근거)
 function saveNow(){
-  if(!M) return;
+  if(!M) return false;
   try{
     const rs=regions.map(r=>({id:r.id, labels:r.labels, strokes:r.strokes, at:r.at, ...(r.edited_at?{edited_at:r.edited_at}:{})}));
-    localStorage.setItem(skey(M.name), JSON.stringify({regions:rs, saved_at:new Date().toISOString()}));
-    $('saveState').textContent=`저장됨 · 구역 ${regions.length}`;
-  }catch(e){ $('saveState').textContent='저장 못 함(브라우저 저장공간)'; }
+    const at=new Date();
+    localStorage.setItem(skey(M.name), JSON.stringify({regions:rs, saved_at:at.toISOString()}));
+    const back=JSON.parse(localStorage.getItem(skey(M.name))||'null');
+    if(!back || !Array.isArray(back.regions) || back.regions.length!==rs.length) throw new Error('다시 읽은 구역 수가 다름');
+    lastSaved=at; saveFailed=false;
+  }catch(e){ saveFailed=true; }
+  showSaveState();
+  return !saveFailed;
 }
+function hhmm(d){ const p=n=>String(n).padStart(2,'0'); return `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`; }
+function showSaveState(){
+  if(!M) return;
+  const el=$('saveState');
+  el.classList.toggle('bad', saveFailed);
+  el.textContent = saveFailed ? '저장 못 함 — 보내기로 파일을 받아 두세요'
+    : lastSaved ? `${hhmm(lastSaved)} 저장 · 구역 ${regions.length}` : `구역 ${regions.length}`;
+}
+function doSave(){
+  const ok=saveNow(), b=$('btnSave');
+  clearTimeout(doSave._t);
+  b.classList.remove('saved','fail');
+  if(ok){
+    b.classList.add('saved'); b.textContent='✓ 저장됨';
+    toast(`저장했어요 — ${M.title} · 구역 ${regions.length}개 · ${hhmm(lastSaved)}` + (active?' (칠하는 중인 구역은 ✓ 뒤에 들어가요)':''), true);
+  } else {
+    b.classList.add('fail'); b.textContent='✕ 저장 실패';
+    toast('저장 못 했어요 — 보내기로 파일을 받아 두세요');
+  }
+  doSave._t=setTimeout(()=>{ b.classList.remove('saved','fail'); b.textContent='💾 저장하기'; }, 2200);
+}
+$('btnSave').onclick=doSave;
 
 // ── 화면 ──────────────────────────────────────────────────────────
 function resize(){
@@ -696,6 +735,7 @@ window.addEventListener('keydown', e=>{
   if(t && (t.tagName==='TEXTAREA' || (t.tagName==='INPUT' && /^(text|search|number|email|url|password)$/.test(t.type)))) return;
   if(e.ctrlKey || e.metaKey || e.altKey){
     if((e.ctrlKey||e.metaKey) && !e.altKey && !e.shiftKey && (e.key==='z'||e.key==='Z')){ e.preventDefault(); undo(); }
+    if((e.ctrlKey||e.metaKey) && !e.altKey && (e.key==='s'||e.key==='S')){ e.preventDefault(); doSave(); }   // 브라우저 '페이지 저장' 창 대신
     return;                                           // Ctrl + / − 는 브라우저 확대 그대로
   }
   if(e.key==='Backspace'){ e.preventDefault(); undo(); return; }
@@ -787,7 +827,7 @@ function updateUI(){
     };
     li.querySelector('.del').onclick=()=>{ const id=+li.dataset.id; const rg=regions.find(x=>x.id===id); if(rg && confirm(`${rg.labels.map(k=>LBY[k].ko).join('·')} 구역을 지울까요?`)) deleteRegion(id); };
   });
-  $('saveState').textContent=`저장됨 · 구역 ${regions.length}`;
+  showSaveState();
 }
 function centerOn(rg){
   const b=strokesBBox(rg.strokes); if(!b) return;
