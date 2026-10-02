@@ -10,11 +10,15 @@
   갤럭시 탭 · 크롬 기준. 서버 없음(GitHub Pages) — 결과는 이 탭의 localStorage 에 자동 저장되고
   "보내기" 로 JSON(+그림)을 공유 시트로 내보낸다.
 
-  구역 칠하기 규칙(사용자 요청):
-    · 전개도를 한 번 누르면 작은 구역(얇은 실선 폴리곤)이 생긴다
-    · 그 뒤로는 구역 안(또는 붓이 닿는 곳)에서 시작한 터치만 먹는다 — 밖을 눌러도 아무 일 없다(잘못 누름 방지)
-    · 손가락 둘 = 옮기기 · 확대(붓 아님)
-    · 라벨 체크 → ✓ 완료 / ✕ 취소. 구역은 여러 개. 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
+  구역 규칙(사용자 요청):
+    · 전개도를 한 번 누르면 붓 크기만 한 작은 구역(얇은 실선)이 생긴다
+    · 그 뒤로 칠하기는 구역에 닿는 터치만 먹는다 — 밖을 눌러도 아무 일 없다(잘못 누름 방지)
+    · 지우개는 반대로 바깥에서 시작해 깎아 들어간다 — 지금 고치는 구역만 깎인다
+    · 만든 구역을 누르면 다시 고친다(넓히기 · 깎기 · 라벨 바꾸기) — ✓ 저장 · ✕ 그대로
+    · 손가락 둘 = 옮기기 · 확대(붓 아님) · ⌫(백스페이스) = 되돌리기
+    · 라벨은 구역마다 하나(원형 버튼). 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
+  화면 그리기: 구역은 그림 사각형 안으로 잘라 그리고, 테두리는 칠한 면 **안쪽 가장자리**에 긋는다
+  (테두리 = 면적으로 세는 경계. 전에는 바깥에 그어 그림 끝 밖으로 삐져나왔다 — 2026-10-02 사용자).
 
   자료는 label/build.py 가 dashboard/data 에서 뽑는다 (data/<이름>.jpg · .seen.png · .json · .mp4).
 -->
@@ -31,7 +35,7 @@
   #tabs button[aria-current=true]{ background:#14314f; color:var(--ink); border-color:var(--acc); }
   #saveState{ margin-left:auto; color:var(--mute); font-size:13px; white-space:nowrap; }
 
-  #stage{ position:relative; flex:0 0 52dvh; min-height:220px; background:#07090d; border-bottom:1px solid var(--line); }
+  #stage{ position:relative; flex:0 0 50dvh; min-height:220px; background:#07090d; }
   #cv{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
   .zoomBtns{ position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; }
   .zoomBtns button{ width:44px; height:44px; border-radius:10px; border:1px solid var(--line); background:rgba(22,27,34,.9); color:var(--ink); font-size:20px; }
@@ -40,24 +44,38 @@
   #toast.on{ opacity:1; }
   #toast.good{ background:rgba(63,185,80,.92); }
 
+  /* 도구 줄 — 전개도 바로 밑. 칠하기 / 지우개 · 붓 크기 · 되돌리기 */
+  #tools{ flex:0 0 auto; display:flex; align-items:center; gap:10px 14px; padding:6px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; }
+  .seg{ display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .seg button{ min-height:44px; padding:6px 16px; background:#0d1117; color:var(--mute); border:0; font-size:15px; }
+  .seg button + button{ border-left:1px solid var(--line); }
+  .seg button[aria-pressed=true]{ background:#14314f; color:var(--ink); box-shadow:inset 0 0 0 2px var(--acc); }
+  #tools .size{ display:flex; align-items:center; gap:10px; flex:1 1 260px; max-width:520px; color:var(--mute); font-size:13.5px; white-space:nowrap; }
+  #brush{ flex:1; min-width:120px; height:34px; accent-color:var(--acc); }
+  #brushDot{ width:46px; height:46px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:#07090d; }
+  #brushDot i{ display:block; border-radius:50%; border:1px solid #fff; background:rgba(255,255,255,.2); }
+  #brushDot.erase i{ border-style:dashed; border-color:#ffb3b3; background:transparent; }
+  #brushCm{ min-width:74px; }
+  #btnUndo{ margin-left:auto; min-height:44px; padding:6px 14px; border-radius:9px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:15px; display:inline-flex; align-items:center; gap:8px; }
+  #btnUndo:disabled{ opacity:.4; }
+  kbd{ font:12px ui-monospace,Consolas,monospace; border:1px solid #57606a; border-bottom-width:2px; border-radius:4px; padding:0 5px; color:var(--mute); }
+
   #panel{ flex:1 1 auto; overflow:auto; padding:10px 14px 24px; display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
   @media (max-width:820px){ #panel{ grid-template-columns:1fr; } }
   section{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:0; }
   section h2{ font-size:14px; color:var(--mute); margin:0 0 8px; font-weight:600; }
-  .row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
   .hint{ color:var(--mute); font-size:12.5px; }
 
-  #labelBoxes{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:6px; margin:8px 0 10px; }
+  #labelBoxes{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:6px; margin:4px 0 10px; }
   #labelBoxes label{ display:flex; align-items:center; gap:8px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:15px; min-height:44px; }
   #labelBoxes label.on{ border-color:var(--acc); background:#14314f; }
-  #labelBoxes input{ width:20px; height:20px; margin:0; }
+  #labelBoxes input{ width:22px; height:22px; margin:0; accent-color:var(--acc); flex:0 0 auto; }
   .sw{ display:inline-block; width:14px; height:14px; border-radius:3px; flex:0 0 auto; }
   .btns{ display:flex; gap:8px; flex-wrap:wrap; }
   .btns button, .btns label.btn{ min-height:46px; padding:8px 14px; border-radius:9px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:15px; display:inline-flex; align-items:center; gap:6px; }
   .btns button:disabled{ opacity:.4; }
   button.v{ background:#1f6f3a; border-color:#2ea043; font-weight:700; flex:1 1 120px; justify-content:center; }
   button.x{ background:#5a1f1f; border-color:#8a2b2b; }
-  #brush{ flex:1 1 120px; min-width:100px; }
   #regState{ font-weight:400; color:var(--acc); }
   #vid{ width:100%; max-height:200px; background:#000; border-radius:6px; }
 
@@ -72,7 +90,7 @@
   #regList li{ display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:14px; }
   #regList li .t{ flex:1; }
   #regList li button{ min-height:36px; padding:4px 10px; border-radius:7px; border:1px solid var(--line); background:#21262d; color:var(--ink); }
-  #regList li.sel{ border-color:var(--acc); }
+  #regList li.sel{ border-color:var(--acc); background:#11233a; }
   input[type=file]{ display:none; }
 </style>
 </head>
@@ -85,22 +103,30 @@
 
 <div id="stage">
   <canvas id="cv"></canvas>
-  <div class="zoomBtns"><button id="zIn" title="확대">＋</button><button id="zOut" title="축소">－</button><button id="zFit" title="전체 보기">⤢</button></div>
-  <div id="hint">한 손가락 = 칠하기 · 두 손가락 = 옮기기·확대</div>
+  <div class="zoomBtns"><button id="zIn" title="확대">＋</button><button id="zOut" title="축소">－</button><button id="zFit" title="전체 보기 ↔ 꽉 채움">⤢</button></div>
+  <div id="hint">한 손가락 = 칠하기·지우기 · 두 손가락 = 옮기기·확대 · 만든 구역을 누르면 고치기</div>
   <div id="toast"></div>
+</div>
+
+<div id="tools">
+  <div class="seg" role="group" aria-label="도구">
+    <button id="tPaint" aria-pressed="true" title="구역 안쪽에서 끌어 넓힌다">🖌️ 칠하기</button>
+    <button id="tErase" aria-pressed="false" title="바깥에서 시작해 구역을 깎는다 — 지금 고치는 구역만">🧽 지우개</button>
+  </div>
+  <label class="size"><span>붓 크기</span><input type="range" id="brush" min="0" max="100" step="1" value="51"></label>
+  <span id="brushDot" title="지금 화면에서의 붓 크기"><i></i></span><span id="brushCm" class="hint"></span>
+  <button id="btnUndo" title="마지막 획을 되돌린다 — 키보드 백스페이스로도">↶ 되돌리기 <kbd>⌫</kbd></button>
 </div>
 
 <div id="panel">
   <section id="secLabel">
-    <h2>구역 — <span id="regState">전개도를 한 번 누르면 작은 구역이 생긴다</span></h2>
-    <div class="row"><span class="hint">붓 굵기</span><input type="range" id="brush" min="3" max="30" value="8"><span class="hint" id="brushCm"></span></div>
-    <div id="labelBoxes"></div>
+    <h2>구역 — <span id="regState"></span></h2>
+    <div id="labelBoxes" role="radiogroup" aria-label="라벨"></div>
     <div class="btns">
-      <button id="btnUndo" title="마지막으로 칠한 획을 되돌린다">↶ 되돌리기</button>
-      <button id="btnX" class="x" title="지금 구역을 버린다">✕ 취소</button>
-      <button id="btnV" class="v" title="체크한 라벨로 구역을 확정한다">✓ 완료</button>
+      <button id="btnX" class="x" title="새 구역은 버리고, 고치던 구역은 고치기 전으로">✕ 취소</button>
+      <button id="btnV" class="v" title="고른 라벨로 구역을 확정한다">✓ 완료</button>
     </div>
-    <div class="hint" style="margin-top:8px">① 전개도를 한 번 누른다 → 작은 구역 ② 구역 <b>안쪽에서</b> 끌어 넓힌다 — 밖을 눌러도 아무 일 없다 ③ 라벨 체크 → ✓ 완료</div>
+    <div class="hint" style="margin-top:8px">① 전개도를 한 번 누른다 → 작은 구역 ② 구역 <b>안쪽에서</b> 끌어 넓힌다(밖은 안 먹는다) · 지우개는 <b>바깥에서</b> 깎아 들어간다 ③ 라벨 하나 고르고 ✓ — 만든 구역을 누르면 다시 고친다</div>
   </section>
 
   <section id="secVid">
@@ -114,7 +140,7 @@
   </section>
 
   <section id="secList">
-    <h2>완료한 구역 <span id="nReg"></span></h2>
+    <h2>완료한 구역 <span id="nReg"></span> <span class="hint">— 누르면 고친다</span></h2>
     <ol id="regList"></ol>
     <div class="btns" style="margin-top:10px">
       <button id="btnShare" title="JSON 과 그림을 공유 시트로 보낸다">📤 보내기</button>
@@ -142,26 +168,31 @@ const LABELS=[
 ];
 const CLEAN={key:'clean', ko:'깨끗함', color:'#3fb950'};
 const LBY=Object.fromEntries(LABELS.map(l=>[l.key,l]));
+const R_MIN=1, R_MAX=60;      // 붓 반지름(그림 화소) — 막대는 로그 눈금이라 작은 붓도 고르기 쉽다
+const A_ON=128;               // 면적으로 세는 화소 = 마스크 불투명도 절반 이상(가장자리 흐림은 반만)
 
 // ── 상태 ──────────────────────────────────────────────────────────
 let M=null;            // data/<이름>.json
 let IMG=null;          // 전개도 그림
 let SEEN=null;         // Uint8Array(img_w*img_h) — 분모(계기가 본 화소)
-let regions=[];        // 확정한 구역 [{id, labels:[key], strokes:[{r, pts:[[x,y],…]}], area_m2, pct, at}]
-let active=null;       // 칠하는 중인 구역 {strokes:[…]}
+let regions=[];        // 확정한 구역 [{id, labels:[key], strokes:[{r, pts:[[x,y],…], erase?}], area_m2, pct, at}]
+let active=null;       // 칠하는 중 {strokes, editId(고치는 구역 id | null), base(고치기 전 획 수), empty}
+let regVer=0;          // 구역이 바뀔 때마다 +1 — 화면 캐시 열쇠
+let tool='paint';      // 'paint' | 'erase'
 let view={s:1, ox:0, oy:0};   // 그림 화소 → 화면(css px): sx = ox + x*s
 const PAD={l:40, t:8, r:8, b:22};
 let dpr=window.devicePixelRatio||1;
 const cv=$('cv'), g=cv.getContext('2d');
-let maskA=null;        // 활성 구역 마스크(그림 크기)
-const layer={};        // 라벨마다 확정 구역 합집합 마스크(그림 크기)
+let maskA=null, scratch=null, work=null;   // 그림 크기: 칠하는 구역 · 구역 하나 임시 · 라벨/합집합 세기
 const counts={};       // 라벨마다 본 화소 수
 let seenCount=0, unionCount=0;
-let offT=null, offO=null;   // 화면 크기 임시 캔버스(색 입히기 · 테두리)
-let selId=null;
+let offT=null, offE=null, offO=null, offR=null, offC=null, committedKey='';   // 화면 크기 임시 캔버스
+let cursor=null, previewUntil=0, pvT=0;    // 붓 미리보기(css px)
+const hitC=document.createElement('canvas'); hitC.width=hitC.height=5;
 
 function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
 function mctx(c){ return c.getContext('2d',{willReadFrequently:true}); }
+function mkCanvasR(w,h){ const c=mkCanvas(w,h); mctx(c); return c; }   // 읽기 잦은 캔버스 — 첫 getContext 에 표시해야 먹는다
 
 // ── 자료 불러오기 ──────────────────────────────────────────────────
 async function loadDataset(name, push=true){
@@ -173,39 +204,52 @@ async function loadDataset(name, push=true){
   if(push) history.replaceState(null,'',`?data=${name}`);
   IMG=await loadImage(`data/${name}.jpg`);
   const seenIm=await loadImage(`data/${name}.seen.png`);
-  const sc=mkCanvas(M.img_w, M.img_h), sg=mctx(sc); sg.imageSmoothingEnabled=false;
+  const sc=mkCanvasR(M.img_w, M.img_h), sg=mctx(sc); sg.imageSmoothingEnabled=false;
   sg.drawImage(seenIm,0,0,M.img_w,M.img_h);
   const px=sg.getImageData(0,0,M.img_w,M.img_h).data;
   SEEN=new Uint8Array(M.img_w*M.img_h); seenCount=0;
   for(let i=0;i<SEEN.length;i++){ if(px[i*4]>127){ SEEN[i]=1; seenCount++; } }
-  maskA=mkCanvas(M.img_w, M.img_h);
-  for(const k in layer) delete layer[k];
+  maskA=mkCanvasR(M.img_w, M.img_h); scratch=mkCanvasR(M.img_w, M.img_h); work=mkCanvasR(M.img_w, M.img_h);
   for(const k in counts) delete counts[k];
-  active=null; selId=null;
-  regions=loadSaved(name);
-  for(const l of LABELS) rebuildLayer(l.key);
-  rebuildUnion();
+  active=null; clearChecks();
+  regions=loadSaved(name).map(normRegion).filter(Boolean);
+  for(const rg of regions) computeRegionArea(rg);
+  rebuildAll(); regVer++;
   const v=$('vid'); v.src=`data/${M.video}`; v.load();
   $('vidHint').textContent='구역을 찍으면 그 자리를 찍은 장면으로 간다';
   $('chartDen').textContent=`— 분모 = 계기가 본 벽 ${M.seen_m2.toFixed(2)} m² (어둡게 빈 곳 제외) · 관경 ${M.pipe_dia_mm} mm · 길이 ${(M.len_mm/1000).toFixed(2)} m`;
   resize(); fitView(); updateUI(); render();
 }
 function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
+// 저장본 · 불러온 파일을 지금 형식으로 — 예전 판(라벨 여러 개 고를 수 있던 때)의 구역도 그대로 읽는다
+function normRegion(r){
+  if(!r || !Array.isArray(r.strokes)) return null;
+  const labels=Array.isArray(r.labels) ? r.labels.filter(k=>LBY[k]) : (r.label && LBY[r.label] ? [r.label] : []);
+  const strokes=r.strokes.filter(s=>s && Array.isArray(s.pts) && s.pts.length && +s.r>0)
+                         .map(s=>s.erase ? {r:+s.r, pts:s.pts, erase:true} : {r:+s.r, pts:s.pts});
+  if(!labels.length || !strokes.length) return null;
+  const o={id:r.id||(Date.now()+Math.random()), labels, strokes, at:r.at||new Date().toISOString()};
+  if(r.edited_at) o.edited_at=r.edited_at;
+  return o;
+}
 
 async function init(){
   const list=await (await fetch(`data/index.json?t=${Date.now()}`,{cache:'no-store'})).json();
   const tabs=$('tabs');
   for(const d of list){
     const b=document.createElement('button'); b.textContent=d.title; b.dataset.name=d.name;
-    b.onclick=()=>{ if(active && !confirm('칠하던 구역이 아직 완료되지 않았어요. 버리고 옮길까요?')) return; active=null; loadDataset(d.name); }; tabs.appendChild(b);
+    b.onclick=()=>{ if(active && !confirm('칠하던 구역이 아직 완료되지 않았어요. 버리고 옮길까요?')) return; active=null; loadDataset(d.name); };
+    tabs.appendChild(b);
   }
+  // 라벨 — 원형 버튼(라디오). 구역마다 하나만
   const box=$('labelBoxes');
   for(const l of LABELS){
     const lab=document.createElement('label');
-    lab.innerHTML=`<input type="checkbox" value="${l.key}"><i class="sw" style="background:${l.color}"></i>${l.ko}`;
-    lab.querySelector('input').addEventListener('change',e=>{ lab.classList.toggle('on',e.target.checked); updateUI(); });
+    lab.innerHTML=`<input type="radio" name="lab" value="${l.key}"><i class="sw" style="background:${l.color}"></i>${l.ko}`;
+    lab.querySelector('input').addEventListener('change',()=>{ syncChecks(); updateUI(); render(); });
     box.appendChild(lab);
   }
+  try{ const b=localStorage.getItem('pipelabel:brush'); if(b!==null) $('brush').value=b; }catch(e){}
   const q=new URLSearchParams(location.search).get('data');
   await loadDataset((q && list.some(d=>d.name===q)) ? q : list[0].name);
 }
@@ -218,8 +262,11 @@ function loadSaved(name){
 }
 function saveNow(){
   if(!M) return;
-  try{ localStorage.setItem(skey(M.name), JSON.stringify({regions, saved_at:new Date().toISOString()})); $('saveState').textContent=`저장됨 · 구역 ${regions.length}`; }
-  catch(e){ $('saveState').textContent='저장 못 함(브라우저 저장공간)'; }
+  try{
+    const rs=regions.map(r=>({id:r.id, labels:r.labels, strokes:r.strokes, at:r.at, ...(r.edited_at?{edited_at:r.edited_at}:{})}));
+    localStorage.setItem(skey(M.name), JSON.stringify({regions:rs, saved_at:new Date().toISOString()}));
+    $('saveState').textContent=`저장됨 · 구역 ${regions.length}`;
+  }catch(e){ $('saveState').textContent='저장 못 함(브라우저 저장공간)'; }
 }
 
 // ── 화면 ──────────────────────────────────────────────────────────
@@ -227,7 +274,8 @@ function resize(){
   dpr=window.devicePixelRatio||1;
   const st=$('stage'), w=st.clientWidth, h=st.clientHeight;
   cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr);
-  offT=mkCanvas(cv.width, cv.height); offO=mkCanvas(cv.width, cv.height);
+  [offT,offE,offO,offR,offC]=[0,0,0,0,0].map(()=>mkCanvas(cv.width, cv.height));
+  committedKey='';
 }
 function viewBox(){ return {x:PAD.l, y:PAD.t, w:cv.width/dpr-PAD.l-PAD.r, h:cv.height/dpr-PAD.t-PAD.b}; }
 function fitView(){
@@ -249,6 +297,9 @@ function zoomAt(f, cx, cy){
   view.s*=f; view.ox=cx-ix*view.s; view.oy=cy-iy*view.s; clampView(); render();
 }
 function toImg(cx,cy){ return [(cx-view.ox)/view.s, (cy-view.oy)/view.s]; }
+function imgRectDev(){ return {x:dpr*view.ox, y:dpr*view.oy, w:dpr*IMG.width*view.s, h:dpr*IMG.height*view.s}; }
+let rq=0;
+function requestRender(){ if(rq) return; rq=requestAnimationFrame(()=>{ rq=0; render(); }); }
 
 function render(){
   if(!IMG) return;
@@ -259,33 +310,71 @@ function render(){
   g.save(); g.beginPath(); g.rect(vb.x,vb.y,vb.w,vb.h); g.clip();
   g.imageSmoothingEnabled=view.s<2;
   g.drawImage(IMG, view.ox, view.oy, IMG.width*view.s, IMG.height*view.s);
-  for(const l of LABELS){
-    const rs=regions.filter(r=>r.labels.includes(l.key)); if(!rs.length) continue;
-    drawLayer(rs.flatMap(r=>r.strokes), l.color, 0.30, 1);
+  renderCommitted();
+  g.save(); g.setTransform(1,0,0,1,0,0); g.drawImage(offC,0,0); g.restore();
+  if(active){
+    // 칠하는 구역 — 고른 라벨 색으로 채우고(안 골랐으면 흰색) 흰 실선. 고치는 중이면 선을 조금 굵게
+    const lab=checkedLabel();
+    drawLayer(g, [active.strokes], lab?LBY[lab].color:'#ffffff', 0.28, '#ffffff', active.editId?1.5:1);
   }
-  if(selId!==null){ const r=regions.find(x=>x.id===selId); if(r) drawLayer(r.strokes,'#ffffff',0.35,2); }
-  if(active){ drawLayer(active.strokes, '#ffffff', 0.22, 1); }
+  drawCursor();
   g.restore();
   drawAxes(vb);
+  updateBrushDot();
 }
-// 획들을 화면 좌표로 바로 그려(벡터) 색 입혀 옅게 채우고, 화면 화소 1px 두께의 실선 테두리.
-// 그림 크기 마스크(maskA · layer)는 면적 세기 · 닿음 판정용이고, 화면엔 안 쓴다 — 키우면 계단진다
-function drawLayer(strokes, color, alpha, lw){
-  const tg=offT.getContext('2d'), og=offO.getContext('2d');
-  const cw=cv.width/dpr, ch=cv.height/dpr;
-  tg.setTransform(dpr,0,0,dpr,0,0); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,cw,ch);
-  tg.setTransform(dpr*view.s,0,0,dpr*view.s,dpr*view.ox,dpr*view.oy);
-  paintStrokes(tg, strokes);
-  tg.setTransform(dpr,0,0,dpr,0,0);
-  tg.globalCompositeOperation='source-in'; tg.fillStyle=color; tg.fillRect(0,0,cw,ch);
-  og.setTransform(dpr,0,0,dpr,0,0); og.globalCompositeOperation='source-over'; og.clearRect(0,0,cw,ch);
-  for(let dx=-lw;dx<=lw;dx++) for(let dy=-lw;dy<=lw;dy++){ if(dx||dy) og.drawImage(offT, dx, dy, cw, ch); }
-  og.globalCompositeOperation='destination-out'; og.drawImage(offT,0,0,cw,ch);
-  g.globalAlpha=alpha; g.drawImage(offT,0,0,cw,ch);
-  g.globalAlpha=1; g.drawImage(offO,0,0,cw,ch);
+// 확정한 구역 — 보기·구역이 그대로면 다시 그리지 않는다(칠하는 동안 빠르게)
+function renderCommitted(){
+  const eid=active&&active.editId;
+  const key=[view.s,view.ox,view.oy,cv.width,cv.height,regVer,eid].join('|');
+  if(key===committedKey) return;
+  committedKey=key;
+  const cg=offC.getContext('2d'); cg.setTransform(1,0,0,1,0,0); cg.clearRect(0,0,offC.width,offC.height);
+  for(const l of LABELS){
+    const rs=regions.filter(r=>r.labels.includes(l.key) && r.id!==eid);
+    if(rs.length) drawLayer(cg, rs.map(r=>r.strokes), l.color, 0.30, l.color, 1);
+  }
+}
+// 구역 여럿(획 묶음들)을 화면에 — 그림 사각형 안으로 잘라 옅게 채우고, 칠한 면 안쪽 가장자리에 실선.
+// 지우개 획이 있는 구역은 따로 그려 붙인다(지우개가 다른 구역까지 깎지 않게)
+function drawLayer(target, groups, fill, alpha, line, lwCss){
+  const W=cv.width, H=cv.height;
+  const tg=offT.getContext('2d');
+  tg.setTransform(1,0,0,1,0,0); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,W,H);
+  tg.save();
+  const R=imgRectDev(); tg.beginPath(); tg.rect(R.x,R.y,R.w,R.h); tg.clip();
+  paintGroups(tg, groups, offR, [dpr*view.s,0,0,dpr*view.s,dpr*view.ox,dpr*view.oy]);
+  tg.restore();
+  tg.globalCompositeOperation='source-in'; tg.fillStyle=fill; tg.fillRect(0,0,W,H); tg.globalCompositeOperation='source-over';
+  innerOutline(offT, offE, offO, Math.max(1, Math.round(lwCss*dpr)));
+  if(line!==fill){ const og=offO.getContext('2d'); og.globalCompositeOperation='source-in'; og.fillStyle=line; og.fillRect(0,0,W,H); og.globalCompositeOperation='source-over'; }
+  target.save(); target.setTransform(1,0,0,1,0,0);
+  target.globalAlpha=alpha; target.drawImage(offT,0,0);
+  target.globalAlpha=1; target.drawImage(offO,0,0);
+  target.restore();
+}
+// 안쪽 테두리 = 면 − 깎은 면(8방향 lw 화소). 테두리가 칠한 면 밖으로 나가지 않는다
+const OFFS=lw=>[[lw,0],[-lw,0],[0,lw],[0,-lw],[lw,lw],[lw,-lw],[-lw,lw],[-lw,-lw]];
+function innerOutline(src, e, o, lw){
+  const W=src.width, H=src.height;
+  const eg=e.getContext('2d'); eg.setTransform(1,0,0,1,0,0); eg.globalCompositeOperation='source-over'; eg.clearRect(0,0,W,H); eg.drawImage(src,0,0);
+  eg.globalCompositeOperation='destination-in'; for(const [dx,dy] of OFFS(lw)) eg.drawImage(src,dx,dy);
+  eg.globalCompositeOperation='source-over';
+  const og=o.getContext('2d'); og.setTransform(1,0,0,1,0,0); og.globalCompositeOperation='source-over'; og.clearRect(0,0,W,H); og.drawImage(src,0,0);
+  og.globalCompositeOperation='destination-out'; og.drawImage(e,0,0); og.globalCompositeOperation='source-over';
+}
+function drawCursor(){
+  const on=cursor || performance.now()<previewUntil;
+  if(!on || !M) return;
+  let p=cursor; if(!p){ const vb=viewBox(); p={x:vb.x+vb.w/2, y:vb.y+vb.h/2}; }
+  const r=Math.max(1.5, brushR()*view.s);
+  g.save(); g.lineWidth=1;
+  g.strokeStyle='rgba(0,0,0,.55)'; g.beginPath(); g.arc(p.x,p.y,r+1,0,Math.PI*2); g.stroke();
+  if(tool==='erase'){ g.setLineDash([4,3]); g.strokeStyle='#ffb3b3'; } else g.strokeStyle='rgba(255,255,255,.95)';
+  g.beginPath(); g.arc(p.x,p.y,r,0,Math.PI*2); g.stroke();
+  g.restore();
 }
 function drawAxes(vb){
-  g.font='11px system-ui'; g.fillStyle='#8b949e'; g.strokeStyle='#2a313c'; g.lineWidth=1;
+  g.font='11px system-ui'; g.strokeStyle='#2a313c'; g.lineWidth=1;
   const cw=cv.width/dpr, ch=cv.height/dpr;
   g.fillStyle='#07090d'; g.fillRect(0,0,PAD.l,ch); g.fillRect(0,ch-PAD.b,cw,PAD.b);
   g.fillStyle='#8b949e';
@@ -305,24 +394,55 @@ function drawAxes(vb){
   }
 }
 
-// ── 칠하기 ──────────────────────────────────────────────────────────
-function brushR(){ return +$('brush').value; }
+// ── 칠하기 · 지우개 ──────────────────────────────────────────────────
+function brushR(){ const v=+$('brush').value; return +(R_MIN*Math.pow(R_MAX/R_MIN, v/100)).toFixed(2); }
+function hasErase(st){ return st.some(s=>s.erase); }
 function paintStrokes(ctx, strokes){
-  ctx.fillStyle='#fff'; ctx.strokeStyle='#fff'; ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.strokeStyle='#fff'; ctx.lineCap='round'; ctx.lineJoin='round';
   for(const s of strokes){
     if(!s.pts.length) continue;
+    ctx.globalCompositeOperation = s.erase ? 'destination-out' : 'source-over';
     ctx.lineWidth=s.r*2; ctx.beginPath(); ctx.moveTo(s.pts[0][0], s.pts[0][1]);
     for(let i=1;i<s.pts.length;i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
     if(s.pts.length===1) ctx.lineTo(s.pts[0][0]+0.01, s.pts[0][1]);
     ctx.stroke();
   }
+  ctx.globalCompositeOperation='source-over';
 }
-function redrawActive(){ const c=mctx(maskA); c.clearRect(0,0,maskA.width,maskA.height); if(active) paintStrokes(c, active.strokes); }
-function stampSeg(stroke, x, y){
-  const c=mctx(maskA); c.strokeStyle='#fff'; c.lineCap='round'; c.lineJoin='round'; c.lineWidth=stroke.r*2;
-  const p=stroke.pts[stroke.pts.length-1];
+// 구역 여럿을 한 캔버스에 — 지우개 있는 구역은 tmp 에 따로 그려 붙인다. T = 그릴 때 변환
+function paintGroups(ctx, groups, tmp, T){
+  for(const st of groups){
+    if(!hasErase(st)){ ctx.setTransform(...T); paintStrokes(ctx, st); continue; }
+    const tg=tmp.getContext('2d'); tg.setTransform(1,0,0,1,0,0); tg.clearRect(0,0,tmp.width,tmp.height);
+    tg.setTransform(...T); paintStrokes(tg, st); tg.setTransform(1,0,0,1,0,0);
+    ctx.setTransform(1,0,0,1,0,0); ctx.drawImage(tmp,0,0);
+  }
+  ctx.setTransform(1,0,0,1,0,0);
+}
+function redrawActive(){ const c=mctx(maskA); c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,maskA.width,maskA.height); if(active) paintStrokes(c, active.strokes); }
+function stampSeg(st, x, y){
+  const c=mctx(maskA); c.globalCompositeOperation=st.erase?'destination-out':'source-over';
+  c.strokeStyle='#fff'; c.lineCap='round'; c.lineJoin='round'; c.lineWidth=st.r*2;
+  const p=st.pts[st.pts.length-1];
   c.beginPath(); c.moveTo(p[0],p[1]); c.lineTo(x===p[0]&&y===p[1]?x+0.01:x, y); c.stroke();
-  stroke.pts.push([+x.toFixed(1), +y.toFixed(1)]);
+  c.globalCompositeOperation='source-over';
+  st.pts.push([+x.toFixed(1), +y.toFixed(1)]);
+}
+// 획 묶음이 칠한 범위(그림 화소, 그림 안으로 자름) — 지우개 획은 넓히지 않으니 뺀다
+function strokesBBox(strokes){
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for(const s of strokes){ if(s.erase) continue; for(const p of s.pts){
+    x0=Math.min(x0,p[0]-s.r); y0=Math.min(y0,p[1]-s.r); x1=Math.max(x1,p[0]+s.r); y1=Math.max(y1,p[1]+s.r); } }
+  if(x0===Infinity) return null;
+  const b={x0:Math.max(0,Math.floor(x0)-1), y0:Math.max(0,Math.floor(y0)-1), x1:Math.min(M.img_w,Math.ceil(x1)+2), y1:Math.min(M.img_h,Math.ceil(y1)+2)};
+  return (b.x1>b.x0 && b.y1>b.y0) ? b : null;
+}
+function maskEmpty(){
+  if(!active) return true;
+  const b=strokesBBox(active.strokes); if(!b) return true;
+  const d=mctx(maskA).getImageData(b.x0,b.y0,b.x1-b.x0,b.y1-b.y0).data;
+  for(let i=3;i<d.length;i+=4) if(d[i]>=A_ON) return false;
+  return true;
 }
 // 붓이 지금 구역에 닿는가 — 마스크의 (x,y) 둘레 r+여유 안에 칠해진 화소가 있나
 function touchesActive(x,y,r){
@@ -333,45 +453,77 @@ function touchesActive(x,y,r){
   const d=mctx(maskA).getImageData(x0,y0,x1-x0,y1-y0).data;
   const w=x1-x0;
   for(let j=0;j<y1-y0;j++) for(let i=0;i<w;i++){
-    if(d[(j*w+i)*4+3]>0){ const dx=x0+i-x, dy=y0+j-y; if(dx*dx+dy*dy<=m*m) return true; }
+    if(d[(j*w+i)*4+3]>=A_ON){ const dx=x0+i-x, dy=y0+j-y; if(dx*dx+dy*dy<=m*m) return true; }
   }
   return false;
 }
+// 누른 자리에 있는 확정 구역(나중 것 먼저)
+function hitRegion(x,y){
+  const hc=mctx(hitC);
+  for(let i=regions.length-1;i>=0;i--){
+    const rg=regions[i], b=strokesBBox(rg.strokes);
+    if(!b || x<b.x0-2 || x>b.x1+2 || y<b.y0-2 || y>b.y1+2) continue;
+    hc.setTransform(1,0,0,1,0,0); hc.clearRect(0,0,5,5);
+    hc.setTransform(1,0,0,1,2-x,2-y);
+    paintStrokes(hc, rg.strokes);
+    hc.setTransform(1,0,0,1,0,0);
+    const d=hc.getImageData(1,1,3,3).data;
+    for(let k=3;k<d.length;k+=4) if(d[k]>=A_ON) return rg;
+  }
+  return null;
+}
 function inImage(x,y){ return x>=0&&y>=0&&x<M.img_w&&y<M.img_h; }
 
+function enterEdit(rg){
+  active={strokes:rg.strokes.map(s=>({...s, pts:s.pts.map(p=>p.slice())})), editId:rg.id, base:rg.strokes.length, empty:false};
+  redrawActive(); setLabel(rg.labels[0]);
+  const b=strokesBBox(rg.strokes); if(b) seekVideoAt((b.x0+b.x1)/2);
+  updateUI();
+}
+function beginStroke(x,y,r,erase){
+  stroke={r, pts:[[+x.toFixed(1),+y.toFixed(1)]]}; if(erase) stroke.erase=true;
+  active.strokes.push(stroke); strokeT0=performance.now();
+  redrawActive();
+}
+
 const pointers=new Map();
-let stroke=null, strokeT0=0, gest=null;
+let stroke=null, strokeT0=0, gest=null, editT0=0;
 cv.addEventListener('pointerdown', e=>{
   if(!IMG) return;
   cv.setPointerCapture(e.pointerId);
   pointers.set(e.pointerId, {x:e.offsetX, y:e.offsetY});
   if(pointers.size===2){
-    // 두 번째 손가락 — 방금 시작한 획이면 지운다(옮기려던 손가락이 찍은 점)
-    if(stroke && performance.now()-strokeT0<350){ dropStroke(stroke); }
-    stroke=null;
+    // 두 번째 손가락 — 방금 찍은 점 · 방금 들어간 고치기는 옮기려던 손가락이 한 것이라 되돌린다
+    const now=performance.now();
+    if(stroke && now-strokeT0<350) dropStroke(stroke);
+    if(editT0 && now-editT0<350 && active && active.strokes.length<=active.base){ active=null; redrawActive(); clearChecks(); updateUI(); }
+    stroke=null; editT0=0; cursor=null;
     const [a,b]=[...pointers.values()];
     gest={d:Math.hypot(a.x-b.x,a.y-b.y), cx:(a.x+b.x)/2, cy:(a.y+b.y)/2, s:view.s, ox:view.ox, oy:view.oy};
-    return;
+    render(); return;
   }
   if(pointers.size>2 || gest) return;
-  if(e.button!==0 && e.pointerType==='mouse') return;
+  if(e.pointerType==='mouse' && e.button!==0) return;
   const [x,y]=toImg(e.offsetX,e.offsetY);
-  if(!inImage(x,y)) return;
+  cursor={x:e.offsetX, y:e.offsetY}; editT0=0;
   const r=brushR();
   if(!active){
-    active={strokes:[]};
-    stroke={r, pts:[[+x.toFixed(1),+y.toFixed(1)]]}; active.strokes.push(stroke); strokeT0=performance.now();
-    redrawActive(); seekVideoAt(x);
-    updateUI(); render();
-  } else if(touchesActive(x,y,r)){
-    stroke={r, pts:[[+x.toFixed(1),+y.toFixed(1)]]}; active.strokes.push(stroke); strokeT0=performance.now();
-    redrawActive(); render();
-  } else {
-    toast('구역 밖 — 구역 안쪽에서 끌어 넓혀요 (✕ 로 취소)');
+    if(!inImage(x,y)){ requestRender(); return; }
+    const hit=hitRegion(x,y);
+    if(hit){ enterEdit(hit); editT0=performance.now(); render(); return; }     // 만든 구역을 누르면 고치기
+    if(tool==='erase'){ toast('지우개 — 고칠 구역을 먼저 눌러요 (새 구역은 칠하기로)'); requestRender(); return; }
+    active={strokes:[], editId:null, base:0, empty:false};
+    beginStroke(x,y,r,false); seekVideoAt(x); updateUI(); render(); return;
   }
+  if(tool==='erase'){ beginStroke(x,y,r,true); render(); return; }               // 지우개는 어디서 시작해도 된다(바깥부터 깎기)
+  if(active.empty ? inImage(x,y) : touchesActive(x,y,r)){ beginStroke(x,y,r,false); render(); return; }
+  toast('구역 밖 — 구역 안쪽에서 끌어 넓혀요 (✕ 로 취소)'); requestRender();
 });
 cv.addEventListener('pointermove', e=>{
-  if(!pointers.has(e.pointerId)) return;
+  if(!pointers.has(e.pointerId)){
+    if(e.pointerType!=='touch' && IMG){ cursor={x:e.offsetX, y:e.offsetY}; requestRender(); }   // 펜·마우스를 띄워 두면 붓 원만 보인다
+    return;
+  }
   pointers.set(e.pointerId, {x:e.offsetX, y:e.offsetY});
   if(gest && pointers.size>=2){
     const [a,b]=[...pointers.values()];
@@ -380,28 +532,35 @@ cv.addEventListener('pointermove', e=>{
     view.s=gest.s*f;
     view.ox=cx-((gest.cx-gest.ox)/gest.s)*view.s;
     view.oy=cy-((gest.cy-gest.oy)/gest.s)*view.s;
-    clampView(); render(); return;
+    clampView(); requestRender(); return;
   }
+  cursor={x:e.offsetX, y:e.offsetY};
   if(stroke && active){
     const [x,y]=toImg(e.offsetX,e.offsetY);
     const p=stroke.pts[stroke.pts.length-1];
-    if(Math.hypot(x-p[0],y-p[1])<Math.max(1, stroke.r*0.3)) return;
-    stampSeg(stroke, Math.max(0,Math.min(M.img_w,x)), Math.max(0,Math.min(M.img_h,y))); render();
+    if(Math.hypot(x-p[0],y-p[1])>=Math.max(0.7, stroke.r*0.25)) stampSeg(stroke, x, y);
   }
+  requestRender();
 });
 function endPointer(e){
   pointers.delete(e.pointerId);
   if(pointers.size<2) gest=null;
-  if(pointers.size===0){ stroke=null; }
+  if(pointers.size===0){
+    if(stroke && active) active.empty=maskEmpty();
+    stroke=null;
+    if(e.pointerType==='touch') cursor=null;
+    updateUI(); requestRender();
+  }
 }
 cv.addEventListener('pointerup', endPointer);
 cv.addEventListener('pointercancel', endPointer);
+cv.addEventListener('pointerleave', e=>{ if(e.pointerType!=='touch' && !pointers.size){ cursor=null; requestRender(); } });
 cv.addEventListener('wheel', e=>{ e.preventDefault(); zoomAt(e.deltaY<0?1.2:1/1.2, e.offsetX, e.offsetY); }, {passive:false});
 function dropStroke(s){
   if(!active) return;
   const i=active.strokes.indexOf(s); if(i>=0) active.strokes.splice(i,1);
   if(!active.strokes.length) active=null;
-  redrawActive(); updateUI(); render();
+  redrawActive(); if(active) active.empty=maskEmpty(); updateUI(); render();
 }
 
 $('zIn').onclick=()=>{ const vb=viewBox(); zoomAt(1.5, vb.x+vb.w/2, vb.y+vb.h/2); };
@@ -415,7 +574,22 @@ $('zFit').onclick=()=>{
 };
 window.addEventListener('resize', ()=>{ if(!IMG) return; resize(); clampView(); render(); });
 
-$('brush').addEventListener('input', ()=>updateUI());
+// ── 도구 줄 ────────────────────────────────────────────────────────
+function setTool(t){ tool=t; updateUI(); requestRender(); }
+$('tPaint').onclick=()=>setTool('paint');
+$('tErase').onclick=()=>setTool('erase');
+$('brush').addEventListener('input', ()=>{
+  // 막대를 움직이면 전개도 가운데(또는 마지막 터치 자리)에 붓 원을 잠깐 보인다
+  previewUntil=performance.now()+1200;
+  try{ localStorage.setItem('pipelabel:brush', $('brush').value); }catch(e){}
+  updateUI(); render(); clearTimeout(pvT); pvT=setTimeout(render, 1250);
+});
+function updateBrushDot(){
+  if(!M) return;
+  const d=2*brushR()*view.s, s=Math.max(3, Math.min(40, d));
+  const i=$('brushDot').firstElementChild; i.style.width=s+'px'; i.style.height=s+'px';
+  $('brushDot').classList.toggle('erase', tool==='erase');
+}
 
 // ── 영상 — 그 station 을 가장 잘 찍은 장면으로 ────────────────────
 function seekVideoAt(x){
@@ -427,71 +601,115 @@ function seekVideoAt(x){
   $('vidHint').textContent=`${(k*M.z_bin_mm/1000).toFixed(2)} m 자리 → 영상 ${mm}:${String(ss).padStart(2,'0')} 쯤 (멀리서부터 보려면 조금 앞으로)`;
 }
 
-// ── 확정 · 취소 · 되돌리기 ────────────────────────────────────────
-function checkedLabels(){ return [...document.querySelectorAll('#labelBoxes input:checked')].map(i=>i.value); }
-function clearChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=false; i.parentElement.classList.remove('on'); }); }
+// ── 라벨(하나만) · 확정 · 취소 · 되돌리기 ──────────────────────────
+function checkedLabel(){ const i=document.querySelector('#labelBoxes input:checked'); return i?i.value:null; }
+function syncChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>i.parentElement.classList.toggle('on', i.checked)); }
+function setLabel(k){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=(i.value===k); }); syncChecks(); }
+function clearChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=false; }); syncChecks(); }
+function endActive(){ active=null; redrawActive(); clearChecks(); }
+
 $('btnV').onclick=()=>{
   if(!active){ toast('먼저 전개도를 눌러 구역을 만들어요'); return; }
-  const labs=checkedLabels();
-  if(!labs.length){ toast('라벨을 하나 이상 체크해요'); return; }
-  const r={id:Date.now(), labels:labs, strokes:active.strokes, at:new Date().toISOString()};
-  r.area_m2=0; regions.push(r);
-  active=null; redrawActive(); clearChecks();
-  for(const k of labs) rebuildLayer(k);
-  rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
-  toast(`완료 — ${labs.map(k=>LBY[k].ko).join('·')} ${r.pct.toFixed(2)}%`, true);
+  const lab=checkedLabel();
+  if(!lab){ toast('라벨을 하나 골라요'); return; }
+  if(maskEmpty()){
+    // 다 깎아 없앴다 — 고치던 구역이면 지우고, 새 구역이면 버린다
+    const id=active.editId; endActive();
+    if(id){ deleteRegion(id); toast('다 지워서 구역을 없앴어요', true); }
+    else { updateUI(); render(); toast('빈 구역이라 버렸어요'); }
+    return;
+  }
+  let rg, old=[];
+  if(active.editId){
+    rg=regions.find(x=>x.id===active.editId); old=rg.labels;
+    rg.strokes=active.strokes; rg.labels=[lab]; rg.edited_at=new Date().toISOString();
+  } else {
+    rg={id:Date.now(), labels:[lab], strokes:active.strokes, at:new Date().toISOString()};
+    regions.push(rg);
+  }
+  const wasEdit=!!active.editId;
+  computeRegionArea(rg); endActive();
+  for(const k of new Set([...old, lab])) rebuildLayer(k);
+  rebuildUnion(); regVer++; saveNow(); updateUI(); render();
+  toast(`${wasEdit?'고침':'완료'} — ${LBY[lab].ko} ${rg.pct.toFixed(2)}%`, true);
 };
-$('btnX').onclick=()=>{ if(!active) return; active=null; redrawActive(); clearChecks(); updateUI(); render(); };
-$('btnUndo').onclick=()=>{ if(!active) return; active.strokes.pop(); if(!active.strokes.length) active=null; redrawActive(); updateUI(); render(); };
+$('btnX').onclick=()=>{ if(!active) return; endActive(); updateUI(); render(); };
+function undo(){
+  if(!active) return;
+  if(active.strokes.length<=active.base){ toast('고치기 전 그대로예요 — ✕ 로 고치기를 끝내요'); return; }
+  active.strokes.pop();
+  if(!active.strokes.length) active=null;           // 새 구역의 첫 점까지 되돌리면 구역이 없어진다
+  redrawActive(); if(active) active.empty=maskEmpty();
+  updateUI(); render();
+}
+$('btnUndo').onclick=undo;
+// 백스페이스 = 되돌리기 — 한 손은 키보드, 한 손은 화면 (Ctrl+Z 도 같다)
+window.addEventListener('keydown', e=>{
+  const t=e.target;
+  if(t && (t.tagName==='TEXTAREA' || (t.tagName==='INPUT' && /^(text|search|number|email|url|password)$/.test(t.type)))) return;
+  if(e.key==='Backspace' || ((e.ctrlKey||e.metaKey) && !e.shiftKey && (e.key==='z'||e.key==='Z'))){ e.preventDefault(); undo(); }
+});
 
 function deleteRegion(id){
   const i=regions.findIndex(r=>r.id===id); if(i<0) return;
-  const labs=regions[i].labels; regions.splice(i,1); if(selId===id) selId=null;
+  if(active && active.editId===id) endActive();
+  const labs=regions[i].labels; regions.splice(i,1);
   for(const k of labs) rebuildLayer(k);
-  rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+  rebuildUnion(); regVer++; saveNow(); updateUI(); render();
 }
 $('btnClear').onclick=()=>{
   if(!regions.length) return;
   if(!confirm(`${M.title} 의 구역 ${regions.length}개를 전부 지울까요?`)) return;
-  regions=[]; selId=null; for(const l of LABELS) rebuildLayer(l.key); rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+  if(active && active.editId) endActive();
+  regions=[]; rebuildAll(); regVer++; saveNow(); updateUI(); render();
 };
 
 // ── 면적 — 라벨마다 합집합(같은 라벨은 겹쳐도 한 번), 분모 = 본 화소 ─
-function countSeen(canvas){
-  const d=mctx(canvas).getImageData(0,0,canvas.width,canvas.height).data; let n=0;
-  for(let i=0,j=3;i<SEEN.length;i++,j+=4){ if(SEEN[i] && d[j]>0) n++; }
+function countSeenBox(canvas, b){
+  const w=b.x1-b.x0, h=b.y1-b.y0; if(w<=0||h<=0) return 0;
+  const d=mctx(canvas).getImageData(b.x0,b.y0,w,h).data; let n=0;
+  for(let j=0;j<h;j++){ const row=(b.y0+j)*M.img_w+b.x0, o=j*w;
+    for(let i=0;i<w;i++){ if(SEEN[row+i] && d[(o+i)*4+3]>=A_ON) n++; } }
   return n;
+}
+const FULL=()=>({x0:0,y0:0,x1:M.img_w,y1:M.img_h});
+function paintInto(c, rs){
+  const cc=mctx(c); cc.setTransform(1,0,0,1,0,0); cc.clearRect(0,0,c.width,c.height);
+  paintGroups(cc, rs.map(r=>r.strokes), scratch, [1,0,0,1,0,0]);
 }
 function rebuildLayer(key){
   const rs=regions.filter(r=>r.labels.includes(key));
-  if(!rs.length){ delete layer[key]; counts[key]=0; return; }
-  const c=layer[key]||(layer[key]=mkCanvas(M.img_w,M.img_h));
-  const cc=mctx(c); cc.clearRect(0,0,c.width,c.height);
-  for(const r of rs) paintStrokes(cc, r.strokes);
-  counts[key]=countSeen(c);
+  if(!rs.length){ counts[key]=0; return; }
+  paintInto(work, rs); counts[key]=countSeenBox(work, FULL());
 }
 function rebuildUnion(){
   if(!regions.length){ unionCount=0; return; }
-  const c=mkCanvas(M.img_w,M.img_h), cc=mctx(c);
-  for(const r of regions) paintStrokes(cc, r.strokes);
-  unionCount=countSeen(c);
+  paintInto(work, regions); unionCount=countSeenBox(work, FULL());
 }
+function rebuildAll(){ for(const l of LABELS) rebuildLayer(l.key); rebuildUnion(); }
 function pxArea(){ return M.mm_per_px_x*M.mm_per_px_y/1e6; }   // m² / 화소
-function recomputeAreas(){
-  for(const r of regions){
-    const c=mkCanvas(M.img_w,M.img_h); paintStrokes(mctx(c), r.strokes);
-    const n=countSeen(c); r.area_m2=+(n*pxArea()).toFixed(4); r.pct=seenCount?+(100*n/seenCount).toFixed(3):0;
-  }
+function computeRegionArea(rg){
+  const b=strokesBBox(rg.strokes); let n=0;
+  if(b){ const c=mctx(scratch); c.setTransform(1,0,0,1,0,0); c.clearRect(0,0,scratch.width,scratch.height); paintStrokes(c, rg.strokes); n=countSeenBox(scratch,b); }
+  rg.area_m2=+(n*pxArea()).toFixed(4); rg.pct=seenCount?+(100*n/seenCount).toFixed(3):0;
 }
 
 // ── 화면 갱신 ──────────────────────────────────────────────────────
 function toast(msg, good){ const t=$('toast'); t.textContent=msg; t.className='on'+(good?' good':''); clearTimeout(toast._t); toast._t=setTimeout(()=>t.className='',1800); }
+function fmtCm(cm){ return cm<1 ? cm.toFixed(1) : cm.toFixed(0); }
 function updateUI(){
   if(!M) return;
-  const r=brushR(); $('brushCm').textContent=`≈ ${(2*r*M.mm_per_px_x/10).toFixed(0)} cm`;
-  const n=active?active.strokes.length:0;
-  $('regState').textContent= active ? `칠하는 중 — 획 ${n} · 라벨 체크 후 ✓` : '전개도를 한 번 누르면 작은 구역이 생긴다';
-  $('btnV').disabled=!active||!checkedLabels().length; $('btnX').disabled=!active; $('btnUndo').disabled=!active;
+  $('tPaint').setAttribute('aria-pressed', String(tool==='paint'));
+  $('tErase').setAttribute('aria-pressed', String(tool==='erase'));
+  const mm=(M.mm_per_px_x+M.mm_per_px_y)/2;
+  $('brushCm').textContent=`지름 ≈ ${fmtCm(2*brushR()*mm/10)} cm`;
+  updateBrushDot();
+  const editNo = active&&active.editId ? regions.findIndex(x=>x.id===active.editId)+1 : 0;
+  $('regState').textContent = !active ? '전개도를 한 번 누르면 새 구역 · 만든 구역을 누르면 고치기'
+    : editNo ? `구역 ${editNo} 고치는 중 — 칠하기로 넓히고 지우개로 깎는다 · ✓ 저장 · ✕ 그대로`
+    : `새 구역 — 획 ${active.strokes.length} · 라벨 하나 고르고 ✓`;
+  $('btnV').disabled=!active||!checkedLabel(); $('btnX').disabled=!active;
+  $('btnUndo').disabled=!active||active.strokes.length<=active.base;
   // 막대 — 깨끗함 먼저
   const pct=k=>seenCount?100*(counts[k]||0)/seenCount:0;
   const cleanPct=seenCount?100*(seenCount-unionCount)/seenCount:100;
@@ -500,46 +718,54 @@ function updateUI(){
   $('bars').innerHTML=rows.map(x=>`<div class="bar${x.pct>0?' lead':''}"><span><i class="sw" style="background:${x.color};vertical-align:-2px"></i> ${x.ko}</span>
       <div class="trk"><div class="fill" style="width:${x.pct.toFixed(2)}%;background:${x.color}"></div></div>
       <span class="num">${x.pct.toFixed(x.key==='clean'?1:2)}% · ${x.m2.toFixed(2)} m²</span></div>`).join('');
-  // 구역 목록
+  // 구역 목록 — 누르면 고친다
   $('nReg').textContent=regions.length?`${regions.length}개`:'— 아직 없음';
-  $('regList').innerHTML=regions.map((rg,i)=>`<li class="${rg.id===selId?'sel':''}" data-id="${rg.id}">
+  $('regList').innerHTML=regions.map((rg,i)=>{ const ed=active&&active.editId===rg.id; return `<li class="${ed?'sel':''}" data-id="${rg.id}">
       <span class="t">${i+1}. ${rg.labels.map(k=>`<i class="sw" style="background:${LBY[k].color};vertical-align:-2px"></i> ${LBY[k].ko}`).join(' · ')}
-      <span class="hint">${(rg.pct||0).toFixed(2)}% · ${(rg.area_m2||0).toFixed(2)} m²</span></span>
-      <button class="del">지우기</button></li>`).join('');
+      <span class="hint">${(rg.pct||0).toFixed(2)}% · ${(rg.area_m2||0).toFixed(2)} m²${ed?' · 고치는 중':''}</span></span>
+      <button class="del">지우기</button></li>`; }).join('');
   $('regList').querySelectorAll('li').forEach(li=>{
-    li.onclick=e=>{ if(e.target.classList.contains('del')) return; const id=+li.dataset.id; selId=(selId===id?null:id); if(selId!==null) centerOn(regions.find(x=>x.id===id)); updateUI(); render(); };
-    li.querySelector('.del').onclick=()=>{ const id=+li.dataset.id; const rg=regions.find(x=>x.id===id); if(confirm(`${rg.labels.map(k=>LBY[k].ko).join('·')} 구역을 지울까요?`)) deleteRegion(id); };
+    li.onclick=e=>{
+      if(e.target.classList.contains('del')) return;
+      const id=+li.dataset.id, rg=regions.find(x=>x.id===id); if(!rg) return;
+      if(active){ if(active.editId!==id) toast('지금 구역을 먼저 ✓ 또는 ✕'); return; }
+      enterEdit(rg); centerOn(rg); render();
+    };
+    li.querySelector('.del').onclick=()=>{ const id=+li.dataset.id; const rg=regions.find(x=>x.id===id); if(rg && confirm(`${rg.labels.map(k=>LBY[k].ko).join('·')} 구역을 지울까요?`)) deleteRegion(id); };
   });
   $('saveState').textContent=`저장됨 · 구역 ${regions.length}`;
 }
 function centerOn(rg){
-  let sx=0,sy=0,n=0; for(const s of rg.strokes) for(const p of s.pts){ sx+=p[0]; sy+=p[1]; n++; }
-  if(!n) return; const vb=viewBox(); view.ox=vb.x+vb.w/2-sx/n*view.s; view.oy=vb.y+vb.h/2-sy/n*view.s; clampView();
+  const b=strokesBBox(rg.strokes); if(!b) return;
+  const vb=viewBox(); view.ox=vb.x+vb.w/2-(b.x0+b.x1)/2*view.s; view.oy=vb.y+vb.h/2-(b.y0+b.y1)/2*view.s; clampView();
 }
 
 // ── 내보내기 · 불러오기 ────────────────────────────────────────────
 function exportJSON(){
   const per={}; for(const l of LABELS) per[l.key]={ko:l.ko, pct:+(seenCount?100*(counts[l.key]||0)/seenCount:0).toFixed(3), m2:+((counts[l.key]||0)*pxArea()).toFixed(4)};
   return {
-    format:'pipe-label/1', dataset:M.name, title:M.title, video_label:M.label, exported_at:new Date().toISOString(),
+    format:'pipe-label/2', dataset:M.name, title:M.title, video_label:M.label, exported_at:new Date().toISOString(),
     pipe_dia_mm:M.pipe_dia_mm, len_mm:M.len_mm, img:{w:M.img_w,h:M.img_h, mm_per_px_x:M.mm_per_px_x, mm_per_px_y:M.mm_per_px_y},
     denominator:{seen_m2:+(seenCount*pxArea()).toFixed(4), note:'계기가 본 화소(q4≥4)만 센다 · 칠한 곳 중 못 본 화소는 면적에서 뺀다'},
+    strokes_note:'구역마다 strokes 를 순서대로 그린다(지름 = 2r, 둥근 끝). erase=true 는 지우개 — 그 구역 안에서만 깎는다. 좌표 = 전개도 그림 화소(가로 관 길이 · 세로 둘레)',
     summary:{clean_pct:+(seenCount?100*(seenCount-unionCount)/seenCount:100).toFixed(3), per_label:per},
-    regions:regions.map(r=>({id:r.id, labels:r.labels, area_m2:r.area_m2, pct:r.pct, at:r.at, strokes:r.strokes})),
+    regions:regions.map(r=>({id:r.id, labels:r.labels, area_m2:r.area_m2, pct:r.pct, at:r.at, ...(r.edited_at?{edited_at:r.edited_at}:{}), strokes:r.strokes})),
     ua:navigator.userAgent,
   };
 }
 function stamp(){ const d=new Date(); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}_${p(d.getHours())}${p(d.getMinutes())}`; }
 function snapshotBlob(){
-  // 전개도 전체 + 구역 테두리를 그림으로 — 사람이 바로 볼 수 있게
-  const c=mkCanvas(M.img_w, M.img_h), cc=c.getContext('2d');
-  cc.drawImage(IMG,0,0);
-  for(const l of LABELS){ if(!layer[l.key]||!counts[l.key]) continue;
-    const t=mkCanvas(M.img_w,M.img_h), tg=t.getContext('2d'); tg.drawImage(layer[l.key],0,0); tg.globalCompositeOperation='source-in'; tg.fillStyle=l.color; tg.fillRect(0,0,t.width,t.height);
-    cc.globalAlpha=0.35; cc.drawImage(t,0,0); cc.globalAlpha=1;
-    const o=mkCanvas(M.img_w,M.img_h), og=o.getContext('2d');
-    for(let dx=-2;dx<=2;dx++) for(let dy=-2;dy<=2;dy++){ if(dx||dy) og.drawImage(t,dx,dy); }
-    og.globalCompositeOperation='destination-out'; og.drawImage(t,0,0); cc.drawImage(o,0,0);
+  // 전개도 전체 + 구역(옅은 채움 + 안쪽 테두리)을 그림으로 — 사람이 바로 볼 수 있게
+  const W=M.img_w, H=M.img_h;
+  const c=mkCanvas(W,H), cc=c.getContext('2d'); cc.drawImage(IMG,0,0);
+  const t=mkCanvas(W,H), e=mkCanvas(W,H), o=mkCanvas(W,H);
+  for(const l of LABELS){
+    const rs=regions.filter(r=>r.labels.includes(l.key)); if(!rs.length) continue;
+    const tg=t.getContext('2d'); tg.setTransform(1,0,0,1,0,0); tg.clearRect(0,0,W,H);
+    paintGroups(tg, rs.map(r=>r.strokes), scratch, [1,0,0,1,0,0]);
+    tg.globalCompositeOperation='source-in'; tg.fillStyle=l.color; tg.fillRect(0,0,W,H); tg.globalCompositeOperation='source-over';
+    innerOutline(t,e,o,2);
+    cc.globalAlpha=0.35; cc.drawImage(t,0,0); cc.globalAlpha=1; cc.drawImage(o,0,0);
   }
   return new Promise(res=>c.toBlob(res,'image/png'));
 }
@@ -565,12 +791,13 @@ $('fileIn').onchange=e=>{
   rd.onload=()=>{
     try{
       const j=JSON.parse(rd.result);
-      if(j.format!=='pipe-label/1' || !Array.isArray(j.regions)) throw new Error('형식');
+      if(!/^pipe-label\/[12]$/.test(j.format) || !Array.isArray(j.regions)) throw new Error('형식');
       if(j.dataset!==M.name && !confirm(`이 파일은 ${j.title||j.dataset} 것입니다. 지금 탭(${M.title})에 불러올까요?`)) return;
       if(regions.length && !confirm(`지금 구역 ${regions.length}개를 지우고 파일의 ${j.regions.length}개로 바꿀까요?`)) return;
-      regions=j.regions.map(r=>({id:r.id||Date.now()+Math.random(), labels:r.labels, strokes:r.strokes, at:r.at}));
-      active=null; redrawActive(); selId=null;
-      for(const l of LABELS) rebuildLayer(l.key); rebuildUnion(); recomputeAreas(); saveNow(); updateUI(); render();
+      endActive();
+      regions=j.regions.map(normRegion).filter(Boolean);
+      for(const rg of regions) computeRegionArea(rg);
+      rebuildAll(); regVer++; saveNow(); updateUI(); render();
       toast(`불러왔어요 — 구역 ${regions.length}개`, true);
     }catch(err){ toast('JSON 을 못 읽었어요'); }
     e.target.value='';
@@ -579,6 +806,7 @@ $('fileIn').onchange=e=>{
 };
 
 window.addEventListener('beforeunload', saveNow);
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') saveNow(); });
 init().catch(err=>{ $('saveState').textContent='자료를 못 열었다: '+err; });
 </script>
 </body>
