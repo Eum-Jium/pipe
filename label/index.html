@@ -15,7 +15,9 @@
     · 그 뒤로 칠하기는 구역에 닿는 터치만 먹는다 — 밖을 눌러도 아무 일 없다(잘못 누름 방지)
     · 지우개는 반대로 바깥에서 시작해 깎아 들어간다 — 지금 고치는 구역만 깎인다
     · 만든 구역을 누르면 다시 고친다(넓히기 · 깎기 · 라벨 바꾸기) — ✓ 저장 · ✕ 그대로
-    · 손가락 둘 = 옮기기 · 확대(붓 아님) · ⌫(백스페이스) = 되돌리기
+    · 손가락 둘 = 옮기기 · 확대(붓 아님) · ⌫(백스페이스) = 되돌리기 · Enter = ✓ · + / − = 붓 크기
+    · 라벨 기본값 = 부식(새 구역마다 골라져 있다) · 전개도 위 ▼ = 지금 영상이 보는 자리
+    · 한 화면에 전개도 · 영상 · 구역 체크가 다 보이게(아래 판은 높이 고정, 남는 높이는 전개도)
     · 라벨은 구역마다 하나(원형 버튼). 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
   화면 그리기: 구역은 그림 사각형 안으로 잘라 그리고, 테두리는 칠한 면 **안쪽 가장자리**에 긋는다
   (테두리 = 면적으로 세는 경계. 전에는 바깥에 그어 그림 끝 밖으로 삐져나왔다 — 2026-10-02 사용자).
@@ -25,73 +27,89 @@
 <style>
   :root{ --bg:#0d1117; --panel:#161b22; --line:#30363d; --ink:#e6edf3; --mute:#8b949e; --acc:#58a6ff; --ok:#3fb950; --bad:#f85149; }
   *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif; height:100%; overscroll-behavior:none; }
-  body{ display:flex; flex-direction:column; height:100dvh; }
-  header{ display:flex; align-items:center; gap:10px; padding:8px 14px; border-bottom:1px solid var(--line); flex:0 0 auto; flex-wrap:wrap; }
-  header h1{ font-size:17px; margin:0; white-space:nowrap; }
-  header h1 small{ color:var(--mute); font-weight:400; font-size:13px; margin-left:6px; }
-  #tabs{ display:flex; gap:6px; }
-  #tabs button{ background:var(--panel); color:var(--mute); border:1px solid var(--line); border-radius:8px; padding:7px 12px; font-size:14px; }
+  html,body{ margin:0; background:var(--bg); color:var(--ink); font:14px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans KR",sans-serif; overscroll-behavior:none; }
+  /* 한 화면에 전개도 · 영상 · 구역 체크가 다 보이게 — 아래 판은 높이를 정하고, 남는 높이를 전개도가 쓴다 (2026-10-02 사용자) */
+  body{ display:flex; flex-direction:column; height:100dvh; overflow:auto; }
+  header{ display:flex; align-items:center; gap:8px; padding:5px 12px; border-bottom:1px solid var(--line); flex:0 0 auto; flex-wrap:wrap; }
+  header h1{ font-size:15px; margin:0; white-space:nowrap; }
+  header h1 small{ color:var(--mute); font-weight:400; font-size:12px; margin-left:6px; }
+  #tabs{ display:flex; gap:5px; }
+  #tabs button{ background:var(--panel); color:var(--mute); border:1px solid var(--line); border-radius:7px; padding:5px 10px; font-size:13px; }
   #tabs button[aria-current=true]{ background:#14314f; color:var(--ink); border-color:var(--acc); }
-  #saveState{ margin-left:auto; color:var(--mute); font-size:13px; white-space:nowrap; }
+  #saveState{ margin-left:auto; color:var(--mute); font-size:12px; white-space:nowrap; }
 
-  #stage{ position:relative; flex:0 0 50dvh; min-height:220px; background:#07090d; }
+  #stage{ position:relative; flex:1 1 auto; min-height:220px; background:#07090d; }
   #cv{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; display:block; }
-  .zoomBtns{ position:absolute; right:10px; top:10px; display:flex; flex-direction:column; gap:6px; }
-  .zoomBtns button{ width:44px; height:44px; border-radius:10px; border:1px solid var(--line); background:rgba(22,27,34,.9); color:var(--ink); font-size:20px; }
-  #hint{ position:absolute; left:46px; bottom:26px; color:#b9c3cf; font-size:12.5px; background:rgba(13,17,23,.75); padding:3px 8px; border-radius:6px; pointer-events:none; }
-  #toast{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); background:rgba(248,81,73,.92); color:#fff; padding:8px 14px; border-radius:8px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; }
+  .zoomBtns{ position:absolute; right:8px; top:8px; display:flex; flex-direction:column; gap:5px; }
+  .zoomBtns button{ width:38px; height:38px; border-radius:9px; border:1px solid var(--line); background:rgba(22,27,34,.9); color:var(--ink); font-size:18px; }
+  #hint{ position:absolute; left:46px; bottom:26px; color:#b9c3cf; font-size:11.5px; background:rgba(13,17,23,.75); padding:2px 7px; border-radius:6px; pointer-events:none; }
+  #toast{ position:absolute; left:50%; bottom:30px; transform:translateX(-50%); background:rgba(248,81,73,.92); color:#fff; padding:6px 12px; border-radius:8px; font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none; white-space:nowrap; }
   #toast.on{ opacity:1; }
   #toast.good{ background:rgba(63,185,80,.92); }
 
   /* 도구 줄 — 전개도 바로 밑. 칠하기 / 지우개 · 붓 크기 · 되돌리기 */
-  #tools{ flex:0 0 auto; display:flex; align-items:center; gap:10px 14px; padding:6px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; }
-  .seg{ display:inline-flex; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
-  .seg button{ min-height:44px; padding:6px 16px; background:#0d1117; color:var(--mute); border:0; font-size:15px; }
+  #tools{ flex:0 0 auto; display:flex; align-items:center; gap:6px 12px; padding:4px 12px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--panel); flex-wrap:wrap; }
+  .seg{ display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; }
+  .seg button{ min-height:38px; padding:4px 14px; background:#0d1117; color:var(--mute); border:0; font-size:14px; }
   .seg button + button{ border-left:1px solid var(--line); }
   .seg button[aria-pressed=true]{ background:#14314f; color:var(--ink); box-shadow:inset 0 0 0 2px var(--acc); }
-  #tools .size{ display:flex; align-items:center; gap:10px; flex:1 1 260px; max-width:520px; color:var(--mute); font-size:13.5px; white-space:nowrap; }
-  #brush{ flex:1; min-width:120px; height:34px; accent-color:var(--acc); }
-  #brushDot{ width:46px; height:46px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:#07090d; }
+  #tools .size{ display:flex; align-items:center; gap:8px; flex:1 1 240px; max-width:480px; color:var(--mute); font-size:12.5px; white-space:nowrap; }
+  #brush{ flex:1; min-width:110px; height:30px; accent-color:var(--acc); }
+  #brushDot{ width:40px; height:40px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:#07090d; }
   #brushDot i{ display:block; border-radius:50%; border:1px solid #fff; background:rgba(255,255,255,.2); }
   #brushDot.erase i{ border-style:dashed; border-color:#ffb3b3; background:transparent; }
-  #brushCm{ min-width:74px; }
-  #btnUndo{ margin-left:auto; min-height:44px; padding:6px 14px; border-radius:9px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:15px; display:inline-flex; align-items:center; gap:8px; }
+  #brushCm{ min-width:70px; }
+  #btnUndo{ margin-left:auto; min-height:38px; padding:4px 12px; border-radius:8px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:14px; display:inline-flex; align-items:center; gap:7px; }
   #btnUndo:disabled{ opacity:.4; }
-  kbd{ font:12px ui-monospace,Consolas,monospace; border:1px solid #57606a; border-bottom-width:2px; border-radius:4px; padding:0 5px; color:var(--mute); }
+  kbd{ font:11px ui-monospace,Consolas,monospace; border:1px solid #57606a; border-bottom-width:2px; border-radius:4px; padding:0 4px; color:var(--mute); }
 
-  #panel{ flex:1 1 auto; overflow:auto; padding:10px 14px 24px; display:grid; grid-template-columns:1fr 1fr; gap:12px 16px; }
-  @media (max-width:820px){ #panel{ grid-template-columns:1fr; } }
-  section{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; min-width:0; }
-  section h2{ font-size:14px; color:var(--mute); margin:0 0 8px; font-weight:600; }
-  .hint{ color:var(--mute); font-size:12.5px; }
+  /* 아래 판 — 구역 체크 | 영상 | 면적·목록. 칸마다 넘치면 그 칸 안에서만 스크롤 */
+  #panel{ flex:0 0 auto; height:min(300px, 40dvh); padding:8px 12px; display:grid; grid-template-columns:1fr 1.25fr 1fr; gap:10px; overflow:hidden; }
+  section{ background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:7px 10px; min-width:0; min-height:0; overflow:auto; }
+  section h2{ font-size:12.5px; color:var(--mute); margin:0 0 6px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hint{ color:var(--mute); font-size:11.5px; font-weight:400; }
 
-  #labelBoxes{ display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:6px; margin:4px 0 10px; }
-  #labelBoxes label{ display:flex; align-items:center; gap:8px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:15px; min-height:44px; }
+  #labelBoxes{ display:grid; grid-template-columns:repeat(3,1fr); gap:5px; margin:0 0 7px; }
+  #labelBoxes label{ display:flex; align-items:center; gap:6px; padding:4px 7px; border:1px solid var(--line); border-radius:7px; background:#0d1117; font-size:13px; min-height:34px; white-space:nowrap; overflow:hidden; }
   #labelBoxes label.on{ border-color:var(--acc); background:#14314f; }
-  #labelBoxes input{ width:22px; height:22px; margin:0; accent-color:var(--acc); flex:0 0 auto; }
-  .sw{ display:inline-block; width:14px; height:14px; border-radius:3px; flex:0 0 auto; }
-  .btns{ display:flex; gap:8px; flex-wrap:wrap; }
-  .btns button, .btns label.btn{ min-height:46px; padding:8px 14px; border-radius:9px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:15px; display:inline-flex; align-items:center; gap:6px; }
+  #labelBoxes input{ width:18px; height:18px; margin:0; accent-color:var(--acc); flex:0 0 auto; }
+  .sw{ display:inline-block; width:11px; height:11px; border-radius:2px; flex:0 0 auto; }
+  .btns{ display:flex; gap:6px; flex-wrap:wrap; }
+  .btns button, .btns label.btn{ min-height:38px; padding:5px 12px; border-radius:8px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:14px; display:inline-flex; align-items:center; gap:6px; }
+  .btns.small button, .btns.small label.btn{ min-height:32px; padding:3px 9px; font-size:12.5px; }
   .btns button:disabled{ opacity:.4; }
   button.v{ background:#1f6f3a; border-color:#2ea043; font-weight:700; flex:1 1 120px; justify-content:center; }
+  button.v kbd{ color:#cfe9d6; border-color:#5fb27a; }
   button.x{ background:#5a1f1f; border-color:#8a2b2b; }
   #regState{ font-weight:400; color:var(--acc); }
-  #vid{ width:100%; max-height:200px; background:#000; border-radius:6px; }
+  #secVid{ display:flex; flex-direction:column; overflow:hidden; }
+  #vid{ display:block; flex:1 1 0; min-height:0; width:100%; object-fit:contain; background:#000; border-radius:6px; }
 
-  #bars{ display:flex; flex-direction:column; gap:5px; }
-  .bar{ display:grid; grid-template-columns:92px 1fr 118px; align-items:center; gap:8px; font-size:13.5px; }
-  .bar .trk{ height:16px; background:#0d1117; border-radius:4px; overflow:hidden; border:1px solid #262c35; }
-  .bar .fill{ height:100%; min-width:0; border-radius:3px; transition:width .25s; }
+  #bars{ display:flex; flex-direction:column; gap:3px; }
+  .bar{ display:grid; grid-template-columns:76px 1fr 92px; align-items:center; gap:6px; font-size:12px; }
+  .bar > span:first-child{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bar .trk{ height:11px; background:#0d1117; border-radius:3px; overflow:hidden; border:1px solid #262c35; }
+  .bar .fill{ height:100%; min-width:0; border-radius:2px; transition:width .25s; }
   .bar .num{ text-align:right; color:var(--mute); font-variant-numeric:tabular-nums; white-space:nowrap; }
   .bar.lead .num{ color:var(--ink); font-weight:600; }
 
-  #regList{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:5px; max-height:220px; overflow:auto; }
-  #regList li{ display:flex; align-items:center; gap:8px; padding:6px 8px; border:1px solid var(--line); border-radius:8px; background:#0d1117; font-size:14px; }
+  #regList{ margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px; }
+  #regList li{ display:flex; align-items:center; gap:6px; padding:3px 6px; border:1px solid var(--line); border-radius:7px; background:#0d1117; font-size:12.5px; }
   #regList li .t{ flex:1; }
-  #regList li button{ min-height:36px; padding:4px 10px; border-radius:7px; border:1px solid var(--line); background:#21262d; color:var(--ink); }
+  #regList li button{ min-height:28px; padding:2px 8px; border-radius:6px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:12px; }
   #regList li.sel{ border-color:var(--acc); background:#11233a; }
   input[type=file]{ display:none; }
+
+  /* 세로로 든 탭 · 좁은 화면 — 구역 체크와 영상은 나란히, 면적·목록은 밑에. 넘치면 페이지가 스크롤된다 */
+  @media (max-width:900px){
+    #panel{ height:auto; grid-template-columns:1fr 1fr; overflow:visible; }
+    #secRight{ grid-column:1 / -1; }
+    #vid{ flex:none; height:auto; aspect-ratio:16/9; max-height:240px; }
+  }
+  @media (max-width:560px){
+    #panel{ grid-template-columns:1fr; }
+    header h1 small{ display:none; }
+  }
 </style>
 </head>
 <body>
@@ -104,7 +122,7 @@
 <div id="stage">
   <canvas id="cv"></canvas>
   <div class="zoomBtns"><button id="zIn" title="확대">＋</button><button id="zOut" title="축소">－</button><button id="zFit" title="전체 보기 ↔ 꽉 채움">⤢</button></div>
-  <div id="hint">한 손가락 = 칠하기·지우기 · 두 손가락 = 옮기기·확대 · 만든 구역을 누르면 고치기</div>
+  <div id="hint">한 손가락 칠하기 · 두 손가락 옮기기·확대 · 구역 누르면 고치기 · ▼ 지금 영상 위치</div>
   <div id="toast"></div>
 </div>
 
@@ -113,7 +131,7 @@
     <button id="tPaint" aria-pressed="true" title="구역 안쪽에서 끌어 넓힌다">🖌️ 칠하기</button>
     <button id="tErase" aria-pressed="false" title="바깥에서 시작해 구역을 깎는다 — 지금 고치는 구역만">🧽 지우개</button>
   </div>
-  <label class="size"><span>붓 크기</span><input type="range" id="brush" min="0" max="100" step="1" value="51"></label>
+  <label class="size"><span>붓 크기 <kbd>−</kbd><kbd>+</kbd></span><input type="range" id="brush" min="0" max="100" step="1" value="51"></label>
   <span id="brushDot" title="지금 화면에서의 붓 크기"><i></i></span><span id="brushCm" class="hint"></span>
   <button id="btnUndo" title="마지막 획을 되돌린다 — 키보드 백스페이스로도">↶ 되돌리기 <kbd>⌫</kbd></button>
 </div>
@@ -124,31 +142,28 @@
     <div id="labelBoxes" role="radiogroup" aria-label="라벨"></div>
     <div class="btns">
       <button id="btnX" class="x" title="새 구역은 버리고, 고치던 구역은 고치기 전으로">✕ 취소</button>
-      <button id="btnV" class="v" title="고른 라벨로 구역을 확정한다">✓ 완료</button>
+      <button id="btnV" class="v" title="고른 라벨로 구역을 확정한다 — 키보드 Enter 로도">✓ 완료 <kbd>Enter</kbd></button>
     </div>
-    <div class="hint" style="margin-top:8px">① 전개도를 한 번 누른다 → 작은 구역 ② 구역 <b>안쪽에서</b> 끌어 넓힌다(밖은 안 먹는다) · 지우개는 <b>바깥에서</b> 깎아 들어간다 ③ 라벨 하나 고르고 ✓ — 만든 구역을 누르면 다시 고친다</div>
+    <div class="hint" style="margin-top:6px">안쪽에서 끌어 넓히기 · 지우개는 바깥부터 깎기 · 라벨 기본값 = 부식</div>
   </section>
 
   <section id="secVid">
-    <h2>영상 — <span id="vidHint">구역을 찍으면 그 자리를 찍은 장면으로 간다</span></h2>
+    <h2>영상 <span class="hint" id="vidHint"></span></h2>
     <video id="vid" controls playsinline preload="metadata"></video>
   </section>
 
-  <section id="secChart">
+  <section id="secRight">
     <h2>면적 비율 <span class="hint" id="chartDen"></span></h2>
     <div id="bars"></div>
-  </section>
-
-  <section id="secList">
-    <h2>완료한 구역 <span id="nReg"></span> <span class="hint">— 누르면 고친다</span></h2>
+    <h2 style="margin-top:9px">완료한 구역 <span id="nReg"></span> <span class="hint">— 누르면 고친다</span></h2>
     <ol id="regList"></ol>
-    <div class="btns" style="margin-top:10px">
+    <div class="btns small" style="margin-top:6px">
       <button id="btnShare" title="JSON 과 그림을 공유 시트로 보낸다">📤 보내기</button>
       <button id="btnCopy" title="JSON 을 클립보드로">복사</button>
       <label class="btn" title="보낸 JSON 을 다시 불러온다">불러오기<input type="file" id="fileIn" accept=".json,application/json"></label>
       <button id="btnClear" title="이 관의 구역을 전부 지운다">전부 지우기</button>
     </div>
-    <div class="hint" style="margin-top:6px">결과는 이 브라우저에 자동 저장된다. 다 하면 <b>보내기</b>로 전달해 주세요.</div>
+    <div class="hint" style="margin-top:4px">이 브라우저에 자동 저장 · 다 하면 <b>보내기</b>로 전달해 주세요</div>
   </section>
 </div>
 
@@ -170,6 +185,8 @@ const CLEAN={key:'clean', ko:'깨끗함', color:'#3fb950'};
 const LBY=Object.fromEntries(LABELS.map(l=>[l.key,l]));
 const R_MIN=1, R_MAX=60;      // 붓 반지름(그림 화소) — 막대는 로그 눈금이라 작은 붓도 고르기 쉽다
 const A_ON=128;               // 면적으로 세는 화소 = 마스크 불투명도 절반 이상(가장자리 흐림은 반만)
+const DEFAULT_LABEL='corrosion';   // 라벨 기본값 — 새 구역마다 이것이 골라져 있다(2026-10-02 사용자 "기본은 부식"). 바꾸려면 여기만
+const BRUSH_STEP=5;                // +/- 키 한 번에 붓 막대 몇 칸(로그 눈금 100칸 중 — 한 번에 약 1.2배)
 
 // ── 상태 ──────────────────────────────────────────────────────────
 let M=null;            // data/<이름>.json
@@ -180,14 +197,16 @@ let active=null;       // 칠하는 중 {strokes, editId(고치는 구역 id | n
 let regVer=0;          // 구역이 바뀔 때마다 +1 — 화면 캐시 열쇠
 let tool='paint';      // 'paint' | 'erase'
 let view={s:1, ox:0, oy:0};   // 그림 화소 → 화면(css px): sx = ox + x*s
-const PAD={l:40, t:8, r:8, b:22};
+const PAD={l:40, t:14, r:8, b:22};   // 위 14px = 영상 위치 ▼ 자리
 let dpr=window.devicePixelRatio||1;
 const cv=$('cv'), g=cv.getContext('2d');
 let maskA=null, scratch=null, work=null;   // 그림 크기: 칠하는 구역 · 구역 하나 임시 · 라벨/합집합 세기
 const counts={};       // 라벨마다 본 화소 수
 let seenCount=0, unionCount=0;
 let offT=null, offE=null, offO=null, offR=null, offC=null, committedKey='';   // 화면 크기 임시 캔버스
-let cursor=null, previewUntil=0, pvT=0;    // 붓 미리보기(css px)
+let cursor=null, lastPos=null, previewUntil=0, pvT=0;    // 붓 미리보기(css px) — 키보드로 바꿀 땐 마지막 터치 자리에
+let vidX=null;          // 지금 영상이 보는 자리(그림 화소 x) — 전개도 위 ▼
+let fitted=true;        // 전체 보기 상태면 화면 크기가 바뀔 때 다시 맞춘다
 const hitC=document.createElement('canvas'); hitC.width=hitC.height=5;
 
 function mkCanvas(w,h){ const c=document.createElement('canvas'); c.width=w; c.height=h; return c; }
@@ -211,13 +230,14 @@ async function loadDataset(name, push=true){
   for(let i=0;i<SEEN.length;i++){ if(px[i*4]>127){ SEEN[i]=1; seenCount++; } }
   maskA=mkCanvasR(M.img_w, M.img_h); scratch=mkCanvasR(M.img_w, M.img_h); work=mkCanvasR(M.img_w, M.img_h);
   for(const k in counts) delete counts[k];
-  active=null; clearChecks();
+  active=null; resetLabel(); vidX=null;
   regions=loadSaved(name).map(normRegion).filter(Boolean);
   for(const rg of regions) computeRegionArea(rg);
   rebuildAll(); regVer++;
   const v=$('vid'); v.src=`data/${M.video}`; v.load();
-  $('vidHint').textContent='구역을 찍으면 그 자리를 찍은 장면으로 간다';
-  $('chartDen').textContent=`— 분모 = 계기가 본 벽 ${M.seen_m2.toFixed(2)} m² (어둡게 빈 곳 제외) · 관경 ${M.pipe_dia_mm} mm · 길이 ${(M.len_mm/1000).toFixed(2)} m`;
+  $('vidHint').textContent='— 구역을 찍으면 그 자리 장면으로 · 전개도 ▼ = 지금 영상 위치';
+  $('chartDen').textContent=`— 분모 = 본 벽 ${M.seen_m2.toFixed(2)} m²`;
+  $('chartDen').title=`계기가 본 벽 ${M.seen_m2.toFixed(2)} m² (어둡게 빈 곳 제외) · 관경 ${M.pipe_dia_mm} mm · 길이 ${(M.len_mm/1000).toFixed(2)} m`;
   resize(); fitView(); updateUI(); render();
 }
 function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
@@ -282,7 +302,7 @@ function fitView(){
   if(!IMG) return;
   const vb=viewBox();
   const s=Math.min(vb.w/IMG.width, vb.h/IMG.height);
-  view={s, ox:vb.x+(vb.w-IMG.width*s)/2, oy:vb.y+(vb.h-IMG.height*s)/2};
+  view={s, ox:vb.x+(vb.w-IMG.width*s)/2, oy:vb.y+(vb.h-IMG.height*s)/2}; fitted=true;
 }
 function clampView(){
   const vb=viewBox(), fit=Math.min(vb.w/IMG.width, vb.h/IMG.height);
@@ -294,7 +314,7 @@ function clampView(){
 }
 function zoomAt(f, cx, cy){
   const ix=(cx-view.ox)/view.s, iy=(cy-view.oy)/view.s;
-  view.s*=f; view.ox=cx-ix*view.s; view.oy=cy-iy*view.s; clampView(); render();
+  view.s*=f; view.ox=cx-ix*view.s; view.oy=cy-iy*view.s; fitted=false; clampView(); render();
 }
 function toImg(cx,cy){ return [(cx-view.ox)/view.s, (cy-view.oy)/view.s]; }
 function imgRectDev(){ return {x:dpr*view.ox, y:dpr*view.oy, w:dpr*IMG.width*view.s, h:dpr*IMG.height*view.s}; }
@@ -320,6 +340,7 @@ function render(){
   drawCursor();
   g.restore();
   drawAxes(vb);
+  drawVidArrow(vb);
   updateBrushDot();
 }
 // 확정한 구역 — 보기·구역이 그대로면 다시 그리지 않는다(칠하는 동안 빠르게)
@@ -365,7 +386,7 @@ function innerOutline(src, e, o, lw){
 function drawCursor(){
   const on=cursor || performance.now()<previewUntil;
   if(!on || !M) return;
-  let p=cursor; if(!p){ const vb=viewBox(); p={x:vb.x+vb.w/2, y:vb.y+vb.h/2}; }
+  let p=cursor||lastPos; if(!p){ const vb=viewBox(); p={x:vb.x+vb.w/2, y:vb.y+vb.h/2}; }
   const r=Math.max(1.5, brushR()*view.s);
   g.save(); g.lineWidth=1;
   g.strokeStyle='rgba(0,0,0,.55)'; g.beginPath(); g.arc(p.x,p.y,r+1,0,Math.PI*2); g.stroke();
@@ -496,7 +517,7 @@ cv.addEventListener('pointerdown', e=>{
     // 두 번째 손가락 — 방금 찍은 점 · 방금 들어간 고치기는 옮기려던 손가락이 한 것이라 되돌린다
     const now=performance.now();
     if(stroke && now-strokeT0<350) dropStroke(stroke);
-    if(editT0 && now-editT0<350 && active && active.strokes.length<=active.base){ active=null; redrawActive(); clearChecks(); updateUI(); }
+    if(editT0 && now-editT0<350 && active && active.strokes.length<=active.base){ active=null; redrawActive(); resetLabel(); updateUI(); }
     stroke=null; editT0=0; cursor=null;
     const [a,b]=[...pointers.values()];
     gest={d:Math.hypot(a.x-b.x,a.y-b.y), cx:(a.x+b.x)/2, cy:(a.y+b.y)/2, s:view.s, ox:view.ox, oy:view.oy};
@@ -505,7 +526,7 @@ cv.addEventListener('pointerdown', e=>{
   if(pointers.size>2 || gest) return;
   if(e.pointerType==='mouse' && e.button!==0) return;
   const [x,y]=toImg(e.offsetX,e.offsetY);
-  cursor={x:e.offsetX, y:e.offsetY}; editT0=0;
+  cursor={x:e.offsetX, y:e.offsetY}; lastPos=cursor; editT0=0;
   const r=brushR();
   if(!active){
     if(!inImage(x,y)){ requestRender(); return; }
@@ -532,9 +553,9 @@ cv.addEventListener('pointermove', e=>{
     view.s=gest.s*f;
     view.ox=cx-((gest.cx-gest.ox)/gest.s)*view.s;
     view.oy=cy-((gest.cy-gest.oy)/gest.s)*view.s;
-    clampView(); requestRender(); return;
+    fitted=false; clampView(); requestRender(); return;
   }
-  cursor={x:e.offsetX, y:e.offsetY};
+  cursor={x:e.offsetX, y:e.offsetY}; lastPos=cursor;
   if(stroke && active){
     const [x,y]=toImg(e.offsetX,e.offsetY);
     const p=stroke.pts[stroke.pts.length-1];
@@ -568,11 +589,12 @@ $('zOut').onclick=()=>{ const vb=viewBox(); zoomAt(1/1.5, vb.x+vb.w/2, vb.y+vb.h
 $('zFit').onclick=()=>{
   // 전체 보기(가로 맞춤) ↔ 꽉 채움(세로 맞춤 · 0 m 부터) — 긴 관은 전체 보기가 가는 띠라 번갈아 쓴다
   const vb=viewBox(), fit=Math.min(vb.w/IMG.width, vb.h/IMG.height);
-  if(Math.abs(view.s-fit)<1e-6){ view.s=vb.h/IMG.height; view.ox=vb.x; view.oy=vb.y; clampView(); }
+  if(Math.abs(view.s-fit)<1e-6){ view.s=vb.h/IMG.height; view.ox=vb.x; view.oy=vb.y; fitted=false; clampView(); }
   else fitView();
   render();
 };
-window.addEventListener('resize', ()=>{ if(!IMG) return; resize(); clampView(); render(); });
+// 전개도 칸 크기가 바뀌면(창 · 탭 돌리기 · 아래 판 높이) 캔버스를 다시 잡는다 — 전체 보기였으면 다시 맞춘다
+new ResizeObserver(()=>{ if(!IMG) return; resize(); if(fitted) fitView(); else clampView(); render(); }).observe($('stage'));
 
 // ── 도구 줄 ────────────────────────────────────────────────────────
 function setTool(t){ tool=t; updateUI(); requestRender(); }
@@ -584,6 +606,7 @@ $('brush').addEventListener('input', ()=>{
   try{ localStorage.setItem('pipelabel:brush', $('brush').value); }catch(e){}
   updateUI(); render(); clearTimeout(pvT); pvT=setTimeout(render, 1250);
 });
+function stepBrush(d){ const s=$('brush'); s.value=String(Math.max(0, Math.min(100, +s.value + d*BRUSH_STEP))); s.dispatchEvent(new Event('input')); }
 function updateBrushDot(){
   if(!M) return;
   const d=2*brushR()*view.s, s=Math.max(3, Math.min(40, d));
@@ -592,23 +615,45 @@ function updateBrushDot(){
 }
 
 // ── 영상 — 그 station 을 가장 잘 찍은 장면으로 ────────────────────
+// 거꾸로, 지금 영상이 보는 자리를 전개도 위 ▼ 로 — 카메라 위치 + 표본 띠 가운데(build.py frame_z · view_mm).
+// 대충의 자리다: 영상 한 장은 앞으로 1~1.6 m 띠를 고루 보지만 그 가운데를 찍는다
+function updateVidPos(){
+  if(!M || !M.frame_z) return;
+  const v=$('vid'), f=Math.max(0, Math.min(M.frame_z.length-1, Math.round((v.currentTime||0)*M.play_fps)));
+  const vm=M.view_mm||[1000,1600];
+  const x=Math.max(0, Math.min(M.img_w, (M.frame_z[f]+(vm[0]+vm[1])/2)/M.mm_per_px_x));
+  if(vidX===null || Math.abs(x-vidX)*view.s>0.3){ vidX=x; requestRender(); }
+}
+function drawVidArrow(vb){
+  if(vidX===null) return;
+  const x=view.ox+vidX*view.s; if(x<vb.x-1 || x>vb.x+vb.w+1) return;
+  const y=Math.max(vb.y, view.oy);                // 그림 위 끝 — 확대로 위가 잘렸으면 보이는 위 끝
+  g.save(); g.fillStyle='#58a6ff'; g.strokeStyle='#07090d'; g.lineWidth=1;
+  g.beginPath(); g.moveTo(x, y); g.lineTo(x-6, y-11); g.lineTo(x+6, y-11); g.closePath(); g.fill(); g.stroke();
+  g.restore();
+}
+{ const v=$('vid');
+  ['timeupdate','seeked','loadedmetadata'].forEach(ev=>v.addEventListener(ev, updateVidPos));
+  // 재생 중엔 프레임마다(되는 브라우저만 — 크롬은 된다). 멈춰 있으면 불리지 않으니 한 번만 걸어 둔다
+  if(v.requestVideoFrameCallback){ const tick=()=>{ updateVidPos(); v.requestVideoFrameCallback(tick); }; v.requestVideoFrameCallback(tick); }
+}
 function seekVideoAt(x){
   const k=Math.max(0, Math.min(M.nz-1, Math.floor(x*M.mm_per_px_x/M.z_bin_mm)));
   const t=M.station_t[k]; const v=$('vid');
   const go=()=>{ try{ v.pause(); v.currentTime=t; }catch(e){} };
   if(v.readyState>=1) go(); else v.addEventListener('loadedmetadata', go, {once:true});
   const mm=Math.floor(t/60), ss=Math.floor(t%60);
-  $('vidHint').textContent=`${(k*M.z_bin_mm/1000).toFixed(2)} m 자리 → 영상 ${mm}:${String(ss).padStart(2,'0')} 쯤 (멀리서부터 보려면 조금 앞으로)`;
+  $('vidHint').textContent=`— ${(k*M.z_bin_mm/1000).toFixed(2)} m 자리 → ${mm}:${String(ss).padStart(2,'0')} 쯤 (멀리서부터 보려면 조금 앞으로)`;
 }
 
 // ── 라벨(하나만) · 확정 · 취소 · 되돌리기 ──────────────────────────
 function checkedLabel(){ const i=document.querySelector('#labelBoxes input:checked'); return i?i.value:null; }
 function syncChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>i.parentElement.classList.toggle('on', i.checked)); }
 function setLabel(k){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=(i.value===k); }); syncChecks(); }
-function clearChecks(){ document.querySelectorAll('#labelBoxes input').forEach(i=>{ i.checked=false; }); syncChecks(); }
-function endActive(){ active=null; redrawActive(); clearChecks(); }
+function resetLabel(){ setLabel(DEFAULT_LABEL); }   // 구역이 끝나면 기본 라벨(부식)로 돌아간다
+function endActive(){ active=null; redrawActive(); resetLabel(); }
 
-$('btnV').onclick=()=>{
+function confirmActive(){
   if(!active){ toast('먼저 전개도를 눌러 구역을 만들어요'); return; }
   const lab=checkedLabel();
   if(!lab){ toast('라벨을 하나 골라요'); return; }
@@ -632,7 +677,8 @@ $('btnV').onclick=()=>{
   for(const k of new Set([...old, lab])) rebuildLayer(k);
   rebuildUnion(); regVer++; saveNow(); updateUI(); render();
   toast(`${wasEdit?'고침':'완료'} — ${LBY[lab].ko} ${rg.pct.toFixed(2)}%`, true);
-};
+}
+$('btnV').onclick=confirmActive;
 $('btnX').onclick=()=>{ if(!active) return; endActive(); updateUI(); render(); };
 function undo(){
   if(!active) return;
@@ -643,11 +689,19 @@ function undo(){
   updateUI(); render();
 }
 $('btnUndo').onclick=undo;
-// 백스페이스 = 되돌리기 — 한 손은 키보드, 한 손은 화면 (Ctrl+Z 도 같다)
+// 키보드 — 한 손은 키보드, 한 손은 화면 (2026-10-02 사용자)
+//   ⌫ · Ctrl+Z = 되돌리기 · Enter = ✓ 완료 · + / − = 붓 크기
 window.addEventListener('keydown', e=>{
   const t=e.target;
   if(t && (t.tagName==='TEXTAREA' || (t.tagName==='INPUT' && /^(text|search|number|email|url|password)$/.test(t.type)))) return;
-  if(e.key==='Backspace' || ((e.ctrlKey||e.metaKey) && !e.shiftKey && (e.key==='z'||e.key==='Z'))){ e.preventDefault(); undo(); }
+  if(e.ctrlKey || e.metaKey || e.altKey){
+    if((e.ctrlKey||e.metaKey) && !e.altKey && !e.shiftKey && (e.key==='z'||e.key==='Z')){ e.preventDefault(); undo(); }
+    return;                                           // Ctrl + / − 는 브라우저 확대 그대로
+  }
+  if(e.key==='Backspace'){ e.preventDefault(); undo(); return; }
+  if(e.key==='Enter'){ e.preventDefault(); if(active) confirmActive(); return; }   // 버튼에 초점이 있어도 두 번 눌리지 않게
+  if(e.key==='+' || e.key==='='){ e.preventDefault(); stepBrush(+1); return; }
+  if(e.key==='-' || e.key==='_'){ e.preventDefault(); stepBrush(-1); return; }
 });
 
 function deleteRegion(id){
@@ -705,9 +759,9 @@ function updateUI(){
   $('brushCm').textContent=`지름 ≈ ${fmtCm(2*brushR()*mm/10)} cm`;
   updateBrushDot();
   const editNo = active&&active.editId ? regions.findIndex(x=>x.id===active.editId)+1 : 0;
-  $('regState').textContent = !active ? '전개도를 한 번 누르면 새 구역 · 만든 구역을 누르면 고치기'
-    : editNo ? `구역 ${editNo} 고치는 중 — 칠하기로 넓히고 지우개로 깎는다 · ✓ 저장 · ✕ 그대로`
-    : `새 구역 — 획 ${active.strokes.length} · 라벨 하나 고르고 ✓`;
+  $('regState').textContent = !active ? '전개도를 누르면 새 구역 · 만든 구역을 누르면 고치기'
+    : editNo ? `구역 ${editNo} 고치는 중 — 넓히기·깎기 후 ✓`
+    : `새 구역 — 획 ${active.strokes.length} · 라벨 확인하고 ✓`;
   $('btnV').disabled=!active||!checkedLabel(); $('btnX').disabled=!active;
   $('btnUndo').disabled=!active||active.strokes.length<=active.base;
   // 막대 — 깨끗함 먼저
@@ -737,7 +791,7 @@ function updateUI(){
 }
 function centerOn(rg){
   const b=strokesBBox(rg.strokes); if(!b) return;
-  const vb=viewBox(); view.ox=vb.x+vb.w/2-(b.x0+b.x1)/2*view.s; view.oy=vb.y+vb.h/2-(b.y0+b.y1)/2*view.s; clampView();
+  const vb=viewBox(); view.ox=vb.x+vb.w/2-(b.x0+b.x1)/2*view.s; view.oy=vb.y+vb.h/2-(b.y0+b.y1)/2*view.s; fitted=false; clampView();
 }
 
 // ── 내보내기 · 불러오기 ────────────────────────────────────────────
