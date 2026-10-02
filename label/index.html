@@ -200,8 +200,8 @@ const LBY=Object.fromEntries(LABELS.map(l=>[l.key,l]));
 const R_MIN=1, R_MAX=60;      // 붓 반지름(그림 화소) — 막대는 로그 눈금이라 작은 붓도 고르기 쉽다
 const A_ON=128;               // 면적으로 세는 화소 = 마스크 불투명도 절반 이상(가장자리 흐림은 반만)
 const DEFAULT_LABEL='corrosion';   // 라벨 기본값 — 새 구역마다 이것이 골라져 있다(2026-10-02 사용자 "기본은 부식"). 바꾸려면 여기만
-let UPLOAD_URL='';   // 결과 받는 곳 — label/apps_script/Code.gs 를 웹 앱으로 배포한 주소(…/exec). 비면 이 기기에만 저장
-const BUILD='2b482dd517';   // deploy.py 가 올릴 때 채운다 — 열 때 version.json 과 다르면 새 판으로 다시 받는다
+let UPLOAD_URL='https://script.google.com/macros/s/AKfycbw0iV5R3_O-wIPcJmrzHCYIbAEYlDwULNXmwIEwSnqLMhymwFRi06CKinoB6_HY3w7PJg/exec';   // 결과 받는 곳 — label/apps_script/Code.gs 를 웹 앱으로 배포한 주소(…/exec). 비면 이 기기에만 저장
+const BUILD='c84c400779';   // deploy.py 가 올릴 때 채운다 — 열 때 version.json 과 다르면 새 판으로 다시 받는다
 let DATASETS=[];     // index.json — 저장하기는 이 기기에 구역이 있는 관을 모두 올린다
 const BRUSH_STEP=5;                // +/- 키 한 번에 붓 막대 몇 칸(로그 눈금 100칸 중 — 한 번에 약 1.2배)
 
