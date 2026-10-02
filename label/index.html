@@ -259,19 +259,24 @@ function render(){
   g.save(); g.beginPath(); g.rect(vb.x,vb.y,vb.w,vb.h); g.clip();
   g.imageSmoothingEnabled=view.s<2;
   g.drawImage(IMG, view.ox, view.oy, IMG.width*view.s, IMG.height*view.s);
-  for(const l of LABELS){ if(layer[l.key] && counts[l.key]>0) drawLayer(layer[l.key], l.color, 0.30, 1); }
-  if(selId!==null){ const r=regions.find(x=>x.id===selId); if(r){ const t=mkCanvas(M.img_w,M.img_h); paintStrokes(mctx(t), r.strokes); drawLayer(t,'#ffffff',0.35,2); } }
-  if(active){ drawLayer(maskA, '#ffffff', 0.22, 1); }
+  for(const l of LABELS){
+    const rs=regions.filter(r=>r.labels.includes(l.key)); if(!rs.length) continue;
+    drawLayer(rs.flatMap(r=>r.strokes), l.color, 0.30, 1);
+  }
+  if(selId!==null){ const r=regions.find(x=>x.id===selId); if(r) drawLayer(r.strokes,'#ffffff',0.35,2); }
+  if(active){ drawLayer(active.strokes, '#ffffff', 0.22, 1); }
   g.restore();
   drawAxes(vb);
 }
-// 마스크(그림 크기, 흰 획) → 화면에 색 입혀 옅게 채우고, 화면 화소 1px 두께의 실선 테두리
-function drawLayer(mask, color, alpha, lw){
+// 획들을 화면 좌표로 바로 그려(벡터) 색 입혀 옅게 채우고, 화면 화소 1px 두께의 실선 테두리.
+// 그림 크기 마스크(maskA · layer)는 면적 세기 · 닿음 판정용이고, 화면엔 안 쓴다 — 키우면 계단진다
+function drawLayer(strokes, color, alpha, lw){
   const tg=offT.getContext('2d'), og=offO.getContext('2d');
   const cw=cv.width/dpr, ch=cv.height/dpr;
   tg.setTransform(dpr,0,0,dpr,0,0); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,cw,ch);
-  tg.imageSmoothingEnabled=false;
-  tg.drawImage(mask, view.ox, view.oy, mask.width*view.s, mask.height*view.s);
+  tg.setTransform(dpr*view.s,0,0,dpr*view.s,dpr*view.ox,dpr*view.oy);
+  paintStrokes(tg, strokes);
+  tg.setTransform(dpr,0,0,dpr,0,0);
   tg.globalCompositeOperation='source-in'; tg.fillStyle=color; tg.fillRect(0,0,cw,ch);
   og.setTransform(dpr,0,0,dpr,0,0); og.globalCompositeOperation='source-over'; og.clearRect(0,0,cw,ch);
   for(let dx=-lw;dx<=lw;dx++) for(let dy=-lw;dy<=lw;dy++){ if(dx||dy) og.drawImage(offT, dx, dy, cw, ch); }
