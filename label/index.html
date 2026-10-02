@@ -21,6 +21,8 @@
     · 오른쪽 위 💾 저장하기 — 자동 저장과 같은 곳에 쓰고 다시 읽어 확인한 뒤 "✓ 저장됨" (Ctrl+S 도 같다)
       UPLOAD_URL 이 있으면 이 기기에 구역이 있는 관을 모두 네 구글 드라이브로 올린다(label/apps_script/Code.gs)
     · 실시간 — UPLOAD_URL 이 있으면 ✓ · 지우기 뒤 3초에 지금 관을 자동으로 올린다(끊기면 30초마다 다시)
+    · 보는 사람 — 맨 위 사람 태그(👥 이름 구역수): 드라이브의 다른 사람 최신본을 빗금으로 겹치고 15초마다 새로 받는다. 누르면 보이기/숨기기.
+      태그는 읽기 열쇠를 넣은 브라우저에만 보인다 — 처음 한 번은 주소에 ?view=all 을 붙여 열고 열쇠를 넣는다
     · 저장본 지키기 — 바뀐 게 없으면 안 쓴다 · 쓰기 전에 저장본과 합친다 · 지운 구역은 표시해 되살리지 않는다
     · 라벨은 구역마다 하나(원형 버튼). 같은 라벨은 면적이 합쳐져 막대그래프로 — 처음엔 깨끗함 100%
   화면 그리기: 구역은 그림 사각형 안으로 잘라 그리고, 테두리는 칠한 면 **안쪽 가장자리**에 긋는다
@@ -74,6 +76,15 @@
   #brushCm{ min-width:70px; }
   #btnUndo{ margin-left:auto; min-height:38px; padding:4px 12px; border-radius:8px; border:1px solid var(--line); background:#21262d; color:var(--ink); font-size:14px; display:inline-flex; align-items:center; gap:7px; }
   #btnUndo:disabled{ opacity:.4; }
+  /* 다른 라벨러 태그 — 맨 위 관 탭 옆. 읽기 열쇠가 있는 브라우저(또는 ?view=all)에만 보인다 (2026-10-02 사용자 "위에 태그") */
+  #people{ display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+  #people .ptag{ background:var(--panel); color:var(--mute); border:1px dashed #57606a; border-radius:999px; padding:4px 11px; font-size:13px; white-space:nowrap; }
+  #people .ptag[aria-pressed=true]{ color:var(--ink); border:1px solid #e3b341; background:repeating-linear-gradient(135deg, rgba(227,179,65,.22) 0 4px, transparent 4px 8px); }
+  #people .ptag small{ color:var(--mute); margin-left:5px; }
+  #people .ptag[aria-pressed=true] small{ color:#f0d58a; }
+  #othersBox{ margin-top:8px; font-size:12px; color:var(--ink); display:flex; flex-direction:column; gap:3px; }
+  #othersBox .sw{ margin:0 2px 0 5px; vertical-align:-1px; }
+  .warnTxt{ color:#e3b341; }
   kbd{ font:11px ui-monospace,Consolas,monospace; border:1px solid #57606a; border-bottom-width:2px; border-radius:4px; padding:0 4px; color:var(--mute); }
 
   /* 아래 판 — 구역 체크 | 영상 | 면적·목록. 칸마다 넘치면 그 칸 안에서만 스크롤 */
@@ -129,6 +140,7 @@
 <header>
   <h1>관 벽 라벨링 <small>전개도 위에 결함 구역을 칠하고 라벨을 단다</small></h1>
   <nav id="tabs"></nav>
+  <nav id="people" hidden aria-label="다른 라벨러"></nav>
   <div class="saveBox"><span id="saveState"></span>
   <button id="btnSave" title="지금 구역들을 이 브라우저에 저장하고, 다시 읽어 확인한다 — 완료할 때마다 자동으로도 저장된다 · Ctrl+S">💾 저장하기</button></div>
 </header>
@@ -169,6 +181,7 @@
   <section id="secRight">
     <h2>면적 비율 <span class="hint" id="chartDen"></span></h2>
     <div id="bars"></div>
+    <div id="othersBox" hidden></div>
     <h2 style="margin-top:9px">완료한 구역 <span id="nReg"></span> <span class="hint">— 누르면 고친다</span></h2>
     <ol id="regList"></ol>
     <div class="btns small" style="margin-top:6px">
@@ -201,7 +214,10 @@ const R_MIN=1, R_MAX=60;      // 붓 반지름(그림 화소) — 막대는 로�
 const A_ON=128;               // 면적으로 세는 화소 = 마스크 불투명도 절반 이상(가장자리 흐림은 반만)
 const DEFAULT_LABEL='corrosion';   // 라벨 기본값 — 새 구역마다 이것이 골라져 있다(2026-10-02 사용자 "기본은 부식"). 바꾸려면 여기만
 let UPLOAD_URL='https://script.google.com/macros/s/AKfycbw0iV5R3_O-wIPcJmrzHCYIbAEYlDwULNXmwIEwSnqLMhymwFRi06CKinoB6_HY3w7PJg/exec';   // 결과 받는 곳 — label/apps_script/Code.gs 를 웹 앱으로 배포한 주소(…/exec). 비면 이 기기에만 저장
-const BUILD='c84c400779';   // deploy.py 가 올릴 때 채운다 — 열 때 version.json 과 다르면 새 판으로 다시 받는다
+const BUILD='6e95e211bb';   // deploy.py 가 올릴 때 채운다 — 열 때 version.json 과 다르면 새 판으로 다시 받는다
+const VIEW_ALL=new URLSearchParams(location.search).get('view')==='all';   // 보는 사람 모드 — 열쇠를 넣기 전에도 태그 자리가 나온다
+let hiddenPeople=new Set(); try{ hiddenPeople=new Set(JSON.parse(localStorage.getItem('pipelabel:hiddenPeople')||'[]')); }catch(e){}   // 태그로 숨긴 사람
+let OTHERS=[], othersOn=false, othersT=0, othersSig='', othersVer=0, othersErr='';   // 드라이브에서 읽어 온 다른 사람 구역
 let DATASETS=[];     // index.json — 저장하기는 이 기기에 구역이 있는 관을 모두 올린다
 const BRUSH_STEP=5;                // +/- 키 한 번에 붓 막대 몇 칸(로그 눈금 100칸 중 — 한 번에 약 1.2배)
 
@@ -257,6 +273,7 @@ async function loadDataset(name, push=true){
   for(const k in counts) delete counts[k];
   active=null; resetLabel(); vidX=null;
   regions=loadSaved(name).map(normRegion).filter(Boolean); dirty=false; pendingSync=false;
+  OTHERS=[]; othersSig=''; othersErr=''; othersVer++;
   for(const rg of regions) computeRegionArea(rg);
   rebuildAll(); regVer++;
   const v=$('vid'); v.src=`data/${M.video}`; v.load();
@@ -264,6 +281,7 @@ async function loadDataset(name, push=true){
   $('chartDen').textContent=`— 분모 = 본 벽 ${M.seen_m2.toFixed(2)} m²`;
   $('chartDen').title=`계기가 본 벽 ${M.seen_m2.toFixed(2)} m² (어둡게 빈 곳 제외) · 관경 ${M.pipe_dia_mm} mm · 길이 ${(M.len_mm/1000).toFixed(2)} m`;
   resize(); fitView(); updateUI(); render();
+  if(othersOn) fetchOthers(); showOthers();
 }
 function loadImage(src){ return new Promise((res,rej)=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=rej; im.src=src; }); }
 // 저장본 · 불러온 파일을 지금 형식으로 — 예전 판(라벨 여러 개 고를 수 있던 때)의 구역도 그대로 읽는다
@@ -312,7 +330,8 @@ async function init(){
   try{ const b=localStorage.getItem('pipelabel:brush'); if(b!==null) $('brush').value=b; }catch(e){}
   const q=new URLSearchParams(location.search).get('data');
   await loadDataset((q && list.some(d=>d.name===q)) ? q : list[0].name);
-  if(UPLOAD_URL && !labeler(false)){ labeler(true); showSaveState(); }   // 결과가 자동으로 올라가니 이름을 먼저 받아 둔다
+  if(UPLOAD_URL && !VIEW_ALL && !readKey(false) && !labeler(false)){ labeler(true); showSaveState(); }   // 결과가 자동으로 올라가니 이름을 먼저 받아 둔다(보는 사람은 안 묻는다)
+  if(peopleVisible()){ if(readKey(false)) setOthers(true); else renderPeople(); }   // 열쇠가 있는 브라우저는 열자마자 다른 라벨러를 받아 온다
 }
 
 // ── 저장 ──────────────────────────────────────────────────────────
@@ -457,6 +476,87 @@ async function autoUpload(name){
 }
 window.addEventListener('online', ()=>{ if(upFail && upName) autoUpload(upName); });
 
+// ── 다른 라벨러 보기(읽기) — 받는 스크립트에 열쇠를 건네 이 관의 최신본들을 받아 온다. 열쇠는 이 브라우저에만 ──
+function readKey(ask){
+  let k=''; try{ k=localStorage.getItem('pipelabel:readkey')||''; }catch(e){}
+  if(!k && ask){ k=(prompt('읽기 열쇠를 붙여 넣어 주세요 (보는 사람용 — 한 번만)', '')||'').trim(); if(k){ try{ localStorage.setItem('pipelabel:readkey', k); }catch(e){} } }
+  return k;
+}
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+async function fetchOthers(){
+  if(!othersOn || !M || !UPLOAD_URL) return;
+  const key=readKey(false); if(!key){ setOthers(false); return; }
+  const name=M.name;
+  try{
+    const r=await fetch(UPLOAD_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({op:'read', key, dataset:name})});
+    const j=await r.json();
+    if(!M || M.name!==name || !othersOn) return;               // 그사이 관을 옮겼거나 껐다
+    if(!j.ok){
+      if(/열쇠/.test(j.error||'')){ try{ localStorage.removeItem('pipelabel:readkey'); }catch(e){} setOthers(false); toast('읽기 열쇠가 틀려요 — 다시 켜고 넣어 주세요'); }
+      else { othersErr='읽기 길이 아직 안 열렸어요(받는 스크립트 새 버전 배포 필요)'; showOthers(); }
+      return;
+    }
+    const me=labeler(false);
+    const list=(j.files||[]).filter(f=>f.data && f.labeler!==me).map(f=>({
+      labeler:String(f.labeler), modified:f.modified,
+      regions:(Array.isArray(f.data.regions)?f.data.regions:[]).map(normRegion).filter(Boolean)}));
+    const sig=JSON.stringify(list.map(o=>[o.labeler, o.modified, o.regions.length]));
+    othersErr='';
+    if(sig!==othersSig){ othersSig=sig; OTHERS=list; computeOthers(); othersVer++; render(); }
+    showOthers();
+  }catch(e){ othersErr='읽기 실패 — 인터넷 확인'; showOthers(); }
+}
+function computeOthers(){
+  for(const o of OTHERS){
+    o.per={};
+    for(const l of LABELS){ const rs=o.regions.filter(r=>r.labels.includes(l.key)); if(rs.length){ paintInto(work, rs); o.per[l.key]=countSeenBox(work, FULL()); } }
+    if(o.regions.length){ paintInto(work, o.regions); o.union=countSeenBox(work, FULL()); } else o.union=0;
+  }
+}
+// 맨 위 사람 태그 — 열쇠가 없으면 "다른 라벨러 보기"(누르면 열쇠를 한 번 묻는다), 있으면 사람마다 태그(누르면 보이기/숨기기)
+function peopleVisible(){ return !!UPLOAD_URL && (VIEW_ALL || !!readKey(false)); }
+function renderPeople(){
+  const nav=$('people');
+  if(!peopleVisible()){ nav.hidden=true; nav.innerHTML=''; return; }
+  nav.hidden=false;
+  if(!othersOn) nav.innerHTML='<button class="ptag" data-act="on" title="읽기 열쇠가 필요하다(이 브라우저에 한 번만)">👥 다른 라벨러 보기</button>';
+  else if(othersErr) nav.innerHTML=`<button class="ptag" data-act="retry" title="${esc(othersErr)} — 누르면 다시">⚠ 다른 라벨러 읽기 안 됨</button>`;
+  else if(!OTHERS.length) nav.innerHTML='<span class="ptag" title="15초마다 다시 본다">👥 이 관엔 아직 없음</span>';
+  else nav.innerHTML=OTHERS.map((o,i)=>{
+    const t=new Date(o.modified), when=isNaN(t)?'':` · ${hhmm(t)} 올림`;
+    return `<button class="ptag" data-i="${i}" aria-pressed="${!hiddenPeople.has(o.labeler)}" title="${esc(o.labeler)} — 구역 ${o.regions.length}${when} · 누르면 보이기/숨기기">👥 ${esc(o.labeler)}<small>${o.regions.length}</small></button>`;
+  }).join('');
+  nav.querySelectorAll('button').forEach(b=>b.onclick=()=>{
+    if(b.dataset.act==='on'){ if(readKey(true)) setOthers(true); else renderPeople(); return; }
+    if(b.dataset.act==='retry'){ fetchOthers(); return; }
+    const o=OTHERS[+b.dataset.i]; if(!o) return;
+    if(hiddenPeople.has(o.labeler)) hiddenPeople.delete(o.labeler); else hiddenPeople.add(o.labeler);
+    try{ localStorage.setItem('pipelabel:hiddenPeople', JSON.stringify([...hiddenPeople])); }catch(e){}
+    othersVer++; render(); renderPeople();
+  });
+}
+function showOthers(){
+  renderPeople();
+  const box=$('othersBox');
+  if(!peopleVisible() || !othersOn){ box.hidden=true; return; }
+  box.hidden=false;
+  if(othersErr){ box.innerHTML=`<span class="warnTxt">${esc(othersErr)}</span>`; return; }
+  if(!OTHERS.length){ box.textContent='👥 이 관에 다른 사람이 올린 라벨이 아직 없다'; return; }
+  const pct=n=>seenCount?100*n/seenCount:0;
+  box.innerHTML=OTHERS.map(o=>{
+    const parts=LABELS.filter(l=>o.per[l.key]).map(l=>`<i class="sw" style="background:${l.color}"></i>${l.ko} ${pct(o.per[l.key]).toFixed(2)}%`);
+    const t=new Date(o.modified);
+    return `<div>👥 <b>${esc(o.labeler)}</b> · ${isNaN(t)?'':hhmm(t)+' 올림 · '}구역 ${o.regions.length} — 깨끗함 ${(100-pct(o.union)).toFixed(1)}%${parts.map(x=>' · '+x).join('')}</div>`;
+  }).join('');
+}
+function setOthers(on){
+  othersOn=on; clearInterval(othersT); othersT=0;
+  try{ localStorage.setItem('pipelabel:others', on?'1':'0'); }catch(e){}
+  if(on){ fetchOthers(); othersT=setInterval(()=>{ if(document.visibilityState==='visible') fetchOthers(); }, 15000); }
+  else { OTHERS=[]; othersSig=''; othersErr=''; othersVer++; render(); }
+  showOthers();
+}
+
 async function doSave(){
   const b=$('btnSave'); if(b.disabled) return;
   if(!saveNow(true)){ flashSave('fail','✕ 저장 실패'); toast('저장 못 했어요 — 보내기로 파일을 받아 두세요'); return; }
@@ -539,10 +639,14 @@ function render(){
 // 확정한 구역 — 보기·구역이 그대로면 다시 그리지 않는다(칠하는 동안 빠르게)
 function renderCommitted(){
   const eid=active&&active.editId;
-  const key=[view.s,view.ox,view.oy,cv.width,cv.height,regVer,eid].join('|');
+  const key=[view.s,view.ox,view.oy,cv.width,cv.height,regVer,eid,othersVer].join('|');
   if(key===committedKey) return;
   committedKey=key;
   const cg=offC.getContext('2d'); cg.setTransform(1,0,0,1,0,0); cg.clearRect(0,0,offC.width,offC.height);
+  if(othersOn) for(const o of OTHERS) if(!hiddenPeople.has(o.labeler)) for(const l of LABELS){   // 다른 라벨러 — 빗금 · 내 구역 밑 · 태그로 숨긴 사람 빼고
+    const rs=o.regions.filter(r=>r.labels.includes(l.key));
+    if(rs.length) drawHatched(cg, rs.map(r=>r.strokes), l.color);
+  }
   for(const l of LABELS){
     const rs=regions.filter(r=>r.labels.includes(l.key) && r.id!==eid);
     if(rs.length) drawLayer(cg, rs.map(r=>r.strokes), l.color, 0.30, l.color, 1);
@@ -564,6 +668,22 @@ function drawLayer(target, groups, fill, alpha, line, lwCss){
   target.save(); target.setTransform(1,0,0,1,0,0);
   target.globalAlpha=alpha; target.drawImage(offT,0,0);
   target.globalAlpha=1; target.drawImage(offO,0,0);
+  target.restore();
+}
+// 다른 라벨러 구역 — 칠 대신 빗금 + 안쪽 실선(내 구역과 섞여도 갈린다)
+function drawHatched(target, groups, color){
+  const W=cv.width, H=cv.height, tg=offT.getContext('2d');
+  tg.setTransform(1,0,0,1,0,0); tg.globalCompositeOperation='source-over'; tg.clearRect(0,0,W,H);
+  tg.save(); const R=imgRectDev(); tg.beginPath(); tg.rect(R.x,R.y,R.w,R.h); tg.clip();
+  paintGroups(tg, groups, offR, [dpr*view.s,0,0,dpr*view.s,dpr*view.ox,dpr*view.oy]);
+  tg.restore();
+  innerOutline(offT, offE, offO, Math.max(1, Math.round(dpr)));
+  const og=offO.getContext('2d'); og.globalCompositeOperation='source-in'; og.fillStyle=color; og.fillRect(0,0,W,H); og.globalCompositeOperation='source-over';
+  const pc=mkCanvas(8,8), px=pc.getContext('2d'); px.strokeStyle=color; px.lineWidth=2;
+  px.beginPath(); px.moveTo(-2,10); px.lineTo(10,-2); px.moveTo(-2,2); px.lineTo(2,-2); px.moveTo(6,10); px.lineTo(10,6); px.stroke();
+  tg.globalCompositeOperation='source-in'; tg.fillStyle=tg.createPattern(pc,'repeat'); tg.fillRect(0,0,W,H); tg.globalCompositeOperation='source-over';
+  target.save(); target.setTransform(1,0,0,1,0,0);
+  target.globalAlpha=0.8; target.drawImage(offT,0,0); target.globalAlpha=1; target.drawImage(offO,0,0);
   target.restore();
 }
 // 안쪽 테두리 = 면 − 깎은 면(8방향 lw 화소). 테두리가 칠한 면 밖으로 나가지 않는다
